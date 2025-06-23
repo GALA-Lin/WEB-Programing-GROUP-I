@@ -1,4 +1,5 @@
-# 注意，请点击最上面的main切换到dev，dev目前还没并入main内容中
+# 注意，请点击上面或左侧的main并切换到dev，dev目前还没并入main内容中
+![image](https://github.com/user-attachments/assets/1c785989-6dd9-4032-a86e-9736ea8a128f)
 
 Cupk 2025夏 web程序设计 第一组
 
