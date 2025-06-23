@@ -58,6 +58,8 @@ Cupk 2025夏 web程序设计 第一组
     1.  从上述指定链接下载与操作系统匹配的 `JDK 21` 版本（`.msi` for Windows, `.pkg` for macOS）。
     2.  在安装过程中，必须确保已勾选并执行 **"Add to PATH"** 和 **"Set JAVA_HOME variable"** 两个关键步骤，以完成系统级环境变量的配置。
 
+![image](https://github.com/user-attachments/assets/856309a5-3e41-4a2d-af4e-f0d82fc906ce)
+
 * **强制性要求与修正规程：**
     * **禁止**使用任何 IDE（如 IntelliJ IDEA）内置的 JDK 下载及管理功能。此举是为了保证所有成员的编译及运行环境绝对一致。
     * 若有成员已通过 IDE 下载了 JDK，必须执行以下**修正规程**：
