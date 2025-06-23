@@ -4,13 +4,13 @@ Cupk 2025夏 web程序设计 第一组
 
 
 
-| 序号 | 学号       | 姓名   | 班级       |
-| :--- | :--------- | :----- | :--------- |
-| 37   | 2023015509 | 胡林森 | 数据23-3班 |
-| 93   | 2023016701 | 郑智   | 数据23-3班 |
-| 157  | 2023015507 | 贺仁铭 | 软工23-2班 |
-| 94   | 2023016901 | 周程   | 数据23-1班 |
-| 139  | 2023015475 | 郭人禄 | 软工23-2   |
+| 序号  | 学号         | 姓名  | 班级      |
+|:----|:-----------|:----|:--------|
+| 37  | 2023015509 | 胡林森 | 数据23-3班 |
+| 93  | 2023016701 | 郑智  | 数据23-3班 |
+| 157 | 2023015507 | 贺仁铭 | 软工23-2班 |
+| 94  | 2023016901 | 周程  | 数据23-1班 |
+| 139 | 2023015475 | 郭人禄 | 软工23-2  |
 
 
 
@@ -137,7 +137,7 @@ Cupk 2025夏 web程序设计 第一组
     * 分支推送到远程后，GitHub Desktop 通常会显示一个带有 `Create Pull Request` 按钮的提示条，点击它。
     * 浏览器将自动打开 GitHub 网站的 PR 创建页面。
     * 确认基座分支为 `develop`，对比分支为你的功能分支。
-    * 填写必要的说明后，点击 `Create Pull Request`，并通知项目负责人进行代码审查 (Code Review)。
+    * 填写必要地说明后，点击 `Create Pull Request`，并通知项目负责人进行代码审查 (Code Review)。
 
 ## 4. 环境配置验证
 
@@ -172,14 +172,14 @@ Cupk 2025夏 web程序设计 第一组
 
 ### **项目开发位置速查表**
 
-| 你要做什么？ | 就把文件放到这里... |
-| :--- | :--- |
-| **写 Java 代码** \<br\> (Controller, Service, Entity...) | `src/main/java/com/student/webproject/` |
-| **写 HTML 页面** \<br\> (给浏览器看的网页) | `src/main/resources/templates/` |
-| **写 CSS 样式 / JS 脚本** | `src/main/resources/static/` |
-| **放图片** | `src/main/resources/static/` |
-| **改项目配置** \<br\> (比如数据库、服务器端口) | `src/main/resources/application.properties` |
-| **添加新的依赖库** \<br\> (比如加一个新功能 Jar 包) | `pom.xml` |
+| 你要做什么？                                                | 就把文件放到这里...                                 |
+|:------------------------------------------------------|:--------------------------------------------|
+| **写 Java 代码** \<br\> (Controller, Service, Entity...) | `src/main/java/com.student.webproject/`     |
+| **写 HTML 页面** \<br\> (给浏览器看的网页)                       | `src/main/resources/templates/`             |
+| **写 CSS 样式 / JS 脚本**                                  | `src/main/resources/static/`                |
+| **放图片**                                               | `src/main/resources/static/`                |
+| **改项目配置** \<br\> (比如数据库、服务器端口)                        | `src/main/resources/application.properties` |
+| **添加新的依赖库** \<br\> (比如加一个新功能 Jar 包)                   | `pom.xml`                                   |
 
 
 
