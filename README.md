@@ -45,20 +45,10 @@ Cupk 2025夏 web程序设计 第一组
 
 -----
 
-## 安装 Git (代码版本管理工具)
-
-  * **去哪里下：** [https://git-scm.com/downloads](https://git-scm.com/downloads)
-
-  * **怎么装：** 下载对应你操作系统（Windows/Mac）的版本。安装时，一路点击 "Next" 即可，不需要修改任何默认设置。
-
-  * **如何验证：** 打开你的终端（Windows下是 PowerShell 或 CMD，Mac下是 Terminal），输入以下命令后按回车：
-
-    ```bash
-    git --version
-    ```
-
-    如果能显示出版本号（如 `git version 2.45.1`），就说明装好了。
-
+## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
+去哪里下： https://desktop.github.com/
+怎么装： 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
+如何验证： 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
 -----
 
 ## 安装 JDK 21 (Java 开发工具包)
