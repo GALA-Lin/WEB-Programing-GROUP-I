@@ -167,3 +167,24 @@ Cupk 2025夏 web程序设计 第一组
 ---
 
 环境配置规范说明完毕。所有成员必须在项目启动前完成并验证上述所有步骤。如在配置过程中遇到任何无法自行解决的问题，请及时企业微信联系。
+
+
+
+好的，完全明白。我们来创建一个最最精简的 Markdown 指南，只说明“做什么事，动哪个文件/文件夹”。
+
+-----
+
+### **项目开发位置速查表**
+
+| 你要做什么？ | 就把文件放到这里... |
+| :--- | :--- |
+| **写 Java 代码** \<br\> (Controller, Service, Entity...) | `src/main/java/com/student/webproject/` |
+| **写 HTML 页面** \<br\> (给浏览器看的网页) | `src/main/resources/templates/` |
+| **写 CSS 样式 / JS 脚本** | `src/main/resources/static/` |
+| **放图片** | `src/main/resources/static/` |
+| **改项目配置** \<br\> (比如数据库、服务器端口) | `src/main/resources/application.properties` |
+| **添加新的依赖库** \<br\> (比如加一个新功能 Jar 包) | `pom.xml` |
+
+
+
+> **一句话原则：** 我们所有的开发工作，几乎都在 **`src/main`** 这个文件夹里。
