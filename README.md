@@ -35,6 +35,7 @@ Cupk 2025夏 web程序设计 第一组
 
 -----
 
+
 # 当前任务：本地软件安装
 
 这个任务是所有后续工作的基础。
@@ -42,22 +43,23 @@ Cupk 2025夏 web程序设计 第一组
 **目标：** 在你自己的电脑上装好所有必需的开发软件。
 
 -----
+## 安装 IntelliJ IDEA (我们的“代码编辑器”)
 
-## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
+  * **去哪里下：** [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
+  * **怎么装：** 下载 Community (社区免费版) 或 Ultimate (旗舰版)。安装时一路 "Next"。
 
-  * **去哪里下：** [https://desktop.github.com/](https://desktop.github.com/)
-  * **怎么装：** 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
-  * **如何验证：** 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
 
 -----
 
+
 ## 安装 JDK 21 (Java 开发工具包)
 
-  * **去哪里下：** 推荐使用 OpenJDK。访问 [https://adoptium.net/temurin/releases/](https://adoptium.net/temurin/releases/)
+  * **去哪里下 / 怎么装：** **推荐直接通过 IntelliJ IDEA 内部下载。**
 
-  * **怎么选：** 在页面上找到 "Version: 21 (LTS)"，选择你的操作系统，下载 `.msi` (Windows) 或 `.pkg` (Mac) 安装包。
-
-  * **怎么装：** 双击安装包，一路 "Next"。在某一步它会问你是否 "Set JAVA\_HOME variable"，请务必选择 "Will be installed on local hard drive" (通常是一个小硬盘图标)，这会自动帮你配置好环境变量。
+    1.  安装并启动 IntelliJ IDEA（如果尚未安装）。
+    2.  在创建新项目时，或进入 `File` -\> `Project Structure...` -\> `SDKs`。
+    3.  点击 "Add SDK" 或 "Download JDK..." 选项。
+    4.  在弹出的窗口中，选择 **Vendor 为 Adoptium (Temurin)**，**Version 为 21 (LTS)**，然后点击 "Download"。IDEA 将自动下载并配置好 JDK。
 
   * **如何验证：** 重启你的终端，输入：
 
@@ -68,6 +70,16 @@ Cupk 2025夏 web程序设计 第一组
     如果能显示出 `openjdk version "21...."`，就说明装好了。
 
 -----
+
+
+## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
+
+  * **去哪里下：** [https://desktop.github.com/](https://desktop.github.com/)
+  * **怎么装：** 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
+  * **如何验证：** 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
+
+-----
+
 
 ## 安装 Node.js 22 (前端运行环境)
 
@@ -95,11 +107,7 @@ Cupk 2025夏 web程序设计 第一组
 
 -----
 
-## 安装 IntelliJ IDEA (我们的“代码编辑器”)
 
-  * **去哪里下：** [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
-  * **怎么装：** 下载 Community (社区免费版) 或 Ultimate (旗舰版)。
------
 
 ✅ **任务零完成标志：** 以上5个软件全部安装并验证成功。
 
