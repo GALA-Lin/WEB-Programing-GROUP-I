@@ -46,6 +46,7 @@ Cupk 2025夏 web程序设计 第一组
 -----
 
 ## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
+
 去哪里下： https://desktop.github.com/
 怎么装： 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
 如何验证： 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
