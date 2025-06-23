@@ -1,4 +1,3 @@
-# WEB-Programing-GROUP-I
 Cupk 2025夏 web程序设计 第一组
 
 ## 成员
@@ -33,77 +32,138 @@ Cupk 2025夏 web程序设计 第一组
 - 代码托管：GitHub
 - 服务器：Docker
 
-
-
 -----
 
-# 当前任务：全员必做 - 本地软件部署
+# 步骤一：项目开发环境配置规范
 
-这个任务是所有后续工作的基础。
+## 1. 概述
 
-**目标：** 在你自己的电脑上装好所有必需的开发软件。
+本规范的核心原则是将开发工具进行本地化安装，同时将项目依赖的外部服务进行容器化管理。
 
------
+## 2. 本地开发环境配置 
 
-## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
+### 2.1. GitHub Desktop (代码版本管理)
 
-去哪里下： https://desktop.github.com/
-怎么装： 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
-如何验证： 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
------
+* **定义：** 图形化 Git 客户端，是本项目指定的代码版本管理工具。
+* **官方下载地址：** [https://desktop.github.com/](https://desktop.github.com/)
+* **操作规程：**
+    1.  从上述链接下载并安装应用程序。
+    2.  首次启动时，程序会引导你登录。**必须使用你的 GitHub 账户进行登录**，且此账户需已被添加为本项目的协作者。
+    3.  登录后，请根据指引配置你的用户名和邮箱，通常会自动从你的 GitHub 账户同步。
 
-## 安装 JDK 21 (Java 开发工具包)
+### 2.2. JDK (Java Development Kit)
 
-  * **去哪里下：** 推荐使用 OpenJDK。访问 [https://adoptium.net/temurin/releases/](https://adoptium.net/temurin/releases/)
+* **定义：** Java 语言的软件开发工具包。
+* **指定版本：** JDK 21 (LTS)
+* **官方下载地址：** [https://adoptium.net/temurin/releases/](https://adoptium.net/temurin/releases/) (Temurin 版)
+* **操作规程：**
+    1.  从上述指定链接下载与操作系统匹配的 `JDK 21` 版本（`.msi` for Windows, `.pkg` for macOS）。
+    2.  在安装过程中，必须确保已勾选并执行 **"Add to PATH"** 和 **"Set JAVA_HOME variable"** 两个关键步骤，以完成系统级环境变量的配置。
 
-  * **怎么选：** 在页面上找到 "Version: 21 (LTS)"，选择你的操作系统，下载 `.msi` (Windows) 或 `.pkg` (Mac) 安装包。
+    ![image](https://github.com/user-attachments/assets/26289854-42ee-454f-8f43-6a389e8f0945)
 
-  * **怎么装：** 双击安装包，一路 "Next"。在某一步它会问你是否 "Set JAVA\_HOME variable"，请务必选择 "Will be installed on local hard drive" (通常是一个小硬盘图标)，这会自动帮你配置好环境变量。
+* **强制性要求与修正规程：**
+    * **禁止**使用任何 IDE（如 IntelliJ IDEA）内置的 JDK 下载及管理功能。此举是为了保证所有成员的编译及运行环境绝对一致。
+    * 若有成员已通过 IDE 下载了 JDK，必须执行以下**修正规程**：
+        a.  首先，仍需按照上述操作规程，完成系统级 JDK 的下载与安装。
+        b.  其次，打开 IntelliJ IDEA，进入 `File -> Project Structure... -> Project` 设置。
+        c.  在 `SDK` 下拉菜单中，通过 `Add SDK -> JDK...` 选项，手动指定到系统级 JDK 的安装路径（例如 `C:\Program Files\Eclipse Adoptium\jdk-21...` 或 `/Library/Java/JavaVirtualMachines/temurin-21.jdk/...`）。
+        d.  将新添加的、不含任何 IDE 标记的系统级 JDK 设置为项目默认 SDK。
 
-  * **如何验证：** 重启你的终端，输入：
+### 2.3. Node.js
 
+* **定义：** JavaScript 运行环境，用于前端项目构建与开发。
+* **指定版本：** Node.js 22 (LTS)
+* **官方下载地址：** [https://nodejs.org/en/download/prebuilt-installer](https://nodejs.org/en/download/prebuilt-installer)
+* **操作规程：**
+    1.  从上述链接下载与操作系统匹配的长期支持版 (LTS) 安装程序（`Windows Installer (.msi)` 或 `macOS Installer (.pkg)`）。
+    2.  **禁止**使用下载页面中展示的 Docker 相关安装选项。前端开发工具链必须在本地主机上运行，以确保开发服务器的性能与热重载功能的正常工作。
+    3.  执行安装程序并使用所有默认设置。
+
+### 2.4. Docker Desktop
+
+* **定义：** 容器化应用管理平台。
+* **官方下载地址：** [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+* **操作规程：**
+    1.  下载并安装最新稳定版。
+    2.  安装完成后，必须启动 Docker Desktop 应用程序，并确认其状态为“正在运行 (Running)”。
+
+### 2.5. IntelliJ IDEA
+
+* **定义：** 项目指定集成开发环境。
+* **官方下载地址：** [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
+* **操作规程：** 推荐安装 Ultimate (旗舰版) 以获得完整的工具支持。团队成员可申请学生免费授权。
+
+## 3. GitHub Desktop 核心工作流程
+
+所有代码的提交与同步，均须通过 GitHub Desktop 完成。
+
+### 3.1. 克隆 (Clone) 远程仓库
+
+此操作仅需执行一次。
+1.  打开 GitHub Desktop。
+2.  在主界面选择 "Clone a repository from the Internet..." 或通过菜单栏 `File -> Clone Repository...`。
+3.  在弹出的窗口中，选择 `GitHub.com` 标签页。列表中应能看到本项目仓库，选中它。
+4.  在 "Local path" 字段，选择一个用于存储项目代码的本地文件夹。
+5.  点击 `Clone` 按钮。
+
+### 3.2. 日常开发标准流程
+
+此流程为每次开发新功能或修复问题时的标准操作。
+
+1.  **同步 `develop` 分支**
+    * 在开始编码前，必须先同步云端的最新代码。
+    * 在 GitHub Desktop 顶部，将 "Current Branch" 切换到 `develop` 分支。
+    * 点击右上角的 `Fetch origin` 按钮。如果云端有更新，该按钮会变为 `Pull origin`，再次点击它即可将最新代码拉取到本地。
+
+2.  **创建新功能分支**
+    * 所有开发工作必须在新分支上进行，严禁直接在 `develop` 或 `main` 分支上修改。
+    * 点击 "Current Branch" (当前分支) 下拉菜单，选择 `New Branch`。
+    * 为新分支命名，命名需遵循 `feature/功能描述` 或 `fix/问题描述` 的规范（例如 `feature/user-login`）。
+    * 确认 "From branch" (基于分支) 选项为 `develop`。
+    * 点击 `Create Branch`。
+
+3.  **提交 (Commit) 本地更改**
+    * 在 IntelliJ IDEA 中完成代码的编写和修改。
+    * 切换回 GitHub Desktop，左侧 "Changes" 区域会列出所有已修改的文件。
+    * 在左下角的 "Summary" (标题) 框中，必须填写符合 **Conventional Commits** 规范的摘要，例如 `feat(login): 实现用户登录接口`。
+    * 点击蓝色的 `Commit to feature/user-login` 按钮。
+
+4.  **推送 (Push) 分支到远程**
+    * 提交后，更改仅保存在本地。需将其推送到 GitHub 云端仓库。
+    * 点击程序顶部的 `Publish branch` (首次推送) 或 `Push origin` (后续推送) 按钮。
+
+5.  **创建 Pull Request (PR)**
+    * 分支推送到远程后，GitHub Desktop 通常会显示一个带有 `Create Pull Request` 按钮的提示条，点击它。
+    * 浏览器将自动打开 GitHub 网站的 PR 创建页面。
+    * 确认基座分支为 `develop`，对比分支为你的功能分支。
+    * 填写必要的说明后，点击 `Create Pull Request`，并通知项目负责人进行代码审查 (Code Review)。
+
+## 4. 环境配置验证
+
+为确保所有工具已正确安装并配置到系统路径，请打开**操作系统原生终端**（例如，Windows 的 `PowerShell` 或 macOS 的 `Terminal`），并逐一执行以下命令进行验证。
+
+1.  **验证 Java (JDK):**
     ```bash
     java -version
     ```
+    *预期输出：显示 `openjdk version "21.x.x"` 等信息。*
+    * **关键验证点：** 此命令必须在操作系统原生终端中成功执行。若失败，意味着 JDK 环境变量配置有误，必须返回 `2.2` 节重新执行安装与配置流程。*
 
-    如果能显示出 `openjdk version "21...."`，就说明装好了。
-
------
-
-## 安装 Node.js 22 (前端运行环境)
-
-  * **去哪里下：** [https://nodejs.org/en/download/prebuilt-installer](https://nodejs.org/en/download/prebuilt-installer)
-
-  * **怎么选：** 找到 "22.x.x LTS"，选择你的操作系统（Windows Installer `.msi` 或 macOS Installer `.pkg`）。
-
-  * **怎么装：** 一路 "Next" 到底。
-
-  * **如何验证：** 重启你的终端，输入：
-
+2.  **验证 Node.js:**
     ```bash
     node -v
     ```
+    *预期输出：显示 `v22.x.x`。*
 
-    如果能显示出 `v22.x.x`，就说明装好了。
+3.  **验证 Docker:**
+    ```bash
+    docker --version
+    ```
+    *预期输出：显示 Docker 的版本号。*
+    ![image](https://github.com/user-attachments/assets/910c7c44-5e05-472b-9ccb-3e0c356d4623)
+    不一样可能是环境变量配错了，问ai跟着改改试试
+   
+---
 
------
-
-## 安装 Docker Desktop (容器化工具)
-
-  * **去哪里下：** [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
-  * **怎么装：** 下载后双击安装。Windows 系统可能会提示你需要开启 WSL 2，根据 Docker 的指引操作即可（通常是几条命令）。安装过程可能需要重启电脑。
-  * **如何验证：** 安装完成后，启动 Docker Desktop 应用。等待它左下角的图标变成绿色，并显示 "Running"，就说明好了。
-
------
-
-## 安装 IntelliJ IDEA (我们的“代码编辑器”)
-
-  * **去哪里下：** [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
-  * **怎么装：** 下载 Community (社区免费版) 或 Ultimate (旗舰版)。作为学生，你们可以免费申请旗舰版，功能更强大。安装时一路 "Next"。
-
------
-
-✅ **任务零完成标志：** 以上5个软件全部安装并验证成功。
-
------
-
+环境配置规范说明完毕。所有成员必须在项目启动前完成并验证上述所有步骤。如在配置过程中遇到任何无法自行解决的问题，请及时企业微信联系。
