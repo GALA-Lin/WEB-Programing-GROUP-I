@@ -1,4 +1,4 @@
-# WEB-Programing-GROUP-I
+![image](https://github.com/user-attachments/assets/e0734f96-451e-4478-806f-4aa37fd2e8c1)# WEB-Programing-GROUP-I
 Cupk 2025夏 web程序设计 第一组
 
 ## 成员
@@ -162,6 +162,8 @@ Cupk 2025夏 web程序设计 第一组
     docker --version
     ```
     *预期输出：显示 Docker 的版本号。*
+    ![image](https://github.com/user-attachments/assets/910c7c44-5e05-472b-9ccb-3e0c356d4623)
 
 ---
+
 环境配置规范说明完毕。所有成员必须在项目启动前完成并验证上述所有步骤。如在配置过程中遇到任何无法自行解决的问题，请及时企业微信联系。
