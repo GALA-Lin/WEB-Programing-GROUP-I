@@ -33,11 +33,9 @@ Cupk 2025夏 web程序设计 第一组
 - 代码托管：GitHub
 - 服务器：Docker
 
-
-
 -----
 
-# 当前任务：全员必做 - 本地软件部署
+# 当前任务：本地软件安装
 
 这个任务是所有后续工作的基础。
 
@@ -47,9 +45,10 @@ Cupk 2025夏 web程序设计 第一组
 
 ## 安装 GitHub Desktop (代码版本管理工具的图形化界面)
 
-去哪里下： https://desktop.github.com/
-怎么装： 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
-如何验证： 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
+  * **去哪里下：** [https://desktop.github.com/](https://desktop.github.com/)
+  * **怎么装：** 下载对应你操作系统（Windows/Mac）的版本。双击下载的安装包，按照提示完成安装即可。
+  * **如何验证：** 安装完成后，启动 GitHub Desktop 应用。如果能正常打开并显示主界面，就说明装好了。
+
 -----
 
 ## 安装 JDK 21 (Java 开发工具包)
@@ -99,11 +98,9 @@ Cupk 2025夏 web程序设计 第一组
 ## 安装 IntelliJ IDEA (我们的“代码编辑器”)
 
   * **去哪里下：** [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
-  * **怎么装：** 下载 Community (社区免费版) 或 Ultimate (旗舰版)。作为学生，你们可以免费申请旗舰版，功能更强大。安装时一路 "Next"。
-
+  * **怎么装：** 下载 Community (社区免费版) 或 Ultimate (旗舰版)。
 -----
 
 ✅ **任务零完成标志：** 以上5个软件全部安装并验证成功。
 
 -----
-
