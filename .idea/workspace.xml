@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3e24bae-6b5c-4178-aa29-0dd8e10fa379" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/webproject/WebProjectApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/student/webproject/WebProjectApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/任务模块.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/详细安排.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/选题与业务逻辑设计.md" beforeDir="false" />
-    </list>
+    <list default="true" id="a3e24bae-6b5c-4178-aa29-0dd8e10fa379" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -179,7 +163,7 @@
       <workItem from="1750758926709" duration="1347000" />
       <workItem from="1750929985893" duration="1646000" />
       <workItem from="1750990035658" duration="6021000" />
-      <workItem from="1750997120391" duration="403000" />
+      <workItem from="1750997120391" duration="442000" />
     </task>
     <servers />
   </component>
