@@ -5,24 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/public/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/router/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/ActivitiesView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/.vscode/extensions.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/public/vite.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/App.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/vue.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/public/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/HelloWorld.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/vite-env.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/tsconfig.app.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/tsconfig.node.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/TheWelcome.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconCommunity.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconDocumentation.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconEcosystem.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconSupport.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconTooling.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,11 +51,18 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;feature/Front-end-framework&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/WEB-Programing-GROUP-I/volunteer-platform-vue/public&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.language.and.region&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\WEB-Programing-GROUP-I\volunteer-platform-vue\public" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="WebProjectApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="web-project" />
@@ -79,6 +89,10 @@
       <updated>1751009525126</updated>
       <workItem from="1751009527532" duration="169000" />
       <workItem from="1751010908686" duration="59000" />
+      <workItem from="1751011722175" duration="219000" />
+      <workItem from="1751012758398" duration="278000" />
+      <workItem from="1751016809046" duration="5000" />
+      <workItem from="1751016881908" duration="10000" />
     </task>
     <servers />
   </component>
