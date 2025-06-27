@@ -90,7 +90,7 @@
 
 .footer-bottom {
   margin-top: 32px;
-  border-top: 1px solid #444;
+  border-top: 1px solid #809a8c;
   padding-top: 20px;
 }
 

@@ -5,35 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/public/logo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/router/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/ActivitiesView.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/public/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/App.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/HelloWorld.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/TheWelcome.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconCommunity.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconDocumentation.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconEcosystem.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconSupport.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/icons/IconTooling.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -44,20 +43,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/Front-end-framework&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/WEB-Programing-GROUP-I/volunteer-platform-vue/public&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.language.and.region&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.WebProjectApplication.executor": "Run",
+    "git-widget-placeholder": "feature/Front-end-framework",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/WEB-Programing-GROUP-I/volunteer-platform-vue/public",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.language.and.region",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\WEB-Programing-GROUP-I\volunteer-platform-vue\public" />

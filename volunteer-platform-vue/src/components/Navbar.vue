@@ -46,7 +46,7 @@ const logout = () => {
 
 .container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin:  auto;
   padding: 0 16px;
 }
 

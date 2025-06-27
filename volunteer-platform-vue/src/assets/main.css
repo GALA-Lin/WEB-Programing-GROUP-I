@@ -1,6 +1,6 @@
 /* 基础样式 */
 body {
-  margin: 0;
+  margin: auto;
   padding: 0;
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
@@ -19,7 +19,7 @@ a:hover {
 
 .container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: auto;
   padding: 0 16px;
 }
 
