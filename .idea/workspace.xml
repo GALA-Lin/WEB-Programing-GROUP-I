@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" afterDir="false" />
-    </list>
+    <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +98,7 @@
       <workItem from="1751016881908" duration="10000" />
       <workItem from="1751030181672" duration="137000" />
       <workItem from="1751077088620" duration="3481000" />
-      <workItem from="1751084002882" duration="760000" />
+      <workItem from="1751084002882" duration="826000" />
     </task>
     <servers />
   </component>
