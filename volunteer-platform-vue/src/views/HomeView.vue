@@ -158,21 +158,12 @@ const testimonials = ref([
   gap: 20px;
 }
 
-.btn-primary {
-  background-color: white;
-  color: #2563eb;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
+
 
 .btn-primary:hover {
   background-color: #f1f5f9;
 }
-
+.btn-primary,
 .btn-secondary {
   background-color: white;
   color: #2563eb;
@@ -183,9 +174,9 @@ const testimonials = ref([
   font-weight: 600;
   transition: background-color 0.2s;
 }
-
+.btn-primary:hover,
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(90, 90, 90, 0.8);
 }
 
 .features {

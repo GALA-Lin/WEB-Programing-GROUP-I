@@ -10,7 +10,8 @@
           <router-link to="/about" class="nav-link">关于我们</router-link>
         </nav>
         <div class="navbar-actions">
-          <button v-if="!isLoggedIn" @click="login" class="btn-login">登录</button>
+          <router-link to="/login" v-if="!isLoggedIn" class="btn-login">登录</router-link>
+          <router-link to="/register" v-if="!isLoggedIn" class="btn-register">注册</router-link>
           <div v-else class="user-menu">
             <span class="user-name">用户名</span>
             <button @click="logout" class="btn-logout">退出</button>
@@ -84,7 +85,17 @@ const logout = () => {
   display: flex;
   align-items: center;
 }
-
+.btn-register{
+  background-color: #65aeff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 8px;
+  margin-left: 8px;
+}
 .btn-login {
   background-color: #2563eb;
   color: white;
@@ -93,8 +104,12 @@ const logout = () => {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-right: 8px;
+  margin-left: 8px;
 }
-
+.btn-register:hover{
+  background-color: #4c9aff;
+}
 .btn-login:hover {
   background-color: #1d4ed8;
 }
