@@ -18,7 +18,7 @@
         <div class="footer-section">
           <h3 class="footer-title">联系我们</h3>
           <ul class="footer-contacts">
-            <li class="footer-contact">邮箱: contact@volunteerplatform.com</li>
+            <li class="footer-contact"><a href="mailto:Gala-lin@outlook.com">向我们发邮箱</a></li>
             <li class="footer-contact">电话: 123-456-7890</li>
           </ul>
         </div>
