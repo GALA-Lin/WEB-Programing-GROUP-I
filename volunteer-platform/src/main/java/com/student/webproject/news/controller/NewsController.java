@@ -10,8 +10,10 @@ Controller 是 API 的入口，它负责接收前端发来的请求，调用 Ser
 @PathVariable: 获取 URL路径中的变量 (例如 /api/news/{id}里的 id)。
  */
 
-package com.student.webproject.news;
+package com.student.webproject.news.controller;
 
+import com.student.webproject.news.service.NewsService;
+import com.student.webproject.news.entity.News;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

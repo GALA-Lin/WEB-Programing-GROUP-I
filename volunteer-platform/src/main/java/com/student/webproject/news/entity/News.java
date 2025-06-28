@@ -12,7 +12,7 @@
 likeCount: 我们加一个 likeCount 字段用来记录点赞数。
  */
 
-package com.student.webproject.news;
+package com.student.webproject.news.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

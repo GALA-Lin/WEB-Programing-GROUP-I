@@ -12,8 +12,10 @@ findNewsById(): 调用 newsRepository.findById() 获取单条新闻。
 likeNews(): 这是你点赞功能的业务逻辑。先找到新闻，然后把它的 likeCount 加一，最后保存回数据库。
  */
 
-package com.student.webproject.news;
+package com.student.webproject.news.service;
 
+import com.student.webproject.news.entity.News;
+import com.student.webproject.news.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
