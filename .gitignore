@@ -30,5 +30,7 @@ target/
 # ---------------------------
 .DS_Store
 Thumbs.db
-volunteer-platform/.idea
+volunteer-platform/.idea/
 .idea/workspace.xml
+volunteer-platform-vue/.vscode/
+
