@@ -4,17 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="eb1b17bc-798d-4221-a588-2130d6da04c7" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="dd86ace3-2322-47fd-8155-2e02edb1413f" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/webproject/WebProjectApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/views/ActivitiesView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/ActivitiesView.vue" afterDir="false" />
     </list>
-=======
-    <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="" />
->>>>>>> feature/Front-end-framework
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,33 +20,27 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
   </component>
-<<<<<<< HEAD
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 0
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Guorenlu"
+  }
 }]]></component>
-  <component name="ProjectId" id="2z7chwE82zzzgE8sXUH9gfBz8bl" />
-=======
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="2z58MMFRRJmARMIHhgcz6EezXiv" />
->>>>>>> feature/Front-end-framework
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/GALA-Lin/WEB-Programing-GROUP-I.git",
+    "accountId": "2b8c8ef2-d009-447b-b84f-bc0fda9d0ab6"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2z83bWmagswV3mF1CHEOTIoNDJy" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< HEAD
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -57,50 +49,15 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "feature/grl",
     "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "D:\\Ideadownload\\IntelliJ IDEA 2025.1.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-=======
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.WebProjectApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/Front-end-framework&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/WEB-Programing-GROUP-I/volunteer-platform-vue/public&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.language.and.region&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\WEB-Programing-GROUP-I\volunteer-platform-vue\public" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="WebProjectApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="web-project" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.student.webproject.WebProjectApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
->>>>>>> feature/Front-end-framework
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -111,47 +68,16 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-<<<<<<< HEAD
-      <changelist id="eb1b17bc-798d-4221-a588-2130d6da04c7" name="更改" comment="" />
-      <created>1751085676319</created>
+      <changelist id="dd86ace3-2322-47fd-8155-2e02edb1413f" name="更改" comment="" />
+      <created>1751098945322</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1751085676319</updated>
-      <workItem from="1751085677832" duration="85000" />
-=======
-      <changelist id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="" />
-      <created>1751009525126</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1751009525126</updated>
-      <workItem from="1751009527532" duration="169000" />
-      <workItem from="1751010908686" duration="59000" />
-      <workItem from="1751011722175" duration="219000" />
-      <workItem from="1751012758398" duration="278000" />
-      <workItem from="1751016809046" duration="5000" />
-      <workItem from="1751016881908" duration="10000" />
-      <workItem from="1751030181672" duration="137000" />
-      <workItem from="1751077088620" duration="3481000" />
-      <workItem from="1751084002882" duration="826000" />
->>>>>>> feature/Front-end-framework
+      <updated>1751098945322</updated>
+      <workItem from="1751098947871" duration="3632000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-<<<<<<< HEAD
-=======
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
->>>>>>> feature/Front-end-framework
 </project>

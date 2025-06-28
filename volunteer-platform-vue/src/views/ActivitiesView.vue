@@ -6,12 +6,14 @@
       <p class="page-subtitle">探索并参与我们的志愿活动，一起为社会贡献力量</p>
     </div>
 
+
     <!-- 筛选和搜索区域 -->
     <div class="filter-section">
+      <!-- 筛选条件 -->
       <div class="filter-row">
-        <div class="filter-item">
+        <div class="filter-item category">
           <label for="category">活动类别</label>
-          <select id="category" v-model="selectedCategory">
+          <select id="category" v-model="selectedCategory" class="smooth-select">
             <option value="">全部类别</option>
             <option value="environment">环境保护</option>
             <option value="education">教育支持</option>
@@ -20,10 +22,10 @@
             <option value="disaster">灾害救援</option>
           </select>
         </div>
-        
-        <div class="filter-item">
+
+        <div class="filter-item location">
           <label for="location">活动地点</label>
-          <select id="location" v-model="selectedLocation">
+          <select id="location" v-model="selectedLocation" class="smooth-select">
             <option value="">全部地区</option>
             <option value="beijing">北京</option>
             <option value="shanghai">上海</option>
@@ -32,10 +34,10 @@
             <option value="hangzhou">杭州</option>
           </select>
         </div>
-        
-        <div class="filter-item">
+
+        <div class="filter-item date">
           <label for="date">活动日期</label>
-          <select id="date" v-model="selectedDate">
+          <select id="date" v-model="selectedDate" class="smooth-select">
             <option value="">全部时间</option>
             <option value="today">今天</option>
             <option value="week">本周</option>
@@ -43,13 +45,20 @@
             <option value="future">未来</option>
           </select>
         </div>
-        
-        <div class="filter-item">
+
+        <div class="filter-item search-box">
           <label for="search">搜索</label>
           <div class="search-container">
-            <input type="text" id="search" placeholder="搜索活动..." v-model="searchTerm">
-            <button type="button" @click="searchActivities">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <input
+                type="text"
+                id="search"
+                placeholder="搜索活动..."
+                v-model="searchTerm"
+                class="search-input"
+            />
+            <button type="button" @click="searchActivities" class="search-button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
@@ -57,40 +66,46 @@
           </div>
         </div>
       </div>
-      
+
+      <!-- 已选标签 -->
       <div class="filter-tags">
-        <span v-if="selectedCategory" class="filter-tag">
-          {{ getCategoryName(selectedCategory) }}
-          <button type="button" @click="selectedCategory = ''">×</button>
-        </span>
-        <span v-if="selectedLocation" class="filter-tag">
-          {{ getLocationName(selectedLocation) }}
-          <button type="button" @click="selectedLocation = ''">×</button>
-        </span>
-        <span v-if="selectedDate" class="filter-tag">
-          {{ getDateName(selectedDate) }}
-          <button type="button" @click="selectedDate = ''">×</button>
-        </span>
-        <span v-if="searchTerm" class="filter-tag">
-          搜索: {{ searchTerm }}
-          <button type="button" @click="searchTerm = ''">×</button>
-        </span>
-        <button type="button" class="clear-all" @click="clearFilters">
-          清除全部
-        </button>
+        <transition-group name="fade-slide" mode="out-in">
+      <span v-for="(tag, index) in filterTags" :key="index" class="filter-tag">
+        {{ tag.text }}
+        <button type="button" @click="removeTag(tag.key)" class="tag-remove">×</button>
+      </span>
+        </transition-group>
+        <button type="button" class="clear-all" @click="clearFilters">清除全部</button>
+      </div>
+
+      <!-- 分页大小控制 -->
+      <div class="page-size-control">
+        <label for="pageSize">每页显示:</label>
+        <select id="pageSize" v-model="itemsPerPage" class="smooth-select page-size-select">
+          <option v-for="size in selectedPageItems" :key="size" :value="size">{{ size }}</option>
+        </select>
       </div>
     </div>
 
+
+
+
+    <!-- 加载状态 -->
+    <div v-if="loading" class="loading">加载中...</div>
+
+    <!-- 错误提示 -->
+    <div v-if="error" class="error">{{ error }}</div>
+
     <!-- 活动列表 -->
     <div class="activities-list">
-      <div class="activity-item" v-for="activity in filteredActivities" :key="activity.id">
+      <div class="activity-item" v-for="activity in paginatedActivities" :key="activity.id">
         <div class="activity-image">
           <img :src="activity.image" :alt="activity.title" />
           <div class="activity-category">
             {{ getCategoryName(activity.category) }}
           </div>
         </div>
-        
+
         <div class="activity-content">
           <div class="activity-header">
             <h2 class="activity-title">{{ activity.title }}</h2>
@@ -103,7 +118,7 @@
               <span class="rating-number">{{ activity.rating }} ({{ activity.reviews }} 评价)</span>
             </div>
           </div>
-          
+
           <div class="activity-details">
             <div class="detail-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="detail-icon">
@@ -114,7 +129,7 @@
               </svg>
               <span>{{ formatDate(activity.date) }}</span>
             </div>
-            
+
             <div class="detail-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="detail-icon">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -122,7 +137,7 @@
               </svg>
               <span>{{ activity.location }}</span>
             </div>
-            
+
             <div class="detail-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="detail-icon">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -130,7 +145,7 @@
               </svg>
               <span>{{ activity.duration }} 小时</span>
             </div>
-            
+
             <div class="detail-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="detail-icon">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -141,18 +156,25 @@
               <span>{{ activity.participants }}/{{ activity.maxParticipants }} 人</span>
             </div>
           </div>
-          
+
           <p class="activity-description">{{ activity.description }}</p>
-          
+
           <div class="activity-footer">
             <div class="activity-organizer">
               <img :src="activity.organizer.avatar" :alt="activity.organizer.name" class="organizer-avatar" />
               <span class="organizer-name">{{ activity.organizer.name }}</span>
             </div>
-            
+
             <div class="activity-actions">
               <button type="button" class="btn btn-outline">收藏</button>
-              <button type="button" class="btn btn-primary">立即报名</button>
+              <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="isEnrolled(activity.id) ? unenrollActivity(activity.id) : enrollActivity(activity.id)"
+                  :disabled="loadingEnrollments.includes(activity.id)"
+              >
+                {{ isEnrolled(activity.id) ? '取消报名' : '立即报名' }}
+              </button>
             </div>
           </div>
         </div>
@@ -164,13 +186,13 @@
       <button type="button" class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
         上一页
       </button>
-      
+
       <div class="page-numbers">
         <button type="button" class="page-number" :class="{ active: page === currentPage }" v-for="page in pageNumbers" :key="page" @click="currentPage = page">
           {{ page }}
         </button>
       </div>
-      
+
       <button type="button" class="page-btn" :disabled="currentPage === totalPages" @click="currentPage++">
         下一页
       </button>
@@ -192,6 +214,37 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const filterTags = computed(() => {
+  const tags = [];
+
+  if (selectedCategory.value)
+    tags.push({ key: 'category', text: `分类：${getCategoryName(selectedCategory.value)}` });
+
+  if (selectedLocation.value)
+    tags.push({ key: 'location', text: `地点：${getLocationName(selectedLocation.value)}` });
+
+  if (selectedDate.value)
+    tags.push({ key: 'date', text: `时间：${getDateName(selectedDate.value)}` });
+
+  if (searchTerm.value)
+    tags.push({ key: 'search', text: `搜索：“${searchTerm.value}”` });
+
+  return tags;
+});
+
+// 删除标签的统一方法
+const removeTag = (key) => {
+  switch (key) {
+    case 'category': selectedCategory.value = ''; break;
+    case 'location': selectedLocation.value = ''; break;
+    case 'date': selectedDate.value = ''; break;
+    case 'search': searchTerm.value = ''; break;
+  }
+};
+
+// Vue Router 实例
+const router = useRouter();
 
 // 模拟活动数据
 const activities = ref([
@@ -341,7 +394,16 @@ const searchTerm = ref('');
 
 // 分页状态
 const itemsPerPage = ref(3);
+const selectedPageItems = [3, 6, 9, 12];
 const currentPage = ref(1);
+
+// 加载状态和错误信息
+const loading = ref(false);
+const error = ref(null);
+const loadingEnrollments = ref([]);
+
+// 用户报名的活动ID列表
+const enrolledActivities = ref([]);
 
 // 格式化日期
 const formatDate = (dateString) => {
@@ -390,28 +452,28 @@ const getDateName = (date) => {
 // 筛选活动
 const filteredActivities = computed(() => {
   let result = [...activities.value];
-  
+
   // 按分类筛选
   if (selectedCategory.value) {
     result = result.filter(activity => activity.category === selectedCategory.value);
   }
-  
+
   // 按地点筛选
   if (selectedLocation.value) {
     result = result.filter(activity => activity.location.includes(getLocationName(selectedLocation.value)));
   }
-  
+
   // 按日期筛选
   if (selectedDate.value) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const activityDate = (dateString) => {
       const date = new Date(dateString);
       date.setHours(0, 0, 0, 0);
       return date;
     };
-    
+
     switch (selectedDate.value) {
       case 'today':
         result = result.filter(activity => activityDate(activity.date).getTime() === today.getTime());
@@ -437,17 +499,17 @@ const filteredActivities = computed(() => {
         break;
     }
   }
-  
+
   // 按搜索词筛选
   if (searchTerm.value) {
     const term = searchTerm.value.toLowerCase();
-    result = result.filter(activity => 
-      activity.title.toLowerCase().includes(term) || 
-      activity.description.toLowerCase().includes(term) ||
-      activity.organizer.name.toLowerCase().includes(term)
+    result = result.filter(activity =>
+        activity.title.toLowerCase().includes(term) ||
+        activity.description.toLowerCase().includes(term) ||
+        activity.organizer.name.toLowerCase().includes(term)
     );
   }
-  
+
   return result;
 });
 
@@ -466,12 +528,12 @@ const pageNumbers = computed(() => {
   const maxVisiblePages = 5;
   let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2));
   let endPage = startPage + maxVisiblePages - 1;
-  
+
   if (endPage > totalPages.value) {
     endPage = totalPages.value;
     startPage = Math.max(1, endPage - maxVisiblePages + 1);
   }
-  
+
   return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 });
 
@@ -490,13 +552,580 @@ const clearFilters = () => {
   currentPage.value = 1;
 };
 
+// 检查用户是否已报名某个活动
+const isEnrolled = (activityId) => {
+  return enrolledActivities.value.includes(activityId);
+};
+
+// 用户报名活动
+const enrollActivity = async (activityId) => {
+  try {
+    loadingEnrollments.value.push(activityId);
+
+    // 调用API报名活动
+    const response = await fetch(`/api/activities/${activityId}/enroll`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      // 更新本地活动信息
+      const activity = activities.value.find(a => a.id === activityId);
+      if (activity && activity.participants < activity.maxParticipants) {
+        activity.participants += 1;
+        enrolledActivities.value.push(activityId);
+      }
+    } else {
+      const data = await response.json();
+      throw new Error(data.message || '报名失败');
+    }
+  } catch (err) {
+    console.error('报名失败:', err);
+    alert(`报名失败：${err.message}`);
+  } finally {
+    loadingEnrollments.value = loadingEnrollments.value.filter(id => id !== activityId);
+  }
+};
+
+// 用户取消报名活动
+const unenrollActivity = async (activityId) => {
+  try {
+    loadingEnrollments.value.push(activityId);
+
+    // 调用API取消报名
+    const response = await fetch(`/api/activities/${activityId}/enroll`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      // 更新本地活动信息
+      const activity = activities.value.find(a => a.id === activityId);
+      if (activity && activity.participants > 0) {
+        activity.participants -= 1;
+        enrolledActivities.value = enrolledActivities.value.filter(id => id !== activityId);
+      }
+    } else {
+      const data = await response.json();
+      throw new Error(data.message || '取消报名失败');
+    }
+  } catch (err) {
+    console.error('取消报名失败:', err);
+    alert(`取消报名失败：${err.message}`);
+  } finally {
+    loadingEnrollments.value = loadingEnrollments.value.filter(id => id !== activityId);
+  }
+};
+
 // 初始化
-onMounted(() => {
-  // 可以在这里添加数据加载逻辑
+onMounted(async () => {
+  loading.value = true;
+  try {
+    // 这里可以添加实际从API获取数据的逻辑
+    // const response = await fetch('/api/activities');
+    // if (!response.ok) throw new Error('网络响应失败');
+    // const data = await response.json();
+    // activities.value = data.content;
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
 <style scoped>
+/* 筛选区域整体 */
+.filter-section {
+  margin-bottom: 30px;
+}
+
+/* 筛选条件行 */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* 单个筛选项 */
+.filter-item {
+  flex: 1 1 200px;
+  min-width: 150px;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-item label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+/* 下拉选择器样式优化 */
+.smooth-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #334155;
+  background-color: white;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%2364748b'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.smooth-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 搜索框容器 */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 搜索输入框 */
+.search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 搜索按钮 */
+.search-button {
+  margin-left: -30px;
+  z-index: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.search-button:hover {
+  color: #2563eb;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 筛选标签 */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0;
+  min-height: 36px;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  color: #334155;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background-color: #e2e8f0;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #64748b;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.tag-remove:hover {
+  color: #ef4444;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-all:hover {
+  text-decoration: underline;
+}
+
+/* 分页大小选择器 */
+.page-size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.page-size-control label {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.page-size-select {
+  width: 60px;
+}
+
+/* 过渡动画 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-item {
+    width: 100%;
+    max-width: none;
+  }
+
+  .page-size-control {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* 筛选项 */
+.filter-row .filter-item {
+  flex: 1 1 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.filter-row .filter-item:hover {
+  transform: translateY(-2px);
+}
+
+/* 下拉选择器样式优化 */
+.smooth-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #334155;
+  background-color: white;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%2364748b'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.smooth-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 搜索框容器 */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 搜索输入框 */
+.search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* 搜索按钮 */
+.search-button {
+  margin-left: -30px;
+  z-index: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.search-button:hover {
+  color: #2563eb;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 筛选标签 */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0;
+  min-height: 36px;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  color: #334155;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background-color: #e2e8f0;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #64748b;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.tag-remove:hover {
+  color: #ef4444;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-all:hover {
+  text-decoration: underline;
+}
+
+/* 分页大小选择器 */
+.page-size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.page-size-control label {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+/* 过渡动画 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 筛选区域整体 */
+.filter-section {
+  margin-bottom: 30px;
+}
+
+/* 筛选条件行 */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* 单个筛选项 */
+.filter-item {
+  flex: 1 1 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-item label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+.filter-item select,
+.filter-item input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #334155;
+  transition: border-color 0.2s;
+}
+
+.filter-item select:focus,
+.filter-item input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* 搜索框 */
+.search-container {
+  position: relative;
+}
+
+.search-container input {
+  padding-right: 40px;
+}
+
+.search-container button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.search-container button:hover {
+  color: #2563eb;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 筛选标签 */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.filter-tag button {
+  background: none;
+  border: none;
+  margin-left: 5px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.filter-tag button:hover {
+  color: #2563eb;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 5px;
+}
+
+.clear-all:hover {
+  text-decoration: underline;
+}
+
+/* 分页大小选择器 */
+.page-size-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.page-size-control label {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.page-size-control select {
+  padding: 5px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
 /* 页面标题 */
 .page-header {
   text-align: center;
@@ -630,6 +1259,44 @@ onMounted(() => {
 
 .clear-all:hover {
   text-decoration: underline;
+}
+
+/* 分页大小选择器 */
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.page-size-selector label {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.page-size-selector select {
+  padding: 5px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #475569;
+}
+
+/* 错误提示 */
+.error {
+  text-align: center;
+  padding: 20px;
+  color: #ef4444;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  margin: 20px;
 }
 
 /* 活动列表 */
@@ -779,6 +1446,38 @@ onMounted(() => {
   gap: 10px;
 }
 
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-outline {
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  background-color: transparent;
+}
+
+.btn-outline:hover {
+  background-color: #bfdbfe;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* 分页 */
 .pagination {
   display: flex;
@@ -862,27 +1561,27 @@ onMounted(() => {
   .activity-item {
     flex-direction: column;
   }
-  
+
   .activity-image {
     width: 100%;
     height: 200px;
   }
-  
+
   .activity-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .activity-rating {
     margin-top: 8px;
   }
-  
+
   .activity-footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
-  
+
   .recommended-list {
     grid-template-columns: 1fr;
   }
