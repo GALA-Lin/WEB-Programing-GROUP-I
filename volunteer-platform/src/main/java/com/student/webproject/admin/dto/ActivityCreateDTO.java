@@ -1,4 +1,4 @@
-package com.student.webproject.dto;
+package com.student.webproject.admin.dto;
 import lombok.Data;
 @Data
 public class ActivityCreateDTO {
