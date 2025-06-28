@@ -30,4 +30,4 @@ target/
 # ---------------------------
 .DS_Store
 Thumbs.db
-/.idea/
+volunteer-platform/.idea
