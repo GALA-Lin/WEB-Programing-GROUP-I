@@ -35,8 +35,7 @@
 
         <!-- 桌面端用户操作区 -->
         <div class="navbar-actions desktop-actions">
-          <router-link to="/login" v-if="!isLoggedIn" class="btn-login">登录</router-link>
-          <router-link to="/register" v-if="!isLoggedIn" class="btn-register">注册</router-link>
+          <router-link to="/login" v-if="!isLoggedIn" class="btn-login">登录/注册</router-link>
           <div v-else class="user-menu">
             <span class="user-name">用户名</span>
             <button @click="logout" class="btn-logout">退出</button>
@@ -147,8 +146,7 @@ const logout = () => {
   align-items: center;
 }
 
-.btn-login,
-.btn-register {
+.btn-login{
   background-color: #2563eb;
   color: white;
   border: none;
@@ -161,8 +159,7 @@ const logout = () => {
   white-space: nowrap; /* 防止文字换行 */
 }
 
-.btn-login:hover,
-.btn-register:hover {
+.btn-login:hover{
   background-color: #1d4ed8;
 }
 
