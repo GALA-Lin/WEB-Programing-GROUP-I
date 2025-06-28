@@ -31,3 +31,4 @@ target/
 .DS_Store
 Thumbs.db
 volunteer-platform/.idea
+.idea/workspace.xml
