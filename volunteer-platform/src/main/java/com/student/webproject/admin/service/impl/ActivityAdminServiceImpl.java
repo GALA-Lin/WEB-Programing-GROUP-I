@@ -1,8 +1,8 @@
 package com.student.webproject.admin.service.impl;
 
 import com.student.webproject.admin.dto.ActivityCreateDTO;
-import com.student.webproject.admin.entity.Activity; // 1. 导入 Entity
-import com.student.webproject.admin.mapper.ActivityMapper; // 2. 导入 Mapper
+import com.student.webproject.admin.entity.Activity;
+import com.student.webproject.admin.mapper.ActivityMapper;
 import com.student.webproject.admin.service.ActivityAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
