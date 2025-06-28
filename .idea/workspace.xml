@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30ba36f6-fff4-4b8f-96c4-08c48f2210e7" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/WEB-Programing-GROUP-I.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/assets/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Footer.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/components/Navbar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/volunteer-platform-vue/src/views/HomeView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +48,8 @@
     "git-widget-placeholder": "feature/Front-end-framework",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/WEB-Programing-GROUP-I/volunteer-platform-vue/public",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.language.and.region",
@@ -100,10 +92,23 @@
       <workItem from="1751012758398" duration="278000" />
       <workItem from="1751016809046" duration="5000" />
       <workItem from="1751016881908" duration="10000" />
+      <workItem from="1751030181672" duration="137000" />
+      <workItem from="1751077088620" duration="2486000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

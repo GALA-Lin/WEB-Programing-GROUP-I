@@ -130,7 +130,7 @@ const testimonials = ref([
 }
 
 .hero {
-  background-color: #2563eb;
+  background-image: url('https://zyh365.com/images/indexbg.jpg');
   color: white;
   padding: 100px 0;
   text-align: center;
@@ -174,9 +174,9 @@ const testimonials = ref([
 }
 
 .btn-secondary {
-  background-color: transparent;
-  color: white;
-  border: 2px solid white;
+  background-color: white;
+  color: #2563eb;
+  border: none;
   padding: 12px 24px;
   border-radius: 4px;
   text-decoration: none;
