@@ -14,4 +14,11 @@ public interface ActivityAdminService {
      */
     String createActivity(ActivityCreateDTO dto);
 
+    /**
+     * 新增：定义一个“更新活动”的职责
+     * @param id 要更新的活动的ID
+     * @param dto 包含了更新后信息的数据包裹
+     * @return 返回一个处理结果
+     */
+    String updateActivity(Long id, ActivityCreateDTO dto);
 }

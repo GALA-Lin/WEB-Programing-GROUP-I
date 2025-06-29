@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/activities")
-
 public class AdminActivityController {
     /**
      * @Autowired 注解告诉 Spring Boot:
@@ -31,10 +30,6 @@ public class AdminActivityController {
      */
     @PutMapping("/{id}")
     public String updateActivity(@PathVariable Long id, @RequestBody ActivityCreateDTO dto) {
-        System.out.println("Controller 收到了更新请求，要更新的活动ID是: " + id);
-        System.out.println("更新后的数据是: " + dto.toString());
-
-        // TODO: 我们稍后会在这里调用 Service 的更新方法
-        return "成功接收到更新请求！";
+        return activityAdminService.updateActivity(id, dto);
     }
 }
