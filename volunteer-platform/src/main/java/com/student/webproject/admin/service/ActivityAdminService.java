@@ -21,4 +21,11 @@ public interface ActivityAdminService {
      * @return 返回一个处理结果
      */
     String updateActivity(Long id, ActivityCreateDTO dto);
+
+    /**
+     * 新增：定义一个“删除活动”的职责
+     * @param id 要删除的活动的ID
+     * @return 返回一个处理结果
+     */
+    String deleteActivity(Long id);
 }
