@@ -28,4 +28,13 @@ public interface ActivityAdminService {
      * @return 返回一个处理结果
      */
     String deleteActivity(Long id);
+
+    /**
+     * 新增：定义一个“查询活动列表（分页）”的职责
+     * @param page 当前页码
+     * @param pageSize 每页数量
+     * @return 返回一个包含列表和总数的结果
+     */
+    Object listActivities(Long page, Long pageSize);
+}
 }

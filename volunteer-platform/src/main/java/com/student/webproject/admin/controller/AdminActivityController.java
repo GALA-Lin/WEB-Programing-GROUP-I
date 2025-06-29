@@ -44,4 +44,18 @@ public class AdminActivityController {
         // 直接将删除任务转交给 Service
         return activityAdminService.deleteActivity(id);
     }
+
+    /**
+     * 新增的“查询活动列表”接口
+     * @GetMapping: 告诉 Spring Boot, 这个方法处理 GET 类型的请求。
+     * @RequestParam(required = false, defaultValue = "1") Long page:
+     * 这是一个查询参数，required = false 表示它不是必需的。
+     * defaultValue = "1" 表示如果不传，默认值就是1。
+     */
+    @GetMapping
+    public Object listActivities(@RequestParam(required = false, defaultValue = "1") Long page,
+                                 @RequestParam(required = false, defaultValue = "10") Long pageSize) {
+        // 将查询任务转交给 Service
+        return activityAdminService.listActivities(page, pageSize);
+    }
 }
