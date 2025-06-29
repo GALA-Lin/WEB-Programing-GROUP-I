@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 @Service
 public class ActivityAdminServiceImpl implements ActivityAdminService {
 
@@ -142,5 +145,25 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
             // 如果要删除的ID本身就不存在，deleteById 会返回0
             return "删除失败，找不到ID为 " + id + " 的活动。";
         }
+    }
+
+    /**
+     * 新增：实现分页查询活动的具体逻辑
+     */
+    @Override
+    public Object listActivities(Long page, Long pageSize) {
+        // 1. 创建一个分页对象
+        // 告诉 MyBatis-Plus，我们要查询的是第 `page` 页，每页 `pageSize` 条。
+        IPage<Activity> pageRequest = new Page<>(page, pageSize);
+
+        // 2. 调用 Mapper 执行分页查询
+        // selectPage() 是 MyBatis-Plus 送给我们的最强大的方法之一。
+        // 它会自动为我们的查询语句加上分页逻辑。
+        // 第二个参数 null 表示我们目前没有额外的查询条件。
+        IPage<Activity> pageResult = activityMapper.selectPage(pageRequest, null);
+
+        // 3. 将查询结果组装成前端需要的格式并返回
+        // pageResult 对象里，既包含了当前页的数据列表，也包含了总记录数等信息。
+        return pageResult;
     }
 }
