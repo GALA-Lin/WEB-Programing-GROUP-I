@@ -27,11 +27,11 @@
             <p class="form-subtitle">请登录您的账户</p>
 
             <div class="form-group">
-              <label for="login-email">邮箱</label>
+              <label for="login-username">用户名</label>
               <input
-                  type="email"
-                  id="login-email"
-                  placeholder="请输入您的邮箱"
+                  type="text"
+                  id="login-username"
+                  placeholder="请输入您的用户名"
                   v-model="loginForm.email"
               >
             </div>
@@ -80,12 +80,12 @@
             <p class="form-subtitle">请填写以下信息完成注册</p>
 
             <div class="form-group">
-              <label for="register-name">姓名</label>
+              <label for="register-name">真实姓名</label>
               <input
                   type="text"
                   id="register-name"
                   placeholder="请输入您的姓名"
-                  v-model="registerForm.name"
+                  v-model="registerForm.realName"
               >
             </div>
 
@@ -150,12 +150,6 @@
       </div>
     </main>
 
-    <!-- 页脚 -->
-    <footer class="auth-footer">
-      <div class="container">
-        <p>© 2023 志愿平台. 保留所有权利.</p>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -167,7 +161,7 @@ const currentTab = ref('login');
 
 // 登录表单数据
 const loginForm = ref({
-  email: '',
+  username: '',
   password: '',
   rememberMe: false
 });
@@ -195,313 +189,290 @@ const handleRegister = () => {
 </script>
 
 <style scoped>
-/* 基础样式 */
 .auth-page {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  background-color: #f9fafb;
-}
-
-
-
-/* 主内容区样式 */
-.auth-content {
-  flex: 1;
-  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 0; /* 增加上下间距 */
+  background-color: #f4f6f8; /* 更柔和的背景 */
+  padding: 40px; /* 页面整体内边距 */
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 600px; /* 修改点：增大容器最大宽度 */
+  width: 100%;
   margin: 0 auto;
-  padding: 0 16px;
 }
 
 .auth-card {
-  background-color: white;
-  border-radius: 12px; /* 增大圆角 */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* 增强阴影效果 */
-  max-width: 480px; /* 增大卡片宽度 */
-  width: 100%;
-  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: all 0.3s ease; /* 添加过渡效果 */
 }
 
-.auth-card:hover {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); /* 悬停时增强阴影 */
-}
-
-/* 选项卡样式 */
 .auth-tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .auth-tabs button {
   flex: 1;
-  padding: 18px; /* 增加选项卡高度 */
-  font-size: 18px; /* 增大字体 */
+  padding: 16px 20px; /* 调整选项卡内边距 */
+  font-size: 16px;
   font-weight: 500;
+  color: #555;
   background-color: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.3s ease;
 }
 
 .auth-tabs button.active {
-  color: #2563eb;
-  border-bottom: 3px solid #2563eb; /* 增加选中状态下划线宽度 */
+  color: #1890ff; /* 更具活力的选中颜色 */
+  border-bottom: 2px solid #1890ff;
 }
 
-/* 表单样式 */
 .auth-form {
-  padding: 40px; /* 增加表单内边距 */
+  padding: 30px; /* 修改点：减小垂直 padding，保持左右 */
 }
 
 .form-title {
-  font-size: 28px; /* 增大标题字体 */
+  font-size: 24px; /* 略微减小标题 */
   font-weight: 600;
   color: #333;
-  margin-bottom: 10px; /* 增加间距 */
+  margin-bottom: 20px;
+  text-align: center; /* 居中标题 */
 }
 
 .form-subtitle {
-  font-size: 16px; /* 增大副标题字体 */
-  color: #666;
-  margin-bottom: 32px; /* 增加间距 */
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 25px;
+  text-align: center; /* 居中副标题 */
 }
 
 .form-group {
-  margin-bottom: 24px; /* 增加表单组间距 */
+  margin-bottom: 20px; /* 修改点：减小表单组间距 */
 }
 
 .form-group label {
   display: block;
-  font-size: 16px; /* 增大标签字体 */
+  font-size: 14px;
   font-weight: 500;
   color: #333;
-  margin-bottom: 12px; /* 增加标签与输入框间距 */
+  margin-bottom: 8px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 14px 16px; /* 增加输入框内边距 */
-  font-size: 16px; /* 增大输入框字体 */
-  border: 1px solid #d1d5db;
-  border-radius: 6px; /* 增大输入框圆角 */
-  transition: border-color 0.2s, box-shadow 0.2s; /* 添加阴影过渡 */
+  padding: 12px 15px;
+  font-size: 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); /* 添加焦点状态阴影 */
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 
 .remember-me {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px; /* 增加间距 */
-}
-
-.remember-me input {
-  margin-right: 10px; /* 增加复选框与标签间距 */
-  width: 18px; /* 增大复选框尺寸 */
-  height: 18px; /* 增大复选框尺寸 */
+  margin-top: 15px;
+  font-size: 13px;
+  color: #555;
 }
 
 .remember-me label {
-  font-size: 15px; /* 调整标签字体 */
-  color: #666;
+  margin-left: 5px;
+}
+
+.remember-me input {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
 }
 
 .forgot-password {
-  font-size: 15px; /* 调整链接字体 */
-  color: #2563eb;
+  color: #1890ff;
   text-decoration: none;
-  transition: color 0.2s; /* 添加颜色过渡 */
 }
 
 .forgot-password:hover {
-  color: #1d4ed8; /* 悬停时加深颜色 */
   text-decoration: underline;
 }
 
 .terms {
   display: flex;
   align-items: center;
-  margin-top: 20px; /* 增加间距 */
-}
-
-.terms input {
-  margin-right: 10px; /* 增加复选框与标签间距 */
-  width: 18px; /* 增大复选框尺寸 */
-  height: 18px; /* 增大复选框尺寸 */
+  margin-top: 15px;
+  font-size: 13px;
+  color: #555;
 }
 
 .terms label {
-  font-size: 15px; /* 调整标签字体 */
-  color: #666;
+  margin-left: 5px;
+}
+
+.terms input {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
 }
 
 .terms a {
-  color: #2563eb;
+  color: #1890ff;
   text-decoration: none;
-  transition: color 0.2s; /* 添加颜色过渡 */
 }
 
 .terms a:hover {
-  color: #1d4ed8; /* 悬停时加深颜色 */
   text-decoration: underline;
 }
 
 .submit-button {
   width: 100%;
-  padding: 16px 16px; /* 增加按钮高度 */
-  background-color: #2563eb;
+  padding: 12px 15px; /* 略微减小按钮 padding */
+  background-color: #1890ff;
   color: white;
-  font-size: 18px; /* 增大按钮字体 */
-  font-weight: 500;
+  font-size: 16px;
   border: none;
-  border-radius: 6px; /* 增大按钮圆角 */
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s; /* 添加所有属性过渡 */
-  margin-top: 32px; /* 增加按钮上方间距 */
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); /* 添加按钮阴影 */
+  transition: background-color 0.3s ease;
+  margin-top: 25px; /* 调整按钮上边距 */
 }
 
 .submit-button:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-2px); /* 悬停时轻微上移 */
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); /* 悬停时增强阴影 */
+  background-color: #0c7cd5;
 }
 
 .submit-button:disabled {
-  background-color: #94a3b8;
+  background-color: #ccc;
   cursor: not-allowed;
-  transform: translateY(0); /* 禁用状态取消上移效果 */
-  box-shadow: none; /* 禁用状态取消阴影 */
 }
 
-/* 社交登录样式 */
 .social-login {
-  margin-top: 40px; /* 增加社交登录区域上方间距 */
+  margin-top: 30px;
+  text-align: center;
 }
 
 .divider {
   display: flex;
   align-items: center;
-  margin-bottom: 32px; /* 增加分隔线下方间距 */
-}
-
-.divider span {
-  font-size: 16px; /* 增大分隔线文字字体 */
-  color: #666;
-  padding: 0 20px; /* 增加分隔线文字左右间距 */
+  justify-content: center;
+  margin-bottom: 20px;
+  color: #999;
+  font-size: 12px;
 }
 
 .divider::before,
 .divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #e0e0e0;
+}
+
+.divider span {
+  padding: 0 15px;
 }
 
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 24px; /* 增加社交按钮间距 */
+  gap: 15px;
 }
 
 .social-button {
-  width: 52px; /* 增大社交按钮尺寸 */
-  height: 52px; /* 增大社交按钮尺寸 */
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #f3f4f6;
-  border: none;
+  background-color: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
+  color: #777;
+  border: none;
   cursor: pointer;
-  transition: all 0.2s; /* 添加所有属性过渡 */
-  font-size: 20px; /* 增大图标字体 */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .social-button:hover {
-  background-color: #e5e7eb;
-  transform: translateY(-2px); /* 悬停时轻微上移 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 悬停时添加阴影 */
+  background-color: #e0e0e0;
+  color: #333;
 }
 
-.social-button.wechat {
-  color: #07c160;
-}
+/* 可以根据具体图标库添加社交平台的颜色 */
+/* 例如: */
+/* .social-button.wechat { color: #1afa29; background-color: #e6f9e8; } */
+/* .social-button.wechat:hover { background-color: #d3f4d6; } */
+/* .social-button.qq { color: #1296db; background-color: #e3f3fd; } */
+/* .social-button.qq:hover { background-color: #cceeff; } */
 
-.social-button.qq {
-  color: #12b7f5;
-}
-
-
-/* 页脚样式 */
 .auth-footer {
-  padding: 32px 0; /* 增加页脚内边距 */
   text-align: center;
-  font-size: 15px; /* 调整页脚字体 */
-  color: #666;
+  padding: 20px 0;
+  font-size: 12px;
+  color: #999;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .auth-content {
-    padding: 40px 0; /* 移动设备上减小内容区上下间距 */
-  }
-
-  .auth-card {
-    max-width: 100%;
-    border-radius: 10px; /* 移动设备上减小卡片圆角 */
+@media (max-width: 576px) {
+  .container {
+    padding: 0 20px;
   }
 
   .auth-form {
-    padding: 32px; /* 移动设备上减小表单内边距 */
+    padding: 20px;
   }
 
-
-
   .auth-tabs button {
-    padding: 16px; /* 移动设备上调整选项卡内边距 */
-    font-size: 16px; /* 移动设备上调整选项卡文字大小 */
+    padding: 14px 15px;
+    font-size: 14px;
   }
 
   .form-title {
-    font-size: 24px; /* 移动设备上调整标题大小 */
+    font-size: 22px;
+    margin-bottom: 15px;
   }
 
   .form-subtitle {
-    font-size: 14px; /* 移动设备上调整副标题大小 */
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
   }
 
   .form-group label {
-    font-size: 14px; /* 移动设备上调整标签文字大小 */
+    font-size: 13px;
+    margin-bottom: 6px;
   }
 
   .form-group input {
-    padding: 12px 14px; /* 移动设备上调整输入框内边距 */
-    font-size: 14px; /* 移动设备上调整输入框文字大小 */
+    padding: 10px 12px;
+    font-size: 13px;
   }
 
   .submit-button {
-    padding: 14px 16px; /* 移动设备上调整按钮内边距 */
-    font-size: 16px; /* 移动设备上调整按钮文字大小 */
+    padding: 10px 12px;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  .social-buttons {
+    gap: 10px;
   }
 
   .social-button {
-    width: 48px; /* 移动设备上调整社交按钮大小 */
-    height: 48px; /* 移动设备上调整社交按钮大小 */
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 }
 </style>
