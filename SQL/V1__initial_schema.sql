@@ -1,3 +1,11 @@
+-- 创建数据库（如果不存在）
+CREATE DATABASE IF NOT EXISTS web_project_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+-- 选择要使用的数据库
+USE web_project_db;
+
 -- -----------------------------------------------------
 -- Table `users` (用户信息表)
 -- -----------------------------------------------------
