@@ -1,8 +1,8 @@
 package com.student.webproject.admin.service.impl;
 
 import com.student.webproject.admin.dto.ActivityCreateDTO;
-import com.student.webproject.admin.entity.Activity; // 1. 导入 Entity
-import com.student.webproject.admin.mapper.ActivityMapper; // 2. 导入 Mapper
+import com.student.webproject.admin.entity.Activity;
+import com.student.webproject.admin.mapper.ActivityMapper;
 import com.student.webproject.admin.service.ActivityAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,11 @@ import java.time.format.DateTimeFormatter;
 public class ActivityAdminServiceImpl implements ActivityAdminService {
 
     // 3. 像之前注入 Service 一样，注入我们的数据库操作手 Mapper
-    @Autowired
-    private ActivityMapper activityMapper;
+    private final ActivityMapper activityMapper;
+
+    public ActivityAdminServiceImpl(ActivityMapper activityMapper) {
+        this.activityMapper = activityMapper;
+    }
 
     @Override
     public String createActivity(ActivityCreateDTO dto) {
@@ -60,6 +63,84 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
         } else {
             // 如果插入失败
             return "活动发布失败，请检查后台日志。";
+        }
+    }
+    /**
+     * 新增：实现更新活动的具体逻辑
+     */
+    @Override
+    public String updateActivity(Long id, ActivityCreateDTO dto) {
+        // --- 第1步：先从数据库里把这个活动的老数据查出来 ---
+        // activityMapper.selectById() 也是 MyBatis-Plus 送给我们的方法
+        Activity activityFromDB = activityMapper.selectById(id);
+
+        // 做一个保护，如果数据库里根本没有这个活动，就直接返回错误信息
+        if (activityFromDB == null) {
+            return "更新失败，找不到ID为 " + id + " 的活动。";
+        }
+
+        // --- 第2步：把 DTO 里的新数据，覆盖到从数据库查出来的老对象上 ---
+        // 使用 if 判断，确保只更新前端传递过来的字段
+
+        if (dto.getTitle() != null) {
+            activityFromDB.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            activityFromDB.setDescription(dto.getDescription());
+        }
+        if (dto.getCoverImageUrl() != null) {
+            activityFromDB.setCoverImageUrl(dto.getCoverImageUrl());
+        }
+        if (dto.getCategory() != null) {
+            activityFromDB.setCategory(dto.getCategory());
+        }
+        if (dto.getLocation() != null) {
+            activityFromDB.setLocation(dto.getLocation());
+        }
+        if (dto.getOrganizerId() != null) {
+            activityFromDB.setOrganizerId(dto.getOrganizerId());
+        }
+        if (dto.getRecruitmentQuota() != null) {
+            activityFromDB.setRecruitmentQuota(dto.getRecruitmentQuota());
+        }
+
+        // 处理时间字符串的转换
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (dto.getStartTime() != null) {
+            activityFromDB.setStartTime(LocalDateTime.parse(dto.getStartTime(), formatter));
+        }
+        if (dto.getEndTime() != null) {
+            activityFromDB.setEndTime(LocalDateTime.parse(dto.getEndTime(), formatter));
+        }
+
+        // 更新一下“最后修改时间”
+        activityFromDB.setUpdatedAt(LocalDateTime.now());
+
+        // --- 第3步：调用 Mapper 执行数据库更新操作 ---
+        // activityMapper.updateById() 也是 MyBatis-Plus 送的
+        int rows = activityMapper.updateById(activityFromDB);
+
+        if (rows > 0) {
+            return "ID为 " + id + " 的活动更新成功！";
+        } else {
+            return "更新失败，请检查后台日志。";
+        }
+    }
+    /**
+     * 新增：实现删除活动的具体逻辑
+     */
+    @Override
+    public String deleteActivity(Long id) {
+        // 调用 Mapper 执行数据库删除操作
+        // activityMapper.deleteById() 是 MyBatis-Plus 免费送给我们的又一个强大方法
+        int rows = activityMapper.deleteById(id);
+
+        if (rows > 0) {
+            // 如果删除成功, rows 会大于0
+            return "ID为 " + id + " 的活动删除成功！";
+        } else {
+            // 如果要删除的ID本身就不存在，deleteById 会返回0
+            return "删除失败，找不到ID为 " + id + " 的活动。";
         }
     }
 }
