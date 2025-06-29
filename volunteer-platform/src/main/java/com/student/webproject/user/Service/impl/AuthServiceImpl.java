@@ -41,12 +41,19 @@ public class AuthServiceImpl implements AuthService {
             // 学号同理
             throw new RuntimeException("学号 '" + userRegisterDTO.getStudentId() + "' 已被注册");
         }
+        //c. 邮箱验证
+        QueryWrapper<User> emailWrapper = new QueryWrapper<>();
+        emailWrapper.eq("email", userRegisterDTO.getEmail());
+        if (userMapper.selectCount(emailWrapper) > 0) {
+            throw new RuntimeException("邮箱 '" + userRegisterDTO.getEmail() + "' 已被注册");
+        }
 
         // --- 2. 创建实体对象并填充数据 ---
         User user = new User();
         user.setUsername(userRegisterDTO.getUsername());
         user.setRealName(userRegisterDTO.getRealName());
         user.setStudentId(userRegisterDTO.getStudentId());
+        user.setEmail(userRegisterDTO.getEmail());
 
         // --- 3. 密码加密 (安全核心) ---
         // 使用我们配置的 BCryptPasswordEncoder 来加密前端传来的原始密码

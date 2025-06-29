@@ -51,7 +51,7 @@
               <label for="remember-me">记住我</label>
               <a href="#" class="forgot-password">忘记密码?</a>
             </div>
-
+            <p v-if="errorMessage" style="color: red; text-align: center; margin-bottom: 15px;">{{ errorMessage }}</p>
             <button
                 class="submit-button"
                 @click="handleLogin"
@@ -78,7 +78,15 @@
           <div v-if="currentTab === 'register'" class="auth-form">
             <h2 class="form-title">创建新账户</h2>
             <p class="form-subtitle">请填写以下信息完成注册</p>
-
+            <div class="form-group">
+              <label for="register-name">用户名</label>
+              <input
+                  type="text"
+                  id="register-name"
+                  placeholder="请输入您的用户名"
+                  v-model="registerForm.username"
+              >
+            </div>
             <div class="form-group">
               <label for="register-name">真实姓名</label>
               <input
@@ -88,7 +96,15 @@
                   v-model="registerForm.realName"
               >
             </div>
-
+            <div class="form-group">
+              <label for="register-name">学号</label>
+              <input
+                  type="text"
+                  id="register-name"
+                  placeholder="请输入您的学号"
+                  v-model="registerForm.studentId"
+              >
+            </div>
             <div class="form-group">
               <label for="register-email">邮箱</label>
               <input
@@ -123,7 +139,7 @@
               <input type="checkbox" id="terms" v-model="registerForm.terms">
               <label for="terms">我已阅读并同意<a href="#">服务条款</a>和<a href="#">隐私政策</a></label>
             </div>
-
+            <p v-if="errorMessage" style="color: red; text-align: center; margin-bottom: 15px;">{{ errorMessage }}</p>
             <button
                 class="submit-button"
                 @click="handleRegister"
@@ -155,36 +171,93 @@
 
 <script setup>
 import { ref } from 'vue';
+import apiClient from '@/api/axios'; // 导入我们创建的axios实例
+// import { useRouter } from 'vue-router'; // 如果需要跳转，导入useRouter
 
-// 当前活动的选项卡
+// const router = useRouter(); // 获取router实例
+
 const currentTab = ref('login');
 
 // 登录表单数据
 const loginForm = ref({
   username: '',
-  password: '',
-  rememberMe: false
+  password: ''
 });
 
-// 注册表单数据
+// 注册表单数据 (使用我们最终对齐的版本)
 const registerForm = ref({
-  name: '',
+  username: '',
+  realName: '',
+  studentId: '',
   email: '',
   password: '',
   confirmPassword: '',
   terms: false
 });
 
-// 登录处理函数
-const handleLogin = () => {
-  console.log('登录表单数据:', loginForm.value);
-  // 这里可以添加实际的登录逻辑
-};
+// 用于显示错误信息的变量
+const errorMessage = ref('');
 
 // 注册处理函数
-const handleRegister = () => {
-  console.log('注册表单数据:', registerForm.value);
-  // 这里可以添加实际的注册逻辑
+const handleRegister = async () => {
+  errorMessage.value = ''; // 清空之前的错误信息
+  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+    errorMessage.value = '两次输入的密码不一致！';
+    return;
+  }
+
+  try {
+    const response = await apiClient.post('/api/auth/register', {
+
+      realName: registerForm.value.realName,
+      studentId: registerForm.value.studentId,
+      username: registerForm.value.username,
+      email: registerForm.value.email,
+      password: registerForm.value.password
+    });
+
+    if (response.data.code === 201) {
+      alert('注册成功！请前往登录。');
+      currentTab.value = 'login'; // 注册成功后自动切换到登录选项卡
+    }
+  } catch (error) {
+    if (error.response && error.response.data) {
+      // 显示后端返回的错误信息
+      errorMessage.value = error.response.data.message;
+    } else {
+      errorMessage.value = '注册失败，请稍后重试。';
+    }
+    console.error('注册失败:', error);
+  }
+};
+
+// 登录处理函数
+const handleLogin = async () => {
+  errorMessage.value = ''; // 清空之前的错误信息
+  try {
+    const response = await apiClient.post('/api/auth/login', {
+      username: loginForm.value.username,
+      password: loginForm.value.password
+    });
+
+    if (response.data.code === 200) {
+      const token = response.data.data.token;
+      // 登录成功，将token存储到localStorage
+      localStorage.setItem('jwt_token', token);
+
+      alert('登录成功！即将跳转到首页。');
+      // 这里可以取消注释，跳转到首页
+      // router.push('/');
+    }
+  } catch (error) {
+    if (error.response && error.response.data) {
+      // 显示后端返回的错误信息
+      errorMessage.value = error.response.data.message;
+    } else {
+      errorMessage.value = '登录失败，请稍后重试。';
+    }
+    console.error('登录失败:', error);
+  }
 };
 </script>
 
