@@ -37,4 +37,3 @@ public interface ActivityAdminService {
      */
     Object listActivities(Long page, Long pageSize);
 }
-}
