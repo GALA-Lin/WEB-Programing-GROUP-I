@@ -2,6 +2,7 @@ package com.student.webproject.user.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.student.webproject.user.Entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import java.util.Date;
@@ -17,23 +18,19 @@ public class JwtUtils {
     private static final long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;
 
     /**
-     * 生成 JWT Token
-     * @param userId 用户ID
-     * @param username 用户名
-     * @return 生成的 Token
+     * 根据用户对象生成JWT Token
+     * @param user 包含用户信息的实体对象
+     * @return 生成的Token
      */
-    public String generateToken(Long userId, String username) {
+    public String generateToken(User user) {
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
 
-        // 自定义 claims
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        claims.put("username", username);
-
         return JWT.create()
-                .withPayload(claims) // 设置自定义 claims
-                .withExpiresAt(expirationDate) // 设置过期时间
-                .sign(Algorithm.HMAC256(SECRET_KEY)); // 设置签名算法和密钥
+                .withClaim("userId", user.getId())
+                .withClaim("username", user.getUsername())
+                .withClaim("avatarUrl", user.getAvatarUrl())
+                .withExpiresAt(expirationDate)
+                .sign(Algorithm.HMAC256(SECRET_KEY));
     }
 
     // 你可以后续在这里添加验证 token 的方法

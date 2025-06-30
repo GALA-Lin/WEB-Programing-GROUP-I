@@ -181,7 +181,8 @@ const currentTab = ref('login');
 // 登录表单数据
 const loginForm = ref({
   username: '',
-  password: ''
+  password: '',
+  rememberMe:false
 });
 
 // 注册表单数据 (使用我们最终对齐的版本)
