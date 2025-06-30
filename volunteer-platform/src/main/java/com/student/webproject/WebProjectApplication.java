@@ -5,7 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.student.webproject") // <-- 必须有这一行，它告诉框架去哪里找 Mapper 接口
+// 将扫描路径精确到存放所有 Mapper 接口的父包，使用通配符 **
+@MapperScan("com.student.webproject.**.mapper")
 public class WebProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebProjectApplication.class, args);
