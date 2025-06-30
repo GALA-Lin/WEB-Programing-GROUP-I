@@ -62,4 +62,5 @@ public class AuthController {
         Map<String, String> tokenMap = Collections.singletonMap("token", token);
         return Result.success(tokenMap, "登录成功");
     }
+
 }
