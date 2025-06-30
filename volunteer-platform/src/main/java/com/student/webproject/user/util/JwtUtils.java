@@ -2,6 +2,7 @@ package com.student.webproject.user.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,4 +37,18 @@ public class JwtUtils {
     }
 
     // 你可以后续在这里添加验证 token 的方法
+    public String generateTokenByUserDetails(UserDetails userDetails) {
+        // 这里我们需要从 UserDetails 中获取到我们自己的用户ID
+        // 但 UserDetails 默认只有用户名，所以我们需要先根据用户名查一次用户
+        // 这是一个可以优化的点，但我们先这样实现
+
+        // 为了简单，我们暂时只用用户名生成Token，因为ID需要再查一次数据库
+        // 更好的做法是让 UserDetails 实现类携带ID
+        Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+
+        return JWT.create()
+                .withClaim("username", userDetails.getUsername())
+                .withExpiresAt(expirationDate)
+                .sign(Algorithm.HMAC256(SECRET_KEY));
+    }
 }

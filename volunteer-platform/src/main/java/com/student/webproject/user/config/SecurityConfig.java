@@ -2,6 +2,9 @@ package com.student.webproject.user.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -10,35 +13,43 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity // 启用 Spring Security 的 Web 安全支持
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // 我们之前配置的密码加密器，保持不变
         return new BCryptPasswordEncoder();
     }
 
+    // --- 新增内容：将 AuthenticationManager 暴露为 Bean ---
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // --- 这是本次修改的核心 ---
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+    // --- 新增结束 ---
 
-        // 1. 关闭 CSRF 防护
-        // 因为我们使用 JWT，是无状态的，所以不需要 CSRF 防护
-        http.csrf(csrf -> csrf.disable());
+    @Bean
+    @Profile("dev")
+    public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
+        // dev 环境配置保持不变...
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        .anyRequest().permitAll()
+                );
+        return http.build();
+    }
 
-        // 2. 配置 Session 管理策略为无状态 (STATELESS)
-        // 同样因为我们使用 JWT
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        // 3. 配置接口的访问权限 (最关键的部分)
-        http.authorizeHttpRequests(authz -> authz
-                // 为注册和登录接口配置白名单，允许所有用户访问
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                // 除了上面配置的白名单接口，其他所有接口都需要认证（登录）后才能访问
-                .anyRequest().authenticated()
-        );
-
+    @Bean
+    @Profile("!dev")
+    public SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
+        // prod 环境配置也保持不变...
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/auth/**").permitAll() // 为了后续忘记密码等接口，直接放行/api/auth/下的所有
+                        .anyRequest().authenticated()
+                );
         return http.build();
     }
 }

@@ -1,11 +1,15 @@
 package com.student.webproject.user.controller;
 
 import com.student.webproject.common.response.Result;
-import com.student.webproject.user.Entity.User;
-import com.student.webproject.user.Service.AuthService;
 import com.student.webproject.user.dto.UserLoginDTO;
 import com.student.webproject.user.dto.UserRegisterDTO;
+import com.student.webproject.user.Service.AuthService;
+import com.student.webproject.user.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,43 +21,45 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     @Autowired
-    private AuthService authService;
+    private AuthService authService; // 注册服务依然保留
 
-    /**
-     * 用户注册接口
-     * @param userRegisterDTO 请求体中的JSON数据
-     * @return 统一的响应结果
-     */
-    @PostMapping("/register") // 对应 POST /api/auth/register
+    // --- 新增注入 ---
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+    // --- 新增结束 ---
+
+
+    @PostMapping("/register")
     public Result<?> register(@RequestBody UserRegisterDTO userRegisterDTO) {
-        // 1. 调用 Service 层处理注册逻辑
-        User registeredUser = authService.register(userRegisterDTO);
-
-        // 2. 准备返回给前端的数据 (不包含密码等敏感信息)
-        // 注意：User 实体类里的 password 字段我们已经用 @JsonIgnore 忽略了
-
-        // 3. 使用我们定义的 Result 类来封装成功的响应
-        //    根据API文档，注册成功返回 201 Created
-        //    这里我们直接用 success，因为状态码已在异常处理器中设置
-        //    更严谨的方式是返回 ResponseEntity，但目前 Result 已足够
-        return Result.created(registeredUser);
+        // 注册逻辑不变
+        return Result.created(authService.register(userRegisterDTO));
     }
 
+
     /**
-     * 用户登录接口
-     * @param userLoginDTO 请求体中的JSON数据
-     * @return 统一的响应结果，data中包含token
+     * 用户登录接口 (重构后)
      */
-    @PostMapping("/login") // 对应 POST /api/auth/login
+    @PostMapping("/login")
     public Result<?> login(@RequestBody UserLoginDTO userLoginDTO) {
-        // 1. 调用 Service 层处理登录逻辑，获取 token
-        String token = authService.login(userLoginDTO);
+        // 1. 创建一个 Spring Security 的认证凭证
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(userLoginDTO.getUsername(), userLoginDTO.getPassword());
 
-        // 2. 将 token 包装成 { "token": "xxx" } 的形式，与API文档一致
+        // 2. 调用 AuthenticationManager 进行认证，它会自动调用我们写的 UserDetailsServiceImpl 和 PasswordEncoder
+        // 如果认证失败，这里会自动抛出异常，并被我们的 GlobalExceptionHandler 捕获
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        // 3. 认证成功，生成JWT
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String token = jwtUtils.generateTokenByUserDetails(userDetails); // 假设JwtUtils有个新方法
+
+        // 4. 封装成功的响应
         Map<String, String> tokenMap = Collections.singletonMap("token", token);
-
-        // 3. 封装成功的响应
         return Result.success(tokenMap, "登录成功");
     }
 }
