@@ -201,19 +201,29 @@ const errorMessage = ref('');
 // 注册处理函数
 const handleRegister = async () => {
   errorMessage.value = ''; // 清空之前的错误信息
-  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+
+  // --- 新增的前置校验逻辑 ---
+  const { username, realName, studentId, email, password, confirmPassword } = registerForm.value;
+
+  if (!username || !realName || !studentId || !email || !password) {
+    errorMessage.value = '所有项目均为必填项，请填写完整！';
+    return; // 阻止后续代码执行
+  }
+
+  if (password !== confirmPassword) {
     errorMessage.value = '两次输入的密码不一致！';
     return;
   }
+  // --- 校验结束 ---
 
   try {
+    // 只有在所有前端校验都通过后，才执行API请求
     const response = await apiClient.post('/api/auth/register', {
-
-      realName: registerForm.value.realName,
-      studentId: registerForm.value.studentId,
-      username: registerForm.value.username,
-      email: registerForm.value.email,
-      password: registerForm.value.password
+      realName: realName,
+      studentId: studentId,
+      username: username,
+      email: email,
+      password: password
     });
 
     if (response.data.code === 201) {
@@ -222,7 +232,6 @@ const handleRegister = async () => {
     }
   } catch (error) {
     if (error.response && error.response.data) {
-      // 显示后端返回的错误信息
       errorMessage.value = error.response.data.message;
     } else {
       errorMessage.value = '注册失败，请稍后重试。';
