@@ -3,7 +3,7 @@ package com.student.webproject.user.Service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.student.webproject.user.Entity.User;
-import com.student.webproject.user.Mapper.UserMapper;
+import com.student.webproject.user.mapper.UserMapper;
 import com.student.webproject.user.Service.AuthService;
 import com.student.webproject.user.dto.UserLoginDTO;
 import com.student.webproject.user.dto.UserRegisterDTO;

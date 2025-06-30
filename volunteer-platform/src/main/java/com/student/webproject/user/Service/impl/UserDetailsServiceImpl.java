@@ -1,6 +1,6 @@
 package com.student.webproject.user.Service.impl;
 import com.student.webproject.user.Entity.User;
-import com.student.webproject.user.Mapper.UserMapper;
+import com.student.webproject.user.mapper.UserMapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
