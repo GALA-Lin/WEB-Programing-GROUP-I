@@ -14,4 +14,27 @@ public interface ActivityAdminService {
      */
     String createActivity(ActivityCreateDTO dto);
 
+    /**
+     * 新增：定义一个“更新活动”的职责
+     * @param id 要更新的活动的ID
+     * @param dto 包含了更新后信息的数据包裹
+     * @return 返回一个处理结果
+     */
+    String updateActivity(Long id, ActivityCreateDTO dto);
+
+    /**
+     * 新增：定义一个“删除活动”的职责
+     * @param id 要删除的活动的ID
+     * @return 返回一个处理结果
+     */
+    String deleteActivity(Long id);
+
+    /**
+     * 新增：定义一个“查询活动列表（分页）”的职责
+     * @param page 当前页码
+     * @param pageSize 每页数量
+     * @return 返回一个包含列表和总数的结果
+     */
+    Object listActivities(Long page, Long pageSize);
 }
+
