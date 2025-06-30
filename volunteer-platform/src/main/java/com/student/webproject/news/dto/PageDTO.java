@@ -2,9 +2,6 @@ package com.student.webproject.news.dto;
 
 import java.util.List;
 
-/**
- * 分页数据传输对象
- */
 public class PageDTO<T> {
     private long total;
     private List<T> list;
@@ -15,11 +12,6 @@ public class PageDTO<T> {
     }
 
     // Getters
-    public long getTotal() {
-        return total;
-    }
-
-    public List<T> getList() {
-        return list;
-    }
+    public long getTotal() { return total; }
+    public List<T> getList() { return list; }
 }

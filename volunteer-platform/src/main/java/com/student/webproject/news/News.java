@@ -1,46 +1,41 @@
 package com.student.webproject.news;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 import java.time.LocalDateTime;
 
-/**
- * News 实体类 (POJO), 用于映射数据库查询结果
- */
+@Data
+@TableName("news")
 public class News {
+
+    @TableId(type = IdType.AUTO)
     private Long id;
+
     private String title;
     private String summary;
     private String content;
+
+    @TableField("author_id")
     private Long authorId;
+
+    @TableField("likes_count")
     private Integer likesCount;
+
+    @TableField("comments_count")
     private Integer commentsCount;
+
+    @TableField("favorites_count")
     private Integer favoritesCount;
+
+    @TableField("published_at")
     private LocalDateTime publishedAt;
+
+    @TableField("updated_at")
     private LocalDateTime updatedAt;
 
-    // 这个字段用于接收 JOIN 查询出的作者名
+    @TableField(exist = false)
     private String authorName;
-
-    // Getters and Setters for all fields
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getSummary() { return summary; }
-    public void setSummary(String summary) { this.summary = summary; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public Long getAuthorId() { return authorId; }
-    public void setAuthorId(Long authorId) { this.authorId = authorId; }
-    public Integer getLikesCount() { return likesCount; }
-    public void setLikesCount(Integer likesCount) { this.likesCount = likesCount; }
-    public Integer getCommentsCount() { return commentsCount; }
-    public void setCommentsCount(Integer commentsCount) { this.commentsCount = commentsCount; }
-    public Integer getFavoritesCount() { return favoritesCount; }
-    public void setFavoritesCount(Integer favoritesCount) { this.favoritesCount = favoritesCount; }
-    public LocalDateTime getPublishedAt() { return publishedAt; }
-    public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    public String getAuthorName() { return authorName; }
-    public void setAuthorName(String authorName) { this.authorName = authorName; }
 }
