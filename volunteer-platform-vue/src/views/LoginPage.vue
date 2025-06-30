@@ -32,7 +32,7 @@
                   type="text"
                   id="login-username"
                   placeholder="请输入您的用户名"
-                  v-model="loginForm.email"
+                  v-model="loginForm.username"
               >
             </div>
 

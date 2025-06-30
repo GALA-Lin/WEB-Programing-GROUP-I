@@ -1,4 +1,4 @@
-package com.student.webproject.user.config;
+package com.student.webproject.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
