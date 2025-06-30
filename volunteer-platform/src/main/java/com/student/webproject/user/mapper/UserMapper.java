@@ -1,4 +1,4 @@
-package com.student.webproject.user.Mapper;
+package com.student.webproject.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.student.webproject.user.Entity.User;
