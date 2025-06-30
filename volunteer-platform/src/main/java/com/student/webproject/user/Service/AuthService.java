@@ -20,4 +20,5 @@ public interface AuthService {
      * @return 登录成功后生成的 JWT
      */
     String login(UserLoginDTO userLoginDTO);
+    String adminLogin(UserLoginDTO userLoginDTO);
 }
