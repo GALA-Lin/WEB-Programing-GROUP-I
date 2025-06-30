@@ -6,7 +6,6 @@
       <p class="page-subtitle">探索并参与我们的志愿活动，一起为社会贡献力量</p>
     </div>
 
-
     <!-- 筛选和搜索区域 -->
     <div class="filter-section">
       <!-- 筛选条件 -->
@@ -70,25 +69,23 @@
       <!-- 已选标签 -->
       <div class="filter-tags">
         <transition-group name="fade-slide" mode="out-in">
-      <span v-for="(tag, index) in filterTags" :key="index" class="filter-tag">
-        {{ tag.text }}
-        <button type="button" @click="removeTag(tag.key)" class="tag-remove">×</button>
-      </span>
+          <span v-for="(tag, index) in filterTags" :key="index" class="filter-tag">
+            {{ tag.text }}
+            <button type="button" @click="removeTag(tag.key)" class="tag-remove">×</button>
+          </span>
         </transition-group>
-        <button type="button" class="clear-all" @click="clearFilters">清除全部</button>
+        <!-- 使用 v-if 控制显示状态 -->
+        <button v-if="filterTags.length > 0" type="button" class="clear-all" @click="clearFilters">清除全部</button>
       </div>
 
       <!-- 分页大小控制 -->
       <div class="page-size-control">
-        <label for="pageSize">每页显示:</label>
-        <select id="pageSize" v-model="itemsPerPage" class="smooth-select page-size-select">
-          <option v-for="size in selectedPageItems" :key="size" :value="size">{{ size }}</option>
-        </select>
-      </div>
+      <label for="pageSize">每页显示:</label>
+      <select id="pageSize" v-model="itemsPerPage" class="smooth-select page-size-select">
+        <option v-for="size in selectedPageItems" :key="size" :value="size">{{ size }}</option>
+      </select>
     </div>
-
-
-
+    </div>
 
     <!-- 加载状态 -->
     <div v-if="loading" class="loading">加载中...</div>
@@ -211,6 +208,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -639,6 +637,20 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
+.page-size-control {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 调整 label 和 select 之间的间距 */
+  margin-top: 10px;
+}
+
+.page-size-control label {
+  font-size: 0.9rem;
+  color: #475569;
+  white-space: nowrap; /* 防止 label 内容换行 */
+}
+
 /* 筛选区域整体 */
 .filter-section {
   margin-bottom: 30px;
@@ -647,7 +659,7 @@ onMounted(async () => {
 /* 筛选条件行 */
 .filter-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 15px;
   margin-bottom: 15px;
 }
@@ -817,18 +829,26 @@ onMounted(async () => {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .filter-row {
-    flex-direction: column;
-    gap: 10px;
+    display: flex;
+    justify-content: space-between; /* 均匀分布每个筛选项 */
+    gap: 15px;
+    margin-bottom: 15px;
   }
 
   .filter-item {
-    width: 100%;
-    max-width: none;
+    flex: 1; /* 每个筛选项占据相等的空间 */
+    min-width: 0; /* 允许内容换行 */
+    display: flex;
+    flex-direction: column;
   }
 
+
   .page-size-control {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: nowrap; /* 确保内容不换行 */
   }
 }
 
