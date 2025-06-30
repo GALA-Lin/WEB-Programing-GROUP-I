@@ -37,7 +37,7 @@
         <div class="navbar-actions desktop-actions">
           <router-link to="/login" v-if="!isLoggedIn" class="btn-login">登录/注册</router-link>
           <div v-else class="user-menu">
-            <span class="user-name">用户名</span>
+            <span class="user-name">{{ currentUser?.username }}</span>
             <button @click="logout" class="btn-logout">退出</button>
           </div>
         </div>
@@ -59,7 +59,7 @@
           <router-link to="/login" v-if="!isLoggedIn" class="mobile-btn">登录</router-link>
           <router-link to="/register" v-if="!isLoggedIn" class="mobile-btn">注册</router-link>
           <div v-else class="mobile-user-menu">
-            <span class="mobile-user-name">用户名</span>
+            <span class="mobile-user-name">{{ currentUser?.username }}</span>
             <button @click="logout" class="mobile-btn-logout">退出</button>
           </div>
         </div>
@@ -70,12 +70,19 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/userStore'; // 1. 导入 userStore
+import { storeToRefs } from 'pinia'; // 导入 storeToRefs 来保持响应性
 
-const isLoggedIn = ref(false);
+const userStore = useUserStore(); // 2. 获取 userStore 实例
+
+// 3. 使用 storeToRefs 来解构 store 中的状态，确保它们在模板中是响应式的
+const { isLoggedIn, currentUser } = storeToRefs(userStore);
+
 const mobileMenuOpen = ref(false);
 
+// 4. 从 store 中获取 logout 方法
 const logout = () => {
-  isLoggedIn.value = false;
+  userStore.logout();
   mobileMenuOpen.value = false; // 退出时关闭菜单
 };
 </script>

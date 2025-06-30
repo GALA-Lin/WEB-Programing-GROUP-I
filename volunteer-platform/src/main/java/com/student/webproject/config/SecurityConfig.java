@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.config.Customizer.withDefaults; // 确保导入这个
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -21,18 +23,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // --- 新增内容：将 AuthenticationManager 暴露为 Bean ---
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    // --- 新增结束 ---
 
     @Bean
     @Profile("dev")
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
-        // dev 环境配置保持不变...
-        http.csrf(csrf -> csrf.disable())
+        http
+                // ↓↓↓ --- 核心修改：添加此行以启用CORS --- ↓↓↓
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest().permitAll()
@@ -43,11 +45,13 @@ public class SecurityConfig {
     @Bean
     @Profile("!dev")
     public SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
-        // prod 环境配置也保持不变...
-        http.csrf(csrf -> csrf.disable())
+        http
+                // ↓↓↓ --- 核心修改：同样在此处添加此行 --- ↓↓↓
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**").permitAll() // 为了后续忘记密码等接口，直接放行/api/auth/下的所有
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
