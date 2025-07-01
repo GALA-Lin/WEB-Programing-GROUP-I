@@ -22,16 +22,26 @@ const routes = [
       { path: '', name: 'Home', component: HomeView },
       { path: 'activities', name: 'Activities', component: ActivitiesView },
       {
-        path: 'login', // 普通用户的登录路径
-        name: 'Login',
-        component: AuthView,
-        // 【关键】告诉 AuthView 组件，现在是 'user' 模式
-        props: { mode: 'user' }
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/views/main/ProfileView.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   },
-
+  {
+    path: '/login', // 【修改】路径变为绝对路径
+    name: 'Login',
+    component: AuthView,
+    props: { mode: 'user' }
+  },
   // --- 规则二：后台管理路由 ---
+  {
+    path: '/admin/login',
+    name: 'AdminLogin',
+    component: AuthView,
+    props: { mode: 'admin' }
+  },
   {
     path: '/admin',
     component: AdminLayout,
@@ -47,16 +57,11 @@ const routes = [
       }
       // 未来可以添加更多后台管理页面...
     ]
-  },
+  }
 
   // --- 规则三：独立的管理员登录页 ---
   // 这个页面不使用任何布局，是单独显示的
-  {
-    path: '/admin/login',
-    name: 'AdminLogin',
-    component: AuthView,
-    props: { mode: 'admin' }
-  }
+
 ];
 
 const router = createRouter({
