@@ -38,7 +38,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore.js';
 
 const router = useRouter();
 const userStore = useUserStore();

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
-import ActivitiesView from '@/views/ActivitiesView.vue';
+import HomeView from '@/views/main/HomeView.vue';
+import ActivitiesView from '@/views/main/ActivitiesView.vue';
 import LoginPage from '@/views/LoginPage.vue';
 
 const router = createRouter({
