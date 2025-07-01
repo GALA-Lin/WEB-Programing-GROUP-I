@@ -1,6 +1,7 @@
 package com.student.webproject.user.Service.impl;
 
-
+// 【新增】导入MyBatis-Plus的QueryWrapper
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.student.webproject.user.dto.UserDetailDTO;
 import com.student.webproject.user.dto.UserUpdateDTO;
 import com.student.webproject.user.Entity.User;
@@ -19,10 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailDTO getUserByUsername(String username) {
-        User user = userMapper.findByUsername(username);
+        // 【修改1】使用 QueryWrapper 来根据用户名查询用户
+        // 不再需要一个自定义的 findByUsername 方法
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username); // 假设数据库中的用户名字段是 'username'
+        User user = userMapper.selectOne(queryWrapper);
+
         if (user == null) {
-            // 理论上，在经过Spring Security认证后，用户一定存在
-            // 但作为防御性编程，可以抛出异常
             throw new RuntimeException("用户不存在");
         }
 
@@ -30,8 +34,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, userDetailDTO);
 
         // TODO: 计算并设置总服务时长 totalServiceHours
-        // 示例：userDetailDTO.setTotalServiceHours(calculateHours(user.getId()));
-        userDetailDTO.setTotalServiceHours(0.00); // 暂时设置为0
+        userDetailDTO.setTotalServiceHours(0.00);
 
         return userDetailDTO;
     }
@@ -39,17 +42,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDetailDTO updateUser(String username, UserUpdateDTO userUpdateDTO) {
-        User user = userMapper.findByUsername(username);
+        // 同样，先用 QueryWrapper 查询出完整的用户实体
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        User user = userMapper.selectOne(queryWrapper);
+
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
 
-        // 使用BeanUtils选择性地复制非空属性
-        // 注意: 这需要你的UserUpdateDTO中的字段与User实体中的字段名称和类型匹配
+        // 将DTO中的要更新的字段复制到从数据库查出的user实体上
         BeanUtils.copyProperties(userUpdateDTO, user);
 
-        // 调用Mapper更新数据库
-        userMapper.update(user); // 假设你的Mapper有update方法
+        // 【修改2】使用 MyBatis-Plus 提供的 updateById 方法进行更新
+        // 此方法会根据 user 实体中的主键ID (需要有@TableId注解) 作为WHERE条件
+        userMapper.updateById(user);
 
         // 返回更新后的完整信息
         return getUserByUsername(username);
