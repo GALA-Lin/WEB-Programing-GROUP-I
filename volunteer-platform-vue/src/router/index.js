@@ -1,55 +1,59 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
 
-// 导入布局组件
+// 导入我们创建的布局组件
 import MainLayout from '@/layouts/MainLayout.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 
-// 导入页面组件
+// 导入所有页面级组件
 import HomeView from '@/views/main/HomeView.vue';
 import ActivitiesView from '@/views/main/ActivitiesView.vue';
-import LoginPage from '@/views/main/LoginPage.vue';
-import AdminLoginPage from '@/views/admin/AdminLoginPage.vue';
+import AuthView from '@/views/main/AuthView.vue'; // 统一的登录/注册视图
 import ActivityManagement from '@/views/admin/ActivityManagement.vue';
 
-
 const routes = [
-  // --- 前台路由 ---
-  // 所有前台页面都作为 MainLayout 的子路由
+  // --- 规则一：前台页面路由 ---
+  // 所有访问网站主体的路径，都使用 MainLayout 布局
   {
     path: '/',
     component: MainLayout,
     children: [
       { path: '', name: 'Home', component: HomeView },
       { path: 'activities', name: 'Activities', component: ActivitiesView },
-      { path: 'login', name: 'Login', component: LoginPage },
+      {
+        path: 'login', // 普通用户的登录路径
+        name: 'Login',
+        component: AuthView,
+        // 【关键】告诉 AuthView 组件，现在是 'user' 模式
+        props: { mode: 'user' }
+      }
     ]
   },
 
-  // --- 后台路由 ---
-  // 单独的管理员登录页，不使用任何布局
-  {
-    path: '/admin/login',
-    name: 'AdminLogin',
-    component: AdminLoginPage
-  },
-  // 所有受保护的后台页面都作为 AdminLayout 的子路由
+  // --- 规则二：后台管理路由 ---
   {
     path: '/admin',
     component: AdminLayout,
-    meta: { requiresAuth: true }, // 这个 meta 字段用于路由守卫
+    // meta: { requiresAuth: true }, // 我们稍后可以启用这个来实现登录保护
     children: [
-      // 默认后台首页，可以重定向到活动管理
+      // 当访问 /admin 时，自动跳转到活动管理页
       { path: '', redirect: '/admin/activities' },
       {
         path: 'activities',
         name: 'AdminActivityManagement',
         component: ActivityManagement
-      },
-      // 未来可以添加更多后台页面，例如用户管理
-      // { path: 'users', name: 'AdminUserManagement', component: UserManagement },
+      }
     ]
+  },
+
+  // --- 规则三：独立的管理员登录页 ---
+  // 这个页面不使用任何布局，是单独显示的
+  {
+    path: '/admin/login',
+    name: 'AdminLogin',
+    component: AuthView,
+    // 【关键】告诉 AuthView 组件，现在是 'admin' 模式
+    props: { mode: 'admin' }
   }
 ];
 
@@ -58,22 +62,7 @@ const router = createRouter({
   routes,
 });
 
-// --- 全局路由守卫 ---
-// 在每次路由跳转前执行
-router.beforeEach((to, from, next) => {
-  // 检查目标路由是否需要认证
-  if (to.meta.requiresAuth) {
-    const userStore = useUserStore();
-    // 检查 Pinia store 中是否有管理员登录凭证
-    if (userStore.isAdmin) { // 假设你在 userStore 中有 isAdmin 状态
-      next(); // 已登录，放行
-    } else {
-      // 未登录，跳转到管理员登录页
-      next({ name: 'AdminLogin' });
-    }
-  } else {
-    next(); // 不需要认证，直接放行
-  }
-});
+// 这里我们可以添加“路由守卫”，用于检查用户是否登录
+// router.beforeEach((to, from, next) => { ... });
 
 export default router;

@@ -81,7 +81,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi';
+import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
 
 // 响应式数据
 const tableData = ref([]);

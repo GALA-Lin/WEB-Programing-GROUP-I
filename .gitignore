@@ -37,5 +37,4 @@ volunteer-platform/.idea/
 volunteer-platform-vue/.vscode/
 
 package-lock.json
-package.json
-volunteer-platform/src/main/resources/application.properties
+
