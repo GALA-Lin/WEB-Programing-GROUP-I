@@ -46,6 +46,28 @@ export const useUserStore = defineStore('user', () => {
     }
 
     /**
+     * 管理员登录
+     * @param {object} credentials - 包含用户名和密码的对象
+     */
+    async function adminLogin(credentials) {
+        // 【关键】请求管理员登录接口
+        const response = await apiClient.post('/api/admin/auth/login', credentials);
+        const responseData = response.data.data;
+
+        // 后续逻辑与普通登录相同：存token，存user，设置header
+        token.value = responseData.token;
+        localStorage.setItem('token', responseData.token);
+
+        currentUser.value = {
+            username: credentials.username, // 简化处理
+            role: 'admin' // 登录成功，角色肯定是admin
+        };
+        localStorage.setItem('user', JSON.stringify(currentUser.value));
+
+        apiClient.defaults.headers.common['Authorization'] = `${responseData.token}`;
+    }
+
+    /**
      * 退出登录
      */
     function logout() {
