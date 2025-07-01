@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -141,6 +142,7 @@ public class ActivityServiceImpl implements ActivityService {
         enrollment.setUserId(userId);
         enrollment.setActivityId(id);
         enrollment.setEnrolledAt(LocalDateTime.now());
+        enrollment.setStatus("enrolled"); // 修复：设置报名状态
 
         enrollmentRepository.save(enrollment);
         System.out.println("Enrollment saved: userId=" + userId + ", activityId=" + id);
@@ -151,6 +153,7 @@ public class ActivityServiceImpl implements ActivityService {
         System.out.println("Activity updated: activityId=" + id + ", currentEnrollment=" + activity.getCurrentEnrollment());
     }
     @Override
+    @Transactional // 保证取消报名操作在事务中执行，避免EntityManager错误
     public void unenrollActivity(Long id, String currentUserId) {
         Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
