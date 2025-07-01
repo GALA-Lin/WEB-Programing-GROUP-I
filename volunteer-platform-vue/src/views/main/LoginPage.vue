@@ -17,7 +17,6 @@
               注册
             </button>
           </div>
-
           <div v-if="currentTab === 'login'" class="auth-form">
             <h2 class="form-title">欢迎回来</h2>
             <p class="form-subtitle">请登录您的账户</p>
@@ -205,8 +204,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/userStore";
-import apiClient from "@/api/axios";
+import { useUserStore } from "@/stores/userStore.js";
+import apiClient from "@/api/axios.js";
 
 const router = useRouter();
 const userStore = useUserStore();
