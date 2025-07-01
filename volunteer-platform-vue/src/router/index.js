@@ -25,16 +25,8 @@ const routes = [
         path: 'login', // 普通用户的登录路径
         name: 'Login',
         component: AuthView,
+        // 【关键】告诉 AuthView 组件，现在是 'user' 模式
         props: { mode: 'user' }
-      },
-      // 【新增】用户个人中心路由
-      {
-        path: '/profile', // 注意：路径以'/'开头会成为根路径，这里我们希望是 /profile
-        name: 'Profile',
-        // 懒加载我们之前创建的 ProfileView 组件
-        component: () => import('@/views/main/ProfileView.vue'),
-        // 添加元信息，标记此路由需要登录
-        meta: { requiresAuth: true }
       }
     ]
   },
