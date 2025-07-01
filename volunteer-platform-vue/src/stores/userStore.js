@@ -8,41 +8,59 @@ export const useUserStore = defineStore('user', () => {
     const router = useRouter();
 
     // --- State (状态) ---
-    // 尝试从 localStorage 读取初始值，这样刷新页面后状态不会丢失
+    // 尝试从 localStorage 读取初始值，确保刷新页面后登录状态不丢失
     const token = ref(localStorage.getItem('token') || null);
     const currentUser = ref(JSON.parse(localStorage.getItem('user')) || null);
 
     // --- Getters (计算属性) ---
-    // 判断用户是否已登录
     const isLoggedIn = computed(() => !!token.value);
-    // 判断用户是否是管理员
     const isAdmin = computed(() => currentUser.value?.role === 'admin' || currentUser.value?.role === 'super_admin');
 
     // --- Actions (方法) ---
 
     /**
-     * 登录并保存状态
+     * 设置Token, 并更新axios请求头
+     * @param {string} newToken - 后端返回的JWT
+     */
+    function setToken(newToken) {
+        token.value = newToken;
+        localStorage.setItem('token', newToken);
+        // 【重要】为后续所有API请求设置认证头，并添加标准的 'Bearer ' 前缀
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+    }
+
+    /**
+     * 获取当前用户的完整信息
+     * 在登录成功后或需要刷新用户信息时调用
+     */
+    async function fetchCurrentUser() {
+        if (!token.value) return; // 如果没有token，则不执行
+        try {
+            // 请求后端 /api/users/me 接口获取当前登录用户的详细数据
+            const response = await apiClient.get('/api/users/me');
+
+            currentUser.value = response.data.data;
+            localStorage.setItem('user', JSON.stringify(currentUser.value));
+        } catch (error) {
+            console.error('获取用户信息失败，可能是Token已过期:', error);
+            // 获取失败（如token失效），则执行登出操作，清理无效状态
+            logout();
+        }
+    }
+
+    /**
+     * 普通用户登录
      * @param {object} credentials - 包含用户名和密码的对象
      */
     async function login(credentials) {
         const response = await apiClient.post('/api/auth/login', credentials);
-        const responseData = response.data.data; // 假设后端返回的数据在 data.data 中
+        const responseData = response.data.data;
 
-        // 1. 保存 Token
-        token.value = responseData.token;
-        localStorage.setItem('token', responseData.token);
+        setToken(responseData.token); // 调用函数设置Token
+        await fetchCurrentUser(); // 获取完整的用户信息
 
-        // 2. 保存用户信息
-        // (最佳实践是再请求一个 /api/users/me 接口获取，这里我们先用登录返回的信息)
-        currentUser.value = {
-            username: responseData.username,
-            role: responseData.role
-        };
-        localStorage.setItem('user', JSON.stringify(currentUser.value));
-
-        // 3. 更新axios的默认请求头，让后续所有请求都自动带上Token
-        // 注意：你队友实现的JWT可能不需要 'Bearer ' 前缀，根据实际情况调整
-        apiClient.defaults.headers.common['Authorization'] = `${responseData.token}`;
+        // 登录成功后跳转到首页
+        await router.push('/');
     }
 
     /**
@@ -50,21 +68,30 @@ export const useUserStore = defineStore('user', () => {
      * @param {object} credentials - 包含用户名和密码的对象
      */
     async function adminLogin(credentials) {
-        // 【关键】请求管理员登录接口
         const response = await apiClient.post('/api/admin/auth/login', credentials);
         const responseData = response.data.data;
 
-        // 后续逻辑与普通登录相同：存token，存user，设置header
-        token.value = responseData.token;
-        localStorage.setItem('token', responseData.token);
+        setToken(responseData.token); // 同样调用函数设置Token
+        await fetchCurrentUser(); // 管理员登录后也获取完整信息
 
-        currentUser.value = {
-            username: credentials.username, // 简化处理
-            role: 'admin' // 登录成功，角色肯定是admin
-        };
-        localStorage.setItem('user', JSON.stringify(currentUser.value));
+        // 管理员登录成功后跳转到后台页面
+        await router.push('/admin/activities');
+    }
 
-        apiClient.defaults.headers.common['Authorization'] = `${responseData.token}`;
+    /**
+     * 更新当前用户信息
+     */
+    async function updateCurrentUser(profileUpdateDTO) {
+        try {
+            const response = await apiClient.put('/api/users/me', profileUpdateDTO);
+            currentUser.value = response.data.data; // 使用后端返回的最新信息更新本地状态
+            localStorage.setItem('user', JSON.stringify(currentUser.value));
+            alert('信息更新成功！');
+        } catch (error) {
+            console.error('更新用户信息失败:', error);
+            alert('更新失败，请重试。');
+            throw error; // 抛出错误，方便组件捕获
+        }
     }
 
     /**
@@ -86,13 +113,24 @@ export const useUserStore = defineStore('user', () => {
         router.push('/login');
     }
 
-    // 返回所有需要暴露给组件的状态和方法
+    // --- 初始化检查 ---
+    // 当store实例创建时（例如刷新页面），如果localStorage中存在token，
+    // 则立即尝试获取一次用户信息，以恢复用户的登录状态。
+    if (token.value) {
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+        fetchCurrentUser();
+    }
+
+    // --- 导出所有需要暴露给组件的状态和方法 ---
     return {
         token,
         currentUser,
         isLoggedIn,
         isAdmin,
         login,
-        logout
+        adminLogin,
+        logout,
+        fetchCurrentUser,
+        updateCurrentUser,
     };
 });

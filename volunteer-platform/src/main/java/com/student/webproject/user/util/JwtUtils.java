@@ -1,13 +1,15 @@
+// File path: src/main/java/com/student/webproject/user/util/JwtUtils.java
 package com.student.webproject.user.util;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.student.webproject.user.Entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -18,9 +20,75 @@ public class JwtUtils {
     private static final long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;
 
     /**
-     * 根据用户对象生成JWT Token
-     * @param user 包含用户信息的实体对象
-     * @return 生成的Token
+     * (已有方法) 根据UserDetails对象生成JWT Token
+     * 我们的登录逻辑会使用这个方法
+     */
+    public String generateTokenByUserDetails(UserDetails userDetails) {
+        Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+
+        return JWT.create()
+                // 我们在Token中放入username作为核心标识
+                .withClaim("username", userDetails.getUsername())
+                .withExpiresAt(expirationDate)
+                .sign(Algorithm.HMAC256(SECRET_KEY));
+    }
+
+    // --- 【以下是新增的Token解析与验证方法】 ---
+
+    /**
+     * 从Token中提取用户名
+     * @param token JWT Token
+     * @return 用户名
+     */
+    public String extractUsername(String token) {
+        try {
+            return getDecodedJWT(token).getClaim("username").asString();
+        } catch (JWTVerificationException e) {
+            // 如果Token无效（例如，签名不匹配），则返回null
+            return null;
+        }
+    }
+
+    /**
+     * 验证Token是否有效
+     * @param token JWT Token
+     * @param userDetails 从数据库中查询出的用户信息
+     * @return 如果用户名匹配且Token未过期，则返回true
+     */
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (JWTVerificationException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 检查Token是否已过期
+     * @param token JWT Token
+     * @return 如果已过期返回true，否则返回false
+     */
+    private boolean isTokenExpired(String token) {
+        Date expiration = getDecodedJWT(token).getExpiresAt();
+        return expiration.before(new Date());
+    }
+
+    /**
+     * 私有辅助方法：用于验证并解析Token
+     * @param token JWT Token
+     * @return 解析后的DecodedJWT对象
+     */
+    private DecodedJWT getDecodedJWT(String token) {
+        // 创建一个验证器，指定加密算法和密钥
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
+        // 验证token，如果验证失败（如签名错误、格式错误），会直接抛出JWTVerificationException
+        return verifier.verify(token);
+    }
+
+
+    /**
+     * (已有方法) 你原来的根据User对象生成Token的方法，可以保留用于其他场景
      */
     public String generateToken(User user) {
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
@@ -29,22 +97,6 @@ public class JwtUtils {
                 .withClaim("userId", user.getId())
                 .withClaim("username", user.getUsername())
                 .withClaim("avatarUrl", user.getAvatarUrl())
-                .withExpiresAt(expirationDate)
-                .sign(Algorithm.HMAC256(SECRET_KEY));
-    }
-
-    // 你可以后续在这里添加验证 token 的方法
-    public String generateTokenByUserDetails(UserDetails userDetails) {
-        // 这里我们需要从 UserDetails 中获取到我们自己的用户ID
-        // 但 UserDetails 默认只有用户名，所以我们需要先根据用户名查一次用户
-        // 这是一个可以优化的点，但我们先这样实现
-
-        // 为了简单，我们暂时只用用户名生成Token，因为ID需要再查一次数据库
-        // 更好的做法是让 UserDetails 实现类携带ID
-        Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
-
-        return JWT.create()
-                .withClaim("username", userDetails.getUsername())
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC256(SECRET_KEY));
     }
