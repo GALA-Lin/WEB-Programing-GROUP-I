@@ -14,12 +14,16 @@
           <span class="logo-text">油炬智愿</span>
         </router-link>
 
+
+
         <!-- 桌面端导航 -->
         <nav class="navbar-nav desktop-nav">
           <router-link to="/" class="nav-link">首页</router-link>
+          <router-link to="/news" class="nav-link">新闻资讯</router-link>
           <router-link to="/activities" class="nav-link">活动列表</router-link>
           <router-link to="/organizations" class="nav-link">组织列表</router-link>
           <router-link to="/about" class="nav-link">关于我们</router-link>
+
         </nav>
 
         <!-- 移动端汉堡菜单按钮 -->

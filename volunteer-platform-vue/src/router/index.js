@@ -11,6 +11,10 @@ import ActivitiesView from '@/views/main/ActivitiesView.vue';
 import AuthView from '@/views/main/AuthView.vue'; // 统一的登录/注册视图
 import ActivityManagement from '@/views/admin/ActivityManagement.vue';
 
+// ✨ 1. 导入我们为新闻模块新建的两个页面组件
+import NewsView from '@/views/main/NewsView.vue';
+import NewsDetailView from '@/views/main/NewsDetailView.vue';
+
 const routes = [
   // --- 规则一：前台页面路由 ---
   // 所有访问网站主体的路径，都使用 MainLayout 布局
@@ -26,6 +30,17 @@ const routes = [
         component: AuthView,
         // 【关键】告诉 AuthView 组件，现在是 'user' 模式
         props: { mode: 'user' }
+      },
+      // ✨ 2. 在这里添加新闻页面的路由
+      {
+        path: 'news', // 当用户访问 /news 时
+        name: 'NewsList',
+        component: NewsView // 显示 NewsView 组件
+      },
+      {
+        path: 'news/:id', // 当用户访问 /news/一个具体的id 时 (例如 /news/1)
+        name: 'NewsDetail',
+        component: NewsDetailView // 显示 NewsDetailView 组件
       }
     ]
   },
