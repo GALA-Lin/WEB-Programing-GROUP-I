@@ -98,7 +98,7 @@ export const useUserStore = defineStore('user', () => {
             delete apiClient.defaults.headers.common['Authorization'];
 
             // 跳转到登录页
-            router.push('/auth'); // 根据你的路由配置，路径可能是/auth或/login
+            router.push('/login'); // 根据你的路由配置，路径可能是/auth或/login
         }
     }
 
