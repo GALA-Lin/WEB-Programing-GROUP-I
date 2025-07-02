@@ -13,6 +13,7 @@
 
         <nav class="navbar-nav desktop-nav">
           <router-link to="/" class="nav-link">首页</router-link>
+          <router-link to="/news" class="nav-link">新闻资讯</router-link>
           <router-link to="/activities" class="nav-link">活动列表</router-link>
           <router-link to="/organizations" class="nav-link">组织列表</router-link>
           <router-link to="/about" class="nav-link">关于我们</router-link>
@@ -21,6 +22,7 @@
         <button
             class="mobile-menu-button"
             @click="mobileMenuOpen = !mobileMenuOpen"
+            :class="{ open: mobileMenuOpen }"
             aria-label="菜单"
         >
           <span class="bar"></span>
@@ -36,52 +38,66 @@
               <span class="user-name">{{ currentUser?.username }}</span>
               <span class="arrow-down"></span>
             </div>
-
             <div class="user-dropdown-menu">
-              <router-link to="/profile" class="dropdown-item">
-                个人中心
-              </router-link>
-              <button @click="logout" class="dropdown-item logout-button">
-                退出登录
-              </button>
+              <router-link to="/profile" class="dropdown-item">个人中心</router-link>
+              <button @click="logout" class="dropdown-item logout-button">退出登录</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div
-        class="mobile-nav-container"
-        :class="{ 'mobile-nav-open': mobileMenuOpen }"
-    >
+    <div class="mobile-nav-container" :class="{ 'mobile-nav-open': mobileMenuOpen }">
+      <nav class="mobile-nav">
+        <router-link to="/" class="mobile-nav-link" @click="closeMenu">首页</router-link>
+        <router-link to="/news" class="mobile-nav-link" @click="closeMenu">新闻资讯</router-link>
+        <router-link to="/activities" class="mobile-nav-link" @click="closeMenu">活动列表</router-link>
+        <router-link to="/organizations" class="mobile-nav-link" @click="closeMenu">组织列表</router-link>
+        <router-link to="/about" class="mobile-nav-link" @click="closeMenu">关于我们</router-link>
+
+        <div class="mobile-actions">
+          <div v-if="!isLoggedIn">
+            <router-link to="/login" class="mobile-btn" @click="closeMenu">登录</router-link>
+          </div>
+          <div v-else class="mobile-user-menu">
+            <router-link to="/profile" class="mobile-user-name" @click="closeMenu">你好, {{ currentUser?.username }}</router-link>
+            <button @click="logout" class="mobile-btn-logout">退出登录</button>
+          </div>
+        </div>
+      </nav>
     </div>
+    <div class="overlay" v-if="mobileMenuOpen" @click="closeMenu"></div>
   </header>
 </template>
 
 <script setup>
-// script 部分保持不变
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore();
 const { isLoggedIn, currentUser } = storeToRefs(userStore);
+
 const mobileMenuOpen = ref(false);
+
+const closeMenu = () => {
+  mobileMenuOpen.value = false;
+};
 
 const logout = () => {
   userStore.logout();
-  mobileMenuOpen.value = false;
+  closeMenu();
 };
 </script>
 
 <style scoped>
-/* 原有样式保持不变 */
+/* 基础导航栏样式 */
 .navbar {
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 .container {
   max-width: 1200px;
@@ -106,23 +122,45 @@ const logout = () => {
 }
 .logo-text {
   font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #1a202c;
 }
+
+/* 桌面端导航 */
 .desktop-nav {
   display: flex;
-  gap: 24px;
+  gap: 32px;
 }
 .nav-link {
-  color: #666;
+  color: #4a5568;
   text-decoration: none;
+  font-weight: 500;
   transition: color 0.2s;
   white-space: nowrap;
+  position: relative;
+  padding: 4px 0;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2563eb;
+  transition: width 0.3s;
+}
+.nav-link:hover::after,
+.nav-link.router-link-exact-active::after {
+  width: 100%;
 }
 .nav-link:hover,
-.nav-link.router-link-active {
+.nav-link.router-link-exact-active {
   color: #2563eb;
 }
+
+/* 桌面端用户操作区 */
 .desktop-actions {
   display: flex;
   align-items: center;
@@ -132,40 +170,35 @@ const logout = () => {
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
   text-decoration: none;
   margin-left: 10px;
   white-space: nowrap;
+  font-weight: 500;
 }
 .btn-login:hover {
   background-color: #1d4ed8;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
-/* --- 【以下是新增和修改的样式】 --- */
-
-/* 下拉菜单容器 */
+/* 下拉菜单 */
 .user-dropdown {
-  position: relative; /* 关键：为绝对定位的子元素提供定位上下文 */
+  position: relative;
   cursor: pointer;
 }
-
-/* 下拉菜单触发器（用户名+箭头） */
 .user-dropdown-trigger {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px;
 }
-
 .user-name {
-  color: #333;
+  color: #2d3748;
   white-space: nowrap;
   font-weight: 500;
 }
-
-/* 下拉箭头样式 */
 .arrow-down {
   border: solid #666;
   border-width: 0 2px 2px 0;
@@ -174,40 +207,35 @@ const logout = () => {
   transform: rotate(45deg);
   transition: transform 0.2s;
 }
-
-/* 鼠标悬停时箭头旋转 */
 .user-dropdown:hover .arrow-down {
-  transform: rotate(225deg);
+  transform: translateY(2px) rotate(225deg);
 }
-
-/* 下拉菜单主体 */
 .user-dropdown-menu {
-  position: absolute; /* 关键：相对于父元素进行定位 */
-  top: 100%; /* 从父元素底部开始显示 */
-  right: 0; /* 对齐到父元素右侧 */
+  position: absolute;
+  top: 100%;
+  right: 0;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 8px 0;
-  min-width: 120px; /* 菜单最小宽度 */
-  z-index: 110;
-
-  /* 默认隐藏，通过悬停显示 */
-  display: none;
+  min-width: 140px;
+  z-index: 1010;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.2s, transform 0.2s;
 }
-
-/* 鼠标悬停在容器上时，显示下拉菜单 */
 .user-dropdown:hover .user-dropdown-menu {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
-
-/* 下拉菜单中的项目 */
 .dropdown-item {
   display: block;
   width: 100%;
   padding: 10px 16px;
   text-align: left;
-  color: #333;
+  color: #2d3748;
   text-decoration: none;
   background-color: transparent;
   border: none;
@@ -215,17 +243,145 @@ const logout = () => {
   font-size: 14px;
   white-space: nowrap;
 }
-
 .dropdown-item:hover {
-  background-color: #f5f5f5;
+  background-color: #f7fafc;
+  color: #2563eb;
 }
-
 .logout-button {
-  color: #ff4d4f; /* 退出按钮使用警示色 */
+  color: #e53e3e;
+}
+.logout-button:hover {
+  color: #c53030;
+  background-color: #fff5f5;
 }
 
-/* 移动端样式保持不变 */
+/* 移动端菜单按钮 */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1100;
+}
+.bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  margin: 5px auto;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 移动端导航容器 */
+.mobile-nav-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 280px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1050;
+  overflow-y: auto;
+}
+.mobile-nav-open {
+  right: 0;
+}
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 80px 24px 24px;
+}
+.mobile-nav-link {
+  color: #2d3748;
+  text-decoration: none;
+  padding: 16px 0;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 16px;
+  font-weight: 500;
+}
+.mobile-nav-link.router-link-exact-active {
+  color: #2563eb;
+}
+
+/* 移动端操作区 */
+.mobile-actions {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #edf2f7;
+}
+.mobile-btn {
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 500;
+}
+.mobile-user-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.mobile-user-name {
+  color: #2d3748;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 8px 0;
+}
+.mobile-btn-logout {
+  width: 100%;
+  background-color: #edf2f7;
+  color: #e53e3e;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 遮罩层 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+/* 响应式 */
 @media (max-width: 768px) {
-  /* ... 原有的移动端样式 ... */
+  .desktop-nav,
+  .desktop-actions {
+    display: none;
+  }
+  .mobile-menu-button {
+    display: block;
+  }
+  .mobile-nav-container {
+    display: block;
+  }
+  /* 汉堡菜单动画 */
+  .mobile-menu-button.open .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .mobile-menu-button.open .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .mobile-menu-button.open .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 }
 </style>

@@ -25,6 +25,7 @@ const routes = [
         path: 'login', // 普通用户的登录路径
         name: 'Login',
         component: AuthView,
+        // 【关键】告诉 AuthView 组件，现在是 'user' 模式
         props: { mode: 'user' }
       },
       // 【新增】用户个人中心路由
@@ -63,6 +64,7 @@ const routes = [
     path: '/admin/login',
     name: 'AdminLogin',
     component: AuthView,
+    // 【关键】告诉 AuthView 组件，现在是 'admin' 模式
     props: { mode: 'admin' }
   }
 ];
