@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.student.webproject.admin.dto.ActivityCreateDTO;
 import com.student.webproject.admin.entity.Activity;
-import com.student.webproject.admin.mapper.ActivityMapper;
+import com.student.webproject.admin.mapper.AdminActivityMapper;
 import com.student.webproject.admin.service.ActivityAdminService;
 import com.student.webproject.common.response.Result; // 1. 确保导入了 Result 类
 import org.springframework.stereotype.Service;
@@ -16,9 +16,9 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class ActivityAdminServiceImpl implements ActivityAdminService {
 
-    private final ActivityMapper activityMapper;
+    private final AdminActivityMapper activityMapper;
 
-    public ActivityAdminServiceImpl(ActivityMapper activityMapper) {
+    public ActivityAdminServiceImpl(AdminActivityMapper activityMapper) {
         this.activityMapper = activityMapper;
     }
 
@@ -71,7 +71,7 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
 
         // --- 【修改】错误处理 ---
         if (activityFromDB == null) {
-            // 直接抛出异常，而不是返回字符串
+            // 直接抛出异常，而不是返回字��串
             throw new RuntimeException("更新失败，找不到ID为 " + id + " 的活动。");
         }
 
