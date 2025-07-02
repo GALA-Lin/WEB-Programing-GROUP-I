@@ -11,6 +11,8 @@ import HomeView from '@/views/main/HomeView.vue';
 import ActivitiesView from '@/views/main/ActivitiesView.vue';
 import AuthView from '@/views/main/AuthView.vue'; // 统一的登录/注册视图
 import ActivityManagement from '@/views/admin/ActivityManagement.vue';
+import NewsView from '@/views/main/NewsView.vue';
+import NewsDetailView from '@/views/main/NewsDetailView.vue';
 
 const routes = [
   // --- 规则一：前台页面路由 ---
@@ -26,9 +28,20 @@ const routes = [
         name: 'Profile',
         component: () => import('@/views/main/ProfileView.vue'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'news', // 访问 /news 时
+        name: 'NewsList',
+        component: NewsView // 显示 NewsView 组件
+      },
+      {
+        path: 'news/:id', // 访问 /news/具体id 时
+        name: 'NewsDetail',
+        component: NewsDetailView // 显示 NewsDetailView 组件
       }
     ]
   },
+
   {
     path: '/login', // 【修改】路径变为绝对路径
     name: 'Login',
