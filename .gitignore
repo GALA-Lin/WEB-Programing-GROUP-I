@@ -36,3 +36,5 @@ volunteer-platform/.idea/
 .idea/workspace.xml
 volunteer-platform-vue/.vscode/
 
+package-lock.json
+

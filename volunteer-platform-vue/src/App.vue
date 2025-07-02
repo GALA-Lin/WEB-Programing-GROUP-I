@@ -1,28 +1,15 @@
 <template>
-  <div id="app">
-    <Navbar />
-    <main>
-      <router-view />
-    </main>
-    <Footer />
-  </div>
+  <router-view />
 </template>
 
 <script setup>
-import Navbar from './components/Navbar.vue'
-import Footer from './components/Footer.vue'
+// 不需要任何脚本
 </script>
 
 <style>
-#app {
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
+/* 在这里可以放一些全局的CSS样式，比如重置body的内外边距 */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 </style>
-    
