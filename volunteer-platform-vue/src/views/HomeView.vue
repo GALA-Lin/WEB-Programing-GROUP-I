@@ -7,7 +7,7 @@
           <p class="hero-subtitle">加入我们，一起为社区贡献力量，创造更美好的未来</p>
           <div class="hero-actions">
             <router-link to="/activities" class="btn-primary">浏览活动</router-link>
-            <router-link to="/login" class="btn-secondary">成为志愿者</router-link>
+            <router-link to="/register" class="btn-secondary">成为志愿者</router-link>
           </div>
         </div>
       </div>
