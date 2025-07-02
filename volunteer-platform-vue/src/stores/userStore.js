@@ -73,6 +73,27 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    /**
+     * 【新增】管理员登录
+     */
+    async function adminLogin(credentials) {
+        // 调用后端 /api/admin/auth/login 接口
+        const response = await apiClient.post('/api/admin/auth/login', credentials);
+        const responseData = response.data.data;
+
+        // 1. 保存 Token
+        token.value = responseData.token;
+        localStorage.setItem('token', responseData.token);
+
+        // 2. 更新axios的默认请求头
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${responseData.token}`;
+
+        // 3. 获取完整的用户信息
+        await fetchCurrentUser();
+
+        // 4. 跳转由 AuthView.vue 组件完成，这里不需要跳转
+    }
+
 
     /**
      * 退出登录
@@ -108,6 +129,7 @@ export const useUserStore = defineStore('user', () => {
         currentUser,
         isLoggedIn,
         isAdmin,
+        adminLogin,
         login,
         logout,
         fetchCurrentUser,     // 【新增】导出
