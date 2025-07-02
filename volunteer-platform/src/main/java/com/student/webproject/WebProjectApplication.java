@@ -5,7 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.student.webproject") // <-- 检查点：这里的包名是否完全正确？
+@MapperScan({
+        "com.student.webproject.**.mapper",
+        "com.student.webproject.news"
+})
 public class WebProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebProjectApplication.class, args);
