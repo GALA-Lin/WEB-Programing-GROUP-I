@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @Mapper 注解告诉 Spring Boot 和 MyBatis-Plus: "这是一个操作数据库的 Mapper 接口，请帮我实现它。"
  */
 @Mapper
-public interface ActivityMapper extends BaseMapper<Activity> {
+public interface AdminActivityMapper extends BaseMapper<Activity> {
 
     // 目前这里是空的
     // 通过继承 BaseMapper<Activity>，我们就自动拥有了对 Activity 实体的
