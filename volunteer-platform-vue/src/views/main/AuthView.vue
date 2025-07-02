@@ -1,198 +1,131 @@
 <template>
-  <div class="auth-page">
-    <main class="auth-content">
-      <div class="container">
-        <div class="auth-card">
-          <div class="auth-tabs">
+  <div class="auth-page-container">
+    <div class="background-shapes"></div>
+    <main class="auth-main-content">
+      <div class="auth-card-wrapper">
+        <div class="auth-showcase-panel">
+          <div class="showcase-content">
+            <div class="logo">
+              <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="油炬智愿 Logo" />
+              <h1>油炬智愿</h1>
+            </div>
+            <p class="showcase-quote">
+              一个专为中国石油大学师生打造的，志愿服务平台。
+            </p>
+          </div>
+          <div class="showcase-footer">
+            <p>© 2025 油炬智愿. All Rights Reserved.</p>
+          </div>
+        </div>
+
+        <div class="auth-form-panel">
+          <div class="form-header">
+            <h2 class="form-title">{{ title }}</h2>
+            <p class="form-subtitle">{{ subtitle }}</p>
+          </div>
+
+          <div v-if="!isAdminMode" class="auth-tabs">
             <button
                 :class="{ active: currentTab === 'login' }"
-                @click="currentTab = 'login'"
+                @click="switchTab('login')"
             >
               登录
             </button>
             <button
                 :class="{ active: currentTab === 'register' }"
-                @click="currentTab = 'register'"
+                @click="switchTab('register')"
             >
               注册
             </button>
           </div>
-          <div v-if="currentTab === 'login'" class="auth-form">
-            <h2 class="form-title">欢迎回来</h2>
-            <p class="form-subtitle">请登录您的账户</p>
 
-            <div class="form-group">
-              <label for="login-username">用户名</label>
-              <input
-                  type="text"
-                  id="login-username"
-                  placeholder="请输入您的用户名"
-                  v-model="loginForm.username"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="login-password">密码</label>
-              <input
-                  type="password"
-                  id="login-password"
-                  placeholder="请输入您的密码"
-                  v-model="loginForm.password"
-              />
-            </div>
-
-            <div class="form-group remember-me">
-              <div class="remember-me-group">
-                <input
-                    type="checkbox"
-                    id="remember-me"
-                    v-model="loginForm.rememberMe"
-                />
-                <label for="remember-me">记住我</label>
-              </div>
-              <a href="#" class="forgot-password">忘记密码?</a>
-            </div>
-
-            <p
-                v-if="errorMessage"
-                style="color: red; text-align: center; margin-bottom: 15px"
-            >
-              {{ errorMessage }}
-            </p>
-            <button class="submit-button" @click="handleLogin">
-              登录
-            </button>
-
-            <div class="social-login">
-              <p class="divider">
-                <span>或使用其他方式登录</span>
-              </p>
-              <div class="social-buttons">
-                <button class="social-button wechat">
-                  <img
-                      src="https://gitee.com/favicon.ico"
-                      alt="gitee"
-                      height="38px"
-                  />
+          <div class="form-container">
+            <transition name="form-slide" mode="out-in">
+              <div v-if="currentTab === 'login'" key="login" class="auth-form">
+                <div class="form-group">
+                  <label for="login-username">用户名</label>
+                  <input type="text" id="login-username" :placeholder="usernamePlaceholder" v-model="loginForm.username" />
+                </div>
+                <div class="form-group">
+                  <label for="login-password">密码</label>
+                  <input type="password" id="login-password" placeholder="请输入您的密码" v-model="loginForm.password" />
+                </div>
+                <div v-if="!isAdminMode" class="form-options">
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="remember-me" v-model="loginForm.rememberMe" />
+                    <label for="remember-me">记住我</label>
+                  </div>
+                  <a href="#" class="form-link">忘记密码?</a>
+                </div>
+                <p v-if="errorMessage" class="error-message">
+                  {{ errorMessage }}
+                </p>
+                <button class="submit-button" @click="handleLogin">
+                  <span v-if="isAdminMode">登 录</span>
+                  <span v-else>安全登录</span>
                 </button>
-                <button class="social-button qq">
-                  <img
-                      src="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg"
-                      alt="github"
-                      height="38px"
-                  />
+                <div v-if="!isAdminMode" class="social-login-divider">
+                  <span>或使用其他方式登录</span>
+                </div>
+                <div v-if="!isAdminMode" class="social-buttons">
+                  <button class="social-button gitee">
+                    <img src="https://gitee.com/favicon.ico" alt="Gitee 登录"/>
+                    <span>Gitee</span>
+                  </button>
+                  <button class="social-button github">
+                    <img src="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg" alt="Github 登录" />
+                    <span>GitHub</span>
+                  </button>
+                </div>
+              </div>
+
+              <div v-else-if="currentTab === 'register' && !isAdminMode" key="register" class="auth-form is-register">
+                <div class="form-group">
+                  <label for="register-username">用户名</label>
+                  <input type="text" id="register-username" placeholder="建议使用学号" v-model="registerForm.username" />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="register-realname">真实姓名</label>
+                    <input type="text" id="register-realname" placeholder="请输入您的姓名" v-model="registerForm.realName" />
+                  </div>
+                  <div class="form-group">
+                    <label for="register-studentid">学号</label>
+                    <input type="text" id="register-studentid" placeholder="请输入您的学号" v-model="registerForm.studentId" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="register-email">邮箱</label>
+                  <input type="email" id="register-email" placeholder="用于接收重要通知" v-model="registerForm.email" />
+                </div>
+                <div class="form-group">
+                  <label for="register-password">设置密码</label>
+                  <input type="password" id="register-password" placeholder="至少8位，包含字母和数字" v-model="registerForm.password" />
+                </div>
+                <div class="form-group">
+                  <label for="register-confirm-password">确认密码</label>
+                  <input type="password" id="register-confirm-password" placeholder="请再次输入密码" v-model="registerForm.confirmPassword" />
+                </div>
+                <div class="terms-agreement">
+                  <input type="checkbox" id="terms" v-model="registerForm.terms" />
+                  <label for="terms">我已阅读并同意<a href="#" class="form-link">服务条款</a>和<a href="#" class="form-link">隐私政策</a></label>
+                </div>
+                <p v-if="errorMessage" class="error-message">
+                  {{ errorMessage }}
+                </p>
+                <button class="submit-button" @click="handleRegister" :disabled="!registerForm.terms">
+                  立即注册
                 </button>
               </div>
-            </div>
+            </transition>
           </div>
 
-          <div v-if="currentTab === 'register'" class="auth-form">
-            <h2 class="form-title">创建新账户</h2>
-            <p class="form-subtitle">请填写以下信息完成注册</p>
-            <div class="form-group">
-              <label for="register-username">用户名</label>
-              <input
-                  type="text"
-                  id="register-username"
-                  placeholder="请输入您的用户名"
-                  v-model="registerForm.username"
-              />
-            </div>
-            <div class="form-group">
-              <label for="register-realname">真实姓名</label>
-              <input
-                  type="text"
-                  id="register-realname"
-                  placeholder="请输入您的姓名"
-                  v-model="registerForm.realName"
-              />
-            </div>
-            <div class="form-group">
-              <label for="register-studentid">学号</label>
-              <input
-                  type="text"
-                  id="register-studentid"
-                  placeholder="请输入您的学号"
-                  v-model="registerForm.studentId"
-              />
-            </div>
-            <div class="form-group">
-              <label for="register-email">邮箱</label>
-              <input
-                  type="email"
-                  id="register-email"
-                  placeholder="请输入您的邮箱"
-                  v-model="registerForm.email"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="register-password">密码</label>
-              <input
-                  type="password"
-                  id="register-password"
-                  placeholder="请设置密码"
-                  v-model="registerForm.password"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="register-confirm-password">确认密码</label>
-              <input
-                  type="password"
-                  id="register-confirm-password"
-                  placeholder="请再次输入密码"
-                  v-model="registerForm.confirmPassword"
-              />
-            </div>
-
-            <div class="form-group terms">
-              <input type="checkbox" id="terms" v-model="registerForm.terms" />
-              <label for="terms"
-              >我已阅读并同意<a href="#">服务条款</a>和<a href="#"
-              >隐私政策</a
-              ></label
-              >
-            </div>
-            <p
-                v-if="errorMessage"
-                style="color: red; text-align: center; margin-bottom: 15px"
-            >
-              {{ errorMessage }}
-            </p>
-            <button
-                class="submit-button"
-                @click="handleRegister"
-                :disabled="!registerForm.terms"
-            >
-              注册
-            </button>
-
-            <div class="social-login">
-              <p class="divider">
-                <span>或使用其他方式注册</span>
-              </p>
-              <div class="social-buttons">
-                <button class="social-button wechat">
-                  <img
-                      src="https://gitee.com/favicon.ico"
-                      alt="gitee"
-                      height="38px"
-                  />
-                </button>
-                <button class="social-button qq">
-                  <img
-                      src="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg"
-                      alt="github"
-                      height="38px"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="admin-login-entry">
-            <router-link to="/admin/login">
-              &raquo; 进入后台管理登录
+          <div class="switch-mode-footer">
+            <router-link v-if="!isAdminMode" to="/admin/login" class="form-link subtle">
+              进入后台管理
+            </router-link>
+            <router-link v-else to="/login" class="form-link subtle">
+              返回普通用户登录
             </router-link>
           </div>
         </div>
@@ -202,10 +135,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore.js";
 import apiClient from "@/api/axios.js";
+
+// Props definition
+const props = defineProps({
+  mode: {
+    type: String,
+    default: 'user',
+    validator: (value) => ['user', 'admin'].includes(value)
+  }
+});
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -213,7 +155,20 @@ const userStore = useUserStore();
 const currentTab = ref("login");
 const errorMessage = ref("");
 
-// --- 登录逻辑 ---
+const isAdminMode = computed(() => props.mode === 'admin');
+
+// Dynamic UI Text
+const title = computed(() => {
+  if (isAdminMode.value) return '后台管理系统';
+  return currentTab.value === 'login' ? '欢迎回来!' : '创建您的账户';
+});
+const subtitle = computed(() => {
+  if (isAdminMode.value) return '仅限授权管理员登录';
+  return currentTab.value === 'login' ? '很高兴再次见到您。' : '开启您的志愿服务之旅。';
+});
+const usernamePlaceholder = computed(() => isAdminMode.value ? '请输入管理员用户名' : '请输入您的用户名/学号');
+
+// Login Logic
 const loginForm = ref({
   username: "",
   password: "",
@@ -223,359 +178,448 @@ const loginForm = ref({
 const handleLogin = async () => {
   errorMessage.value = "";
   try {
-    await userStore.login(loginForm.value);
-    alert("登录成功！");
-    router.push("/");
+    const loginPayload = { username: loginForm.value.username, password: loginForm.value.password };
+    if (isAdminMode.value) {
+      await userStore.adminLogin(loginPayload);
+      await router.push("/admin/activities");
+    } else {
+      await userStore.login(loginPayload);
+      await router.push("/");
+    }
   } catch (error) {
-    errorMessage.value =
-        error.response?.data?.message || "登录失败，请检查您的用户名和密码。";
-    console.error("登录失败:", error);
+    errorMessage.value = error.response?.data?.message || `登录认证失败，请检查您的凭据。`;
+    console.error("Login failed:", error);
   }
 };
 
-// --- 注册逻辑 ---
+// Registration Logic
 const registerForm = ref({
-  username: "",
-  realName: "",
-  studentId: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  terms: false,
+  username: "", realName: "", studentId: "", email: "",
+  password: "", confirmPassword: "", terms: false,
 });
 
 const handleRegister = async () => {
   errorMessage.value = "";
-  const { username, realName, studentId, email, password, confirmPassword } =
-      registerForm.value;
-
-  if (!username || !realName || !studentId || !email || !password) {
-    errorMessage.value = "所有项目均为必填项，请填写完整！";
-    return;
-  }
+  const { password, confirmPassword } = registerForm.value;
 
   if (password !== confirmPassword) {
     errorMessage.value = "两次输入的密码不一致！";
     return;
   }
 
+  if (!registerForm.value.username || !registerForm.value.realName || !registerForm.value.studentId || !registerForm.value.email || !registerForm.value.password) {
+    errorMessage.value = "所有字段均为必填项。";
+    return;
+  }
+
   try {
     const response = await apiClient.post("/api/auth/register", {
-      realName: realName,
-      studentId: studentId,
-      username: username,
-      email: email,
-      password: password,
+      username: registerForm.value.username,
+      realName: registerForm.value.realName,
+      studentId: registerForm.value.studentId,
+      email: registerForm.value.email,
+      password: registerForm.value.password,
     });
-
     if (response.data.code === 201) {
-      alert("注册成功！请前往登录。");
-      currentTab.value = "login";
+      alert("注册成功！现在您可以登录了。");
+      switchTab("login");
+      Object.keys(registerForm.value).forEach(key => {
+        registerForm.value[key] = typeof registerForm.value[key] === 'boolean' ? false : '';
+      });
     }
   } catch (error) {
-    errorMessage.value =
-        error.response?.data?.message || "注册失败，请稍后重试。";
-    console.error("注册失败:", error);
+    errorMessage.value = error.response?.data?.message || "注册失败，该用户可能已被注册。";
+    console.error("Registration failed:", error);
   }
 };
+
+const switchTab = (tab) => {
+  currentTab.value = tab;
+  errorMessage.value = '';
+}
 </script>
 
 <style scoped>
-.auth-page {
+/* ===== 全局样式与背景 ===== */
+.auth-page-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4f6f8;
-  padding: 40px;
-}
-
-.container {
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.auth-card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
 }
 
-.auth-tabs {
+.background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+      radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.1), transparent 30%),
+      radial-gradient(circle at 85% 20%, rgba(34, 197, 94, 0.1), transparent 30%);
+  z-index: 1;
+}
+
+/* ===== 主卡片布局 ===== */
+.auth-main-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
   display: flex;
-  border-bottom: 1px solid #e0e0e0;
+  justify-content: center;
 }
 
-.auth-tabs button {
-  flex: 1;
-  padding: 16px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #555;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease;
+.auth-card-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  min-height: 680px;
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
 }
 
-.auth-tabs button.active {
-  color: #1890ff;
-  border-bottom: 2px solid #1890ff;
+/* ===== 左侧展示面板 ===== */
+.auth-showcase-panel {
+  display: none;
+  background: linear-gradient(145deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  padding: 3rem;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.auth-form {
-  padding: 30px;
+.showcase-content .logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.showcase-content .logo img {
+  width: 50px;
+  height: 50px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+.showcase-content .logo h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.showcase-quote {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  opacity: 0.9;
+  max-width: 400px;
+}
+
+.showcase-footer {
+  font-size: 0.875rem;
+  opacity: 0.6;
+}
+
+/* ===== 右侧表单面板 ===== */
+.auth-form-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.form-header {
+  text-align: left;
+  margin-bottom: 1.5rem;
 }
 
 .form-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
 }
 
 .form-subtitle {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 25px;
-  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ===== 登录/注册切换标签 ===== */
+.auth-tabs {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.auth-tabs button {
+  padding: 0.75rem 0.25rem;
+  margin-right: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.auth-tabs button::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #3b82f6;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.auth-tabs button.active {
+  color: #1d4ed8;
+}
+
+.auth-tabs button.active::after {
+  transform: scaleX(1);
+}
+
+/* ===== 表单容器与动画 ===== */
+.form-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.auth-form.is-register {
+  gap: 0.8rem;
+}
+
+/* ===== 表单组与输入框 ===== */
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-row .form-group {
+  flex: 1;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem; /* 为注册表单项添加一些垂直间距 */
 }
 
 .form-group label {
-  display: block;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
+  color: #374151;
+  margin-bottom: 0.3rem;
 }
 
-.form-group input {
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"] {
   width: 100%;
-  padding: 12px 15px;
-  font-size: 14px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  transition: border-color 0.3s ease;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background-color: #fff;
 }
 
-/* 文件路径: src/views/LoginPage.vue -> <style scoped> */
-
-/*
-  这是整行的样式
-  用 flex 和 space-between 把“记住我组合”和“忘记密码”推向两端
-*/
-.remember-me {
+/* ===== 表单选项与链接 ===== */
+.form-options {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-top: 15px;
-  font-size: 13px;
-  color: #555;
+  align-items: center;
+  font-size: 0.875rem;
 }
 
-/*
-  这是“记住我”组合的样式
-  【核心】同样使用 flex 和 align-items: center 来确保内部元素垂直居中
-*/
-.remember-me-group {
+.checkbox-group, .terms-agreement {
   display: flex;
-  align-items: center; /* 确保复选框和文字垂直对齐 */
-  gap: 6px; /* 控制复选框和文字之间的间距 */
+  flex-direction: row; /* ★★★ 关键修复 ★★★ */
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem; /* 为协议行增加一点上边距 */
 }
 
-/*
-  让文字标签在点击时显示手型光标，提升用户体验
-  并确保它没有额外的内外边距影响对齐
-*/
-.remember-me-group label {
-  cursor: pointer;
+.checkbox-group label, .terms-agreement label {
+  color: #4b5563;
   margin: 0;
-  padding: 0;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 1.5;
 }
 
-/*
-  确保复选框本身也没有额外的内外边距
-*/
-.remember-me input {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-}
-
-/* “忘记密码”链接的样式 */
-.forgot-password {
-  color: #1890ff;
-  text-decoration: none;
-}
-
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
-.forgot-password {
-  color: #1890ff;
-  text-decoration: none;
-}
-
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
-/* 文件路径: src/views/LoginPage.vue -> <style scoped> */
-
-/*
-  【核心】
-  使用 flex 和 align-items: center 来确保复选框和整段文字垂直居中对齐
-*/
-.terms {
-  display: flex;
-  align-items: center; /* 垂直居中对齐 */
-  gap: 8px;          /* 在复选框和文字之间创建一个8px的间距 */
-  margin-top: 15px;
-  font-size: 13px;
-  color: #555;
-}
-
-/*
-  清理 label 和 input 的默认边距，防止它们影响对齐
-*/
-.terms label,
-.terms input {
-  margin: 0;
-  padding: 0;
-}
-
-/*
-  让<label>元素在被点击时也能触发复选框，并显示手型光标
-*/
-.terms label {
-  cursor: pointer;
-}
-
-/* 给复选框也加上手型光标 */
-.terms input {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  /* 【重要】由于 flex 布局，input会尝试收缩，
-     设置 flex-shrink: 0; 可以防止这种情况，保持其原始大小 */
+.checkbox-group input, .terms-agreement input {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
-/* “服务条款”和“隐私政策”链接的样式 */
-.terms a {
-  color: #1890ff;
+.form-link {
+  color: #3b82f6;
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
 }
-
-.terms a:hover {
+.form-link:hover {
+  color: #1d4ed8;
   text-decoration: underline;
 }
 
+/* ===== 提交按钮 ===== */
 .submit-button {
   width: 100%;
-  padding: 12px 15px;
-  background-color: #1890ff;
-  color: white;
-  font-size: 16px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(to right, #3b82f6, #2563eb);
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 25px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 0.75rem;
 }
 
 .submit-button:hover {
-  background-color: #0c7cd5;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px -5px rgba(59, 130, 246, 0.4);
 }
-
 .submit-button:disabled {
-  background-color: #ccc;
+  background: #9ca3af;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.social-login {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.divider {
+/* ===== 第三方登录 ===== */
+.social-login-divider {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  color: #999;
-  font-size: 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin: 0.25rem 0;
 }
-
-.divider::before,
-.divider::after {
-  content: "";
+.social-login-divider::before,
+.social-login-divider::after {
+  content: '';
   flex: 1;
-  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e5e7eb;
 }
-
-.divider span {
-  padding: 0 15px;
-}
+.social-login-divider:not(:empty)::before { margin-right: .5em; }
+.social-login-divider:not(:empty)::after { margin-left: .5em; }
 
 .social-buttons {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  gap: 1rem;
 }
 
 .social-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: #777;
-  border: none;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.social-button:hover {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.admin-login-entry {
-  text-align: center;
-  padding: 20px 30px;
-  border-top: 1px solid #e0e0e0;
-  margin-top: 10px;
-}
-
-.admin-login-entry a {
-  color: #555;
-  text-decoration: none;
+  font-size: 0.9rem;
   font-weight: 500;
-  transition: color 0.3s;
+  transition: all 0.2s;
+}
+.social-button:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+.social-button img {
+  width: 20px;
+  height: 20px;
 }
 
-.admin-login-entry a:hover {
-  color: #1890ff;
-  text-decoration: underline;
+/* ===== 底部与错误提示 ===== */
+.switch-mode-footer {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.form-link.subtle {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+.form-link.subtle:hover {
+  color: #111827;
+}
+
+.error-message {
+  color: #c81e1e;
+  background-color: #fee2e2;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 0.25rem 0;
+}
+
+/* ===== 动画效果 ===== */
+.form-slide-enter-active, .form-slide-leave-active {
+  transition: opacity 0.2s, transform 0.2s ease-out;
+}
+.form-slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.form-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* ===== 响应式设计 (桌面端) ===== */
+@media (min-width: 1024px) {
+  .auth-form-panel {
+    padding: 2.5rem 3.5rem;
+  }
+  .auth-card-wrapper {
+    grid-template-columns: 4fr 5fr;
+  }
+  .auth-showcase-panel {
+    display: flex;
+  }
 }
 </style>

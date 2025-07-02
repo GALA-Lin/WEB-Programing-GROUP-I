@@ -1,14 +1,10 @@
 package com.student.webproject.activity.entity;
 
-import jakarta.persistence.*;
+// import jakarta.persistence.*; // 移除JPA注解导入
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "activities")
 public class Activity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;

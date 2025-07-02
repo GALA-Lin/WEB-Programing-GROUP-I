@@ -5,7 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.student.webproject") // <-- 检查点：这里的包名是否完全正确？
+@MapperScan({
+    "com.student.webproject.activity.mapper",
+    "com.student.webproject.admin.mapper",
+    "com.student.webproject.news",
+    "com.student.webproject.user.mapper"
+}) // 同时扫描activity和admin的mapper
 public class WebProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebProjectApplication.class, args);

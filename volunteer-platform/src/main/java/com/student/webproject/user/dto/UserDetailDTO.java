@@ -12,5 +12,5 @@ public class UserDetailDTO {
     private String studentId;
     private String avatarUrl;
     private String role;
-    private Double totalServiceHours; // API文档要求包含此字段
+    private Double totalServiceHours;
 }
