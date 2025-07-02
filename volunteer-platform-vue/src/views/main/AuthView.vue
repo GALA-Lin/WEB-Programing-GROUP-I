@@ -212,25 +212,22 @@ const handleRegister = async () => {
     return;
   }
 
-  try {
-    const response = await apiClient.post("/api/auth/register", {
-      username: registerForm.value.username,
-      realName: registerForm.value.realName,
-      studentId: registerForm.value.studentId,
-      email: registerForm.value.email,
-      password: registerForm.value.password,
-    });
-    if (response.data.code === 201) {
-      alert("注册成功！现在您可以登录了。");
-      switchTab("login");
-      Object.keys(registerForm.value).forEach(key => {
-        registerForm.value[key] = typeof registerForm.value[key] === 'boolean' ? false : '';
-      });
-    }
-  } catch (error) {
-    errorMessage.value = error.response?.data?.message || "注册失败，该用户可能已被注册。";
-    console.error("Registration failed:", error);
-  }
+// 我们不再需要关心返回的具体内容，只要没报错就是成功
+  await apiClient.post("/api/auth/register", {
+    username: registerForm.value.username,
+    realName: registerForm.value.realName,
+    studentId: registerForm.value.studentId,
+    email: registerForm.value.email,
+    password: registerForm.value.password,
+  });
+
+  // 【关键修改】如果代码能执行到这里，就说明上面的 await 成功了。
+  // 直接执行成功后的逻辑，不再需要 if 判断。
+  alert("注册成功！现在您可以登录了。");
+  switchTab("login");
+  Object.keys(registerForm.value).forEach(key => {
+    registerForm.value[key] = typeof registerForm.value[key] === 'boolean' ? false : '';
+  });
 };
 
 const switchTab = (tab) => {
