@@ -1,6 +1,8 @@
 package com.student.webproject.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,8 +20,9 @@ public class Activity {
     // 注意：这里的属性名使用小驼峰命名法 (camelCase)
     // MyBatis-Plus 会自动将它映射到数据库表的蛇形命名法 (snake_case)
     // 例如：coverImageUrl 会自动对应 cover_image_url
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
     private String title;
     private String description;
     private String coverImageUrl;
