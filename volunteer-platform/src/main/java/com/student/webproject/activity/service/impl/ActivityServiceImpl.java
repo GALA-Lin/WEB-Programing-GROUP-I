@@ -3,10 +3,11 @@ package com.student.webproject.activity.service.impl;
 import com.student.webproject.activity.dto.ActivityListResponse;
 import com.student.webproject.activity.dto.ActivityDetailResponse;
 import com.student.webproject.activity.service.ActivityService;
-import com.student.webproject.activity.entity.Activity;
+import com.student.webproject.admin.entity.Activity;
 import com.student.webproject.activity.entity.Enrollment;
-import com.student.webproject.activity.mapper.ActivityMapper;
+import com.student.webproject.admin.mapper.AdminActivityMapper;
 import com.student.webproject.activity.mapper.EnrollmentMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,11 @@ import java.util.List;
 @Service
 public class ActivityServiceImpl implements ActivityService {
 
-    private final ActivityMapper activityMapper;
+    @Autowired
+    private AdminActivityMapper activityMapper;
     private final EnrollmentMapper enrollmentMapper;
 
-    public ActivityServiceImpl(ActivityMapper activityMapper, EnrollmentMapper enrollmentMapper) {
+    public ActivityServiceImpl(AdminActivityMapper activityMapper, EnrollmentMapper enrollmentMapper) {
         this.activityMapper = activityMapper;
         this.enrollmentMapper = enrollmentMapper;
         if (activityMapper == null || enrollmentMapper == null) {
