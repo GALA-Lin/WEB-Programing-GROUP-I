@@ -19,6 +19,17 @@
         </div>
 
         <div class="auth-form-panel">
+          <div class="top-navigation">
+            <router-link to="/" class="nav-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              <span>返回首页</span>
+            </router-link>
+            <button @click="goBack" class="nav-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 8 8 12 12 16"></polyline><line x1="16" y1="12" x2="8" y2="12"></line></svg>
+              <span>返回上一页</span>
+            </button>
+          </div>
+
           <div class="form-header">
             <h2 class="form-title">{{ title }}</h2>
             <p class="form-subtitle">{{ subtitle }}</p>
@@ -157,6 +168,12 @@ const errorMessage = ref("");
 
 const isAdminMode = computed(() => props.mode === 'admin');
 
+// 2. 新增：返回上一页的方法
+const goBack = () => {
+  router.go(-1);
+};
+
+
 // Dynamic UI Text
 const title = computed(() => {
   if (isAdminMode.value) return '后台管理系统';
@@ -212,7 +229,6 @@ const handleRegister = async () => {
     return;
   }
 
-// 我们不再需要关心返回的具体内容，只要没报错就是成功
   await apiClient.post("/api/auth/register", {
     username: registerForm.value.username,
     realName: registerForm.value.realName,
@@ -221,8 +237,6 @@ const handleRegister = async () => {
     password: registerForm.value.password,
   });
 
-  // 【关键修改】如果代码能执行到这里，就说明上面的 await 成功了。
-  // 直接执行成功后的逻辑，不再需要 if 判断。
   alert("注册成功！现在您可以登录了。");
   switchTab("login");
   Object.keys(registerForm.value).forEach(key => {
@@ -332,11 +346,44 @@ const switchTab = (tab) => {
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  position: relative; /* 为导航按钮定位 */
 }
+
+/* 3. 新增导航按钮样式 */
+.top-navigation {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid transparent;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
 
 .form-header {
   text-align: left;
   margin-bottom: 1.5rem;
+  margin-top: 3rem; /* 为顶部导航留出空间 */
 }
 
 .form-title {
@@ -422,7 +469,7 @@ const switchTab = (tab) => {
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.5rem; /* 为注册表单项添加一些垂直间距 */
+  margin-bottom: 0.5rem;
 }
 
 .form-group label {
@@ -462,10 +509,9 @@ const switchTab = (tab) => {
 
 .checkbox-group, .terms-agreement {
   display: flex;
-  flex-direction: row; /* ★★★ 关键修复 ★★★ */
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.5rem; /* 为协议行增加一点上边距 */
+  margin-top: 0.5rem;
 }
 
 .checkbox-group label, .terms-agreement label {
@@ -619,4 +665,16 @@ const switchTab = (tab) => {
     display: flex;
   }
 }
+
+@media (max-width: 480px) {
+  .top-navigation {
+    position: static;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+  }
+  .form-header {
+    margin-top: 1rem;
+  }
+}
+
 </style>
