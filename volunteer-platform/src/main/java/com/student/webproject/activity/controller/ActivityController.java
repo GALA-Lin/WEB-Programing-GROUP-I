@@ -42,7 +42,12 @@ public class ActivityController {
     // 3. 修改：报名活动接口
     @PostMapping("/{id}/enroll")
     public ResponseEntity<?> enroll(@PathVariable Long id, Principal principal) {
-        // 如果 principal 为 null，说明用户未登录，Spring Security会拒绝请求，我们无需处理
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new java.util.HashMap<String, Object>() {{
+                put("code", 401);
+                put("message", "未登录，无��报名");
+            }});
+        }
         String currentUsername = principal.getName();
         activityService.enrollActivity(id, currentUsername);
         return ResponseEntity.ok().body(new java.util.HashMap<String, Object>() {{
@@ -54,6 +59,12 @@ public class ActivityController {
     // 4. 修改：取消报名接口
     @DeleteMapping("/{id}/enroll")
     public ResponseEntity<?> unenroll(@PathVariable Long id, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new java.util.HashMap<String, Object>() {{
+                put("code", 401);
+                put("message", "未登录，无法取消报名");
+            }});
+        }
         String currentUsername = principal.getName();
         activityService.unenrollActivity(id, currentUsername);
         return ResponseEntity.ok().body(new java.util.HashMap<String, Object>() {{
