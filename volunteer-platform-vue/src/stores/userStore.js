@@ -14,7 +14,7 @@ export const useUserStore = defineStore('user', () => {
 
     // --- Getters (计算属性) ---
     const isLoggedIn = computed(() => !!token.value);
-    const isAdmin = computed(() => currentUser.value?.role === 'admin'); // 根据你的角色设定调整
+    const isAdmin = computed(() => currentUser.value?.role === 'admin' || currentUser.value?.role === 'super_admin');
 
     // --- Actions (方法) ---
 
