@@ -4,6 +4,7 @@
       <h3>后台管理系统</h3>
       <ul>
         <li><router-link to="/admin/activities">活动管理</router-link></li>
+        <li><router-link to="/admin/users">用户管理</router-link></li>
       </ul>
     </aside>
     <main class="admin-main-content">

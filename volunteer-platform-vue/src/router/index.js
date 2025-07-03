@@ -62,7 +62,14 @@ const routes = [
         path: 'activities',
         name: 'AdminActivityManagement',
         component: ActivityManagement
+      },
+
+      {
+        path: 'users',
+        name: 'AdminUserManagement',
+        component: () => import('@/views/admin/UserManagement.vue') // 懒加载组件
       }
+
       // 未来可以添加更多后台管理页面...
     ]
   },
