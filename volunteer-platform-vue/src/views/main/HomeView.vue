@@ -38,18 +38,23 @@
 
     <section class="recent-activities">
       <div class="container">
-        <h2 class="section-title">近期热门活动</h2>
-        <div class="activities-grid">
+        <h2 class="section-title">近期活动</h2>
+
+        <div v-if="loading" class="loading-state">正在加载活动...</div>
+        <div v-if="error" class="error-state">{{ error }}</div>
+
+        <div v-if="!loading && !error" class="activities-grid">
           <div class="activity-card" v-for="activity in recentActivities" :key="activity.id">
-            <img :src="activity.image" alt="活动图片" class="activity-image">
+            <img :src="activity.coverImageUrl || 'https://picsum.photos/id/1002/600/400'" alt="活动图片" class="activity-image">
             <div class="activity-content">
               <h3 class="activity-title">{{ activity.title }}</h3>
-              <p class="activity-date">{{ activity.date }}</p>
+              <p class="activity-date">{{ activity.startTime }}</p>
               <p class="activity-location">{{ activity.location }}</p>
               <router-link :to="`/activities/${activity.id}`" class="btn-view">查看详情</router-link>
             </div>
           </div>
         </div>
+
         <div class="view-all">
           <router-link to="/activities" class="btn-view-all">查看全部活动</router-link>
         </div>
@@ -79,41 +84,48 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-// 1. 导入用户状态管理 store
+import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { storeToRefs } from 'pinia';
+// 1. 导入新创建的API服务
+import { getPublicActivities } from '@/services/publicActivityApi.js';
 
-// 2. 初始化 store 并获取登录状态
 const userStore = useUserStore();
 const { isLoggedIn } = storeToRefs(userStore);
 
+// 2. 定义加载和错误状态
+const recentActivities = ref([]);
+const loading = ref(true);
+const error = ref(null);
 
-// 模拟数据
-const recentActivities = ref([
-  {
-    id: 1,
-    title: "社区环保清洁日",
-    date: "2023-06-15",
-    location: "城市公园",
-    image: "https://picsum.photos/id/1002/600/400"
-  },
-  {
-    id: 2,
-    title: "儿童阅读推广",
-    date: "2023-06-20",
-    location: "市图书馆",
-    image: "https://picsum.photos/id/20/600/400"
-  },
-  {
-    id: 3,
-    title: "敬老院关爱活动",
-    date: "2023-06-25",
-    location: "夕阳红敬老院",
-    image: "https://picsum.photos/id/1003/600/400"
+// 3. 定义获取活动数据的方法
+const fetchRecentActivities = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    // 调用API，只获取第一页的3条数据作为热门活动
+    const response = await getPublicActivities(1, 3);
+    if (response && response.list) {
+      recentActivities.value = response.list;
+    } else {
+      // 如果API没有返回预期的格式，也设置一个错误提示
+      error.value = '无法加载活动数据，格式不正确。';
+    }
+  } catch (err) {
+    console.error('获取热门活动失败:', err);
+    error.value = '加载热门活动失败，请稍后再试。';
+  } finally {
+    loading.value = false;
   }
-]);
+};
 
+// 4. 在组件挂载时调用该方法
+onMounted(() => {
+  fetchRecentActivities();
+});
+
+
+// 模拟数据 (testimonials 保持不变)
 const testimonials = ref([
   {
     id: 1,
@@ -167,12 +179,6 @@ const testimonials = ref([
   gap: 20px;
 }
 
-
-
-.btn-primary:hover {
-  background-color: #f1f5f9;
-}
-.btn-primary,
 .btn-secondary {
   background-color: white;
   color: #2563eb;
@@ -183,11 +189,9 @@ const testimonials = ref([
   font-weight: 600;
   transition: background-color 0.2s;
 }
-.btn-primary:hover,
 .btn-secondary:hover {
   background-color: rgba(90, 90, 90, 0.8);
 }
-
 .features {
   padding: 80px 0;
   background-color: #f8fafc;
@@ -247,6 +251,18 @@ const testimonials = ref([
 
 .recent-activities {
   padding: 80px 0;
+}
+
+.loading-state, .error-state {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+.error-state {
+  color: #ef4444;
+  background-color: #fef2f2;
+  border-radius: 8px;
 }
 
 .activities-grid {

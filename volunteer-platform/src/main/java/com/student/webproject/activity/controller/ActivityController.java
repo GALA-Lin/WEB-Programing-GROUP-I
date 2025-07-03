@@ -3,6 +3,8 @@ package com.student.webproject.activity.controller;
 import com.student.webproject.activity.dto.ActivityListResponse;
 import com.student.webproject.activity.dto.ActivityDetailResponse;
 import com.student.webproject.activity.service.ActivityService;
+// 1. 导入 Principal
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ public class ActivityController {
         this.activityService = activityService;
     }
 
-    // 查询活动列表
+    // 查询活动列表 (此接口通常是公开的，可以暂时不修改)
     @GetMapping
     public ActivityListResponse getActivities(
             @RequestParam(defaultValue = "1") int page,
@@ -29,34 +31,37 @@ public class ActivityController {
         return activityService.getActivities(page, pageSize, category);
     }
 
-    // 查询活动详情
+    // 2. 修改：查询活动详情接口
     @GetMapping("/{id}")
-    public ActivityDetailResponse getActivity(@PathVariable Long id, @RequestParam String currentUserId) {
-        return activityService.getActivityById(id, currentUserId);
+    public ActivityDetailResponse getActivity(@PathVariable Long id, Principal principal) {
+        // Principal 对象包含了当前登录用户的信息。如果用户未登录，它会是 null。
+        String currentUsername = (principal != null) ? principal.getName() : null;
+        return activityService.getActivityById(id, currentUsername);
     }
 
-    // 报名活动
+    // 3. 修改：报名活动接口
     @PostMapping("/{id}/enroll")
-    public ResponseEntity<?> enroll(@PathVariable Long id, @RequestParam String currentUserId) {
-        activityService.enrollActivity(id, currentUserId);
-        // 返回标准JSON格式
+    public ResponseEntity<?> enroll(@PathVariable Long id, Principal principal) {
+        // 如果 principal 为 null，说明用户未登录，Spring Security会拒绝请求，我们无需处理
+        String currentUsername = principal.getName();
+        activityService.enrollActivity(id, currentUsername);
         return ResponseEntity.ok().body(new java.util.HashMap<String, Object>() {{
             put("code", 200);
             put("message", "报名成功");
         }});
     }
 
-    // 取消报名
+    // 4. 修改：取消报名接口
     @DeleteMapping("/{id}/enroll")
-    public ResponseEntity<?> unenroll(@PathVariable Long id, @RequestParam String currentUserId) {
-        activityService.unenrollActivity(id, currentUserId);
+    public ResponseEntity<?> unenroll(@PathVariable Long id, Principal principal) {
+        String currentUsername = principal.getName();
+        activityService.unenrollActivity(id, currentUsername);
         return ResponseEntity.ok().body(new java.util.HashMap<String, Object>() {{
             put("code", 200);
             put("message", "取消报名成功");
         }});
     }
 
-    // 统一处理业务异常，返回JSON格式
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
         java.util.Map<String, Object> body = new java.util.HashMap<>();

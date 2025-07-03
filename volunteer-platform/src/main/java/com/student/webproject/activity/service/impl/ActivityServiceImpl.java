@@ -1,10 +1,13 @@
 package com.student.webproject.activity.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper; // 导入QueryWrapper
 import com.student.webproject.activity.dto.ActivityListResponse;
 import com.student.webproject.activity.dto.ActivityDetailResponse;
 import com.student.webproject.activity.service.ActivityService;
 import com.student.webproject.admin.entity.Activity;
 import com.student.webproject.activity.entity.Enrollment;
+import com.student.webproject.user.Entity.User; // 导入User实体
+import com.student.webproject.user.mapper.UserMapper; // 导入UserMapper
 import com.student.webproject.admin.mapper.AdminActivityMapper;
 import com.student.webproject.activity.mapper.EnrollmentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +23,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private AdminActivityMapper activityMapper;
-    private final EnrollmentMapper enrollmentMapper;
+    @Autowired
+    private EnrollmentMapper enrollmentMapper;
+    @Autowired
+    private UserMapper userMapper; // 注入UserMapper
 
-    public ActivityServiceImpl(AdminActivityMapper activityMapper, EnrollmentMapper enrollmentMapper) {
-        this.activityMapper = activityMapper;
-        this.enrollmentMapper = enrollmentMapper;
-        if (activityMapper == null || enrollmentMapper == null) {
-            throw new IllegalArgumentException("Mappers cannot be null");
-        }
-    }
+    // ... （构造函数可以简化或移除，因为我们用了@Autowired）
 
     @Override
     public ActivityListResponse getActivities(int page, int pageSize, String category) {
@@ -56,28 +56,23 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ActivityDetailResponse getActivityById(Long id, String currentUserId) {
-        if (id == null) {
-            ActivityDetailResponse response = new ActivityDetailResponse();
-            response.setCode(400);
-            response.setMessage("Invalid activity ID");
-            return response;
-        }
+    public ActivityDetailResponse getActivityById(Long id, String currentUsername) {
         Activity activity = activityMapper.selectById(id);
         if (activity == null) {
-            ActivityDetailResponse response = new ActivityDetailResponse();
-            response.setCode(404);
-            response.setMessage("Activity not found");
-            return response;
+            throw new RuntimeException("Activity not found");
         }
+
         ActivityDetailResponse response = new ActivityDetailResponse();
         response.setCode(200);
         response.setMessage("Success");
         ActivityDetailResponse.Data data = new ActivityDetailResponse.Data();
         mapToActivityData(activity, data);
+
         boolean isEnrolled = false;
-        if (isNumeric(currentUserId)) {
-            isEnrolled = enrollmentMapper.existsByUserIdAndActivityId(Long.valueOf(currentUserId), id);
+        // 如果用户名不为空（即用户已登录），则检查报名状态
+        if (currentUsername != null) {
+            User user = findUserByUsername(currentUsername);
+            isEnrolled = enrollmentMapper.existsByUserIdAndActivityId(user.getId(), id);
         }
         data.setIsEnrolled(isEnrolled);
         response.setData(data);
@@ -85,59 +80,59 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public void enrollActivity(Long id, String currentUserId) {
-        System.out.println("enrollActivity called with id: " + id + ", currentUserId: " + currentUserId);
-        if (currentUserId == null || currentUserId.trim().isEmpty()) {
-            System.err.println("Invalid user ID: currentUserId is null or empty");
-            throw new RuntimeException("Invalid user ID: cannot be null or empty");
-        }
-        if (!isNumeric(currentUserId)) {
-            System.err.println("Invalid user ID: currentUserId is not numeric");
-            throw new RuntimeException("Invalid user ID: must be a numeric value");
-        }
-        Long userId = Long.valueOf(currentUserId);
+    @Transactional
+    public void enrollActivity(Long id, String currentUsername) {
+        User user = findUserByUsername(currentUsername);
         Activity activity = activityMapper.selectById(id);
         if (activity == null) {
-            System.err.println("Activity not found with id: " + id);
             throw new RuntimeException("Activity not found");
         }
-        if (enrollmentMapper.existsByUserIdAndActivityId(userId, id)) {
-            System.err.println("User already enrolled: userId=" + userId + ", activityId=" + id);
+        if (enrollmentMapper.existsByUserIdAndActivityId(user.getId(), id)) {
             throw new RuntimeException("Already enrolled");
         }
         if (activity.getCurrentEnrollment() >= activity.getRecruitmentQuota()) {
-            System.err.println("No available slots for activityId: " + id);
             throw new RuntimeException("No available slots");
         }
         Enrollment enrollment = new Enrollment();
-        enrollment.setUserId(userId);
+        enrollment.setUserId(user.getId());
         enrollment.setActivityId(id);
         enrollment.setEnrolledAt(LocalDateTime.now());
         enrollment.setStatus("enrolled");
         enrollmentMapper.insertEnrollment(enrollment);
-        System.out.println("Enrollment saved: userId=" + userId + ", activityId=" + id);
         activity.setCurrentEnrollment(activity.getCurrentEnrollment() + 1);
         activityMapper.updateCurrentEnrollment(id, activity.getCurrentEnrollment());
-        System.out.println("Activity updated: activityId=" + id + ", currentEnrollment=" + activity.getCurrentEnrollment());
     }
 
     @Override
     @Transactional
-    public void unenrollActivity(Long id, String currentUserId) {
+    public void unenrollActivity(Long id, String currentUsername) {
+        User user = findUserByUsername(currentUsername);
         Activity activity = activityMapper.selectById(id);
         if (activity == null) {
             throw new RuntimeException("Activity not found");
         }
-        if (!isNumeric(currentUserId)) {
-            throw new RuntimeException("Invalid user ID");
-        }
-        enrollmentMapper.deleteByUserIdAndActivityId(Long.valueOf(currentUserId), id);
+        enrollmentMapper.deleteByUserIdAndActivityId(user.getId(), id);
         if (activity.getCurrentEnrollment() > 0) {
             activity.setCurrentEnrollment(activity.getCurrentEnrollment() - 1);
             activityMapper.updateCurrentEnrollment(id, activity.getCurrentEnrollment());
         }
     }
 
+    // 新增一个辅助方法，通过用户名查找用户
+    private User findUserByUsername(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
+        return user;
+    }
+
+    // ... (其他 mapToActivityItem 和 mapToActivityData 方法保持不变)
     private ActivityListResponse.ActivityItem mapToActivityItem(Activity activity) {
         ActivityListResponse.ActivityItem item = new ActivityListResponse.ActivityItem();
         item.setId(activity.getId());
@@ -166,17 +161,5 @@ public class ActivityServiceImpl implements ActivityService {
         data.setRecruitmentQuota(activity.getRecruitmentQuota());
         data.setCurrentEnrollment(activity.getCurrentEnrollment());
         data.setStatus(activity.getStatus());
-    }
-
-    private boolean isNumeric(String str) {
-        if (str == null) {
-            return false;
-        }
-        try {
-            Long.parseLong(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }
