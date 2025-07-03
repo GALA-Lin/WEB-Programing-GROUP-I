@@ -35,9 +35,9 @@ const error = ref(null);
 const fetchNews = async () => {
   try {
     loading.value = true;
+    // 调用API获取第一页的数据
     const response = await getNewsList(1, 10);
-    // ✨ 将 .records 修改回 .list，与后端实际返回的字段名匹配
-    newsList.value = response.list;
+    newsList.value = response.list; // API返回的数据在 list 字段中
   } catch (err) {
     error.value = '无法加载新闻列表，请稍后再试。';
     console.error(err);
@@ -45,6 +45,8 @@ const fetchNews = async () => {
     loading.value = false;
   }
 };
+
+// 组件加载完成后，自动获取新闻数据
 onMounted(fetchNews);
 </script>
 
