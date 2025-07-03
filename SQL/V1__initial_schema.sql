@@ -139,14 +139,14 @@ ALTER TABLE `organization_members`
 
 -- 为activities表添加两个外键约束
 ALTER TABLE `activities`
-    -- organizer_id关联organizations.id：禁止删除有活动的组织，组织ID更新时自动同步
+-- 组织被删除时，其主办的活动也应被删除 (级联删除)
     ADD CONSTRAINT `fk_act_organizer`
         FOREIGN KEY (`organizer_id`) REFERENCES `organizations` (`id`)
-            ON DELETE RESTRICT ON UPDATE CASCADE,
-    -- created_by关联users.id：禁止删除活动创建者，用户ID更新时自动同步
+            ON DELETE CASCADE ON UPDATE CASCADE,
+-- 如果活动创建者被删除，则活动的创建者字段设为 NULL
     ADD CONSTRAINT `fk_act_creator`
         FOREIGN KEY (`created_by`) REFERENCES `users` (`id`)
-            ON DELETE RESTRICT ON UPDATE CASCADE;
+            ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- 为enrollments表添加两个外键约束
 ALTER TABLE `enrollments`
@@ -161,23 +161,25 @@ ALTER TABLE `enrollments`
 
 -- 为service_records表添加三个外键约束
 ALTER TABLE `service_records`
-    -- user_id关联users.id：禁止删除有服务记录的用户，用户ID更新时自动同步
+-- 如果用户被删除，其相关的服务记录也应被删除 (级联删除)
     ADD CONSTRAINT `fk_record_user`
         FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-            ON DELETE RESTRICT ON UPDATE CASCADE,
+            ON DELETE CASCADE ON UPDATE CASCADE,
     -- activity_id关联activities.id：禁止删除有服务记录的活动，活动ID更新时自动同步
     ADD CONSTRAINT `fk_record_activity`
         FOREIGN KEY (`activity_id`) REFERENCES `activities` (`id`)
             ON DELETE RESTRICT ON UPDATE CASCADE,
     -- recorded_by关联users.id：禁止删除记录创建者，用户ID更新时自动同步
+-- 如果记录员被删除，则记录的创建者字段设为 NULL
     ADD CONSTRAINT `fk_record_recorder`
         FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`)
-            ON DELETE RESTRICT ON UPDATE CASCADE;
+            ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- 为news表添加外键约束：author_id关联users.id
 -- 禁止删除新闻作者，用户ID更新时自动同步
 ALTER TABLE `news`
+-- 如果新闻作者被删除，则新闻的作者字段设为 NULL
     ADD CONSTRAINT `fk_news_author`
         FOREIGN KEY (`author_id`) REFERENCES `users` (`id`)
-            ON DELETE RESTRICT ON UPDATE CASCADE;
+            ON DELETE SET NULL ON UPDATE CASCADE;
 
