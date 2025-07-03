@@ -1,7 +1,7 @@
 // 文件路径: src/stores/userStore.js
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import {defineStore} from 'pinia';
+import {computed, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import apiClient from '@/api/axios.js'; // 导入你的axios实例
 
 export const useUserStore = defineStore('user', () => {
@@ -25,12 +25,13 @@ export const useUserStore = defineStore('user', () => {
     async function fetchCurrentUser() {
         if (!token.value) return;
         try {
-            const response = await apiClient.get('/api/users/me');
-            currentUser.value = response.data.data;
+            // 直接用一个清晰的变量名接收拦截器处理后的数据
+            // 直接使用这个数据
+            currentUser.value = await apiClient.get('/api/users/me');
+
             localStorage.setItem('user', JSON.stringify(currentUser.value));
         } catch (error) {
             console.error('获取用户信息失败:', error);
-            // 如果获取失败（例如token失效），则执行登出操作
             logout();
         }
     }
@@ -39,9 +40,7 @@ export const useUserStore = defineStore('user', () => {
      * 登录
      */
     async function login(credentials) {
-        const response = await apiClient.post('/api/auth/login', credentials);
-        const responseData = response.data.data;
-
+        const responseData = await apiClient.post('/api/auth/login', credentials);
         // 1. 保存 Token
         token.value = responseData.token;
         localStorage.setItem('token', responseData.token);
@@ -78,8 +77,7 @@ export const useUserStore = defineStore('user', () => {
      */
     async function adminLogin(credentials) {
         // 调用后端 /api/admin/auth/login 接口
-        const response = await apiClient.post('/api/admin/auth/login', credentials);
-        const responseData = response.data.data;
+        const responseData = await apiClient.post('/api/auth/login', credentials);
 
         // 1. 保存 Token
         token.value = responseData.token;
