@@ -4,10 +4,13 @@
       <template #header>
         <div class="card-header">
           <span>后台 - 用户管理</span>
-          <el-button type="primary" @click="handleOpenDialog()">
-            <el-icon><Plus /></el-icon>
-            <span>添加新用户</span>
-          </el-button>
+          <div>
+            <el-button type="info" :icon="Link" @click="goToFrontend">访问前台</el-button>
+            <el-button type="primary" @click="handleOpenDialog()">
+              <el-icon><Plus /></el-icon>
+              <span>添加新用户</span>
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -30,9 +33,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column fixed="right" label="操作" width="200">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
+            <el-button link type="warning" size="small" @click="handleOpenPasswordDialog(scope.row)">改密</el-button>
             <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -88,27 +92,49 @@
         <el-button type="primary" @click="handleSubmit">确 定</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="passwordDialogVisible" title="修改密码" width="500px" @close="resetPasswordForm">
+      <el-form ref="passwordFormRef" :model="passwordForm" :rules="passwordRules" label-width="100px">
+        <el-form-item label="用户名">
+          <el-input :value="currentUser.username" disabled />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input type="password" v-model="passwordForm.newPassword" placeholder="请输入新密码" show-password />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="passwordDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handlePasswordSubmit">确 定</el-button>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getUsers, createUser, updateUser, deleteUser } from '@/services/userAdminApi.js';
-import { Plus } from '@element-plus/icons-vue'
+import { getUsers, createUser, updateUser, deleteUser, updateUserPassword } from '@/services/userAdminApi.js';
+import { Plus, Link } from '@element-plus/icons-vue';
 
-// 响应式数据
+// --- 通用响应式数据 ---
 const tableData = ref([]);
 const loading = ref(true);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
+// --- 编辑/创建用户对话框相关 ---
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const userFormRef = ref(null);
 
-// 表单数据模型
+// --- 密码修改对话框相关 ---
+const passwordDialogVisible = ref(false);
+const passwordFormRef = ref(null);
+const currentUser = ref({});
+
+// --- 表单数据模型 ---
 const getInitialForm = () => ({
   id: null,
   username: '',
@@ -121,7 +147,11 @@ const getInitialForm = () => ({
 });
 const form = reactive(getInitialForm());
 
-// 表单验证规则
+const passwordForm = reactive({
+  newPassword: '',
+});
+
+// --- 表单验证规则 ---
 const rules = reactive({
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }, {min: 6, message: '密码长度不能少于6位', trigger: 'blur'}],
@@ -131,7 +161,21 @@ const rules = reactive({
   role: [{ required: true, message: '请选择角色', trigger: 'change' }],
 });
 
-// 方法
+const passwordRules = reactive({
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+  ]
+});
+
+// --- 主要方法 ---
+
+// 跳转到前台
+const goToFrontend = () => {
+  window.open('/', '_blank');
+};
+
+// 获取用户列表
 const fetchUsers = async () => {
   loading.value = true;
   try {
@@ -145,11 +189,13 @@ const fetchUsers = async () => {
   }
 };
 
+// 翻页
 const handlePageChange = (page) => {
   currentPage.value = page;
   fetchUsers();
 };
 
+// 重置编辑/创建表单
 const resetForm = () => {
   Object.assign(form, getInitialForm());
   if(userFormRef.value) {
@@ -157,6 +203,7 @@ const resetForm = () => {
   }
 };
 
+// 打开编辑/创建对话框
 const handleOpenDialog = (row) => {
   resetForm();
   if (row && row.id) {
@@ -168,18 +215,17 @@ const handleOpenDialog = (row) => {
   dialogVisible.value = true;
 };
 
+// 提交编辑/创建
 const handleSubmit = async () => {
   if (!userFormRef.value) return;
   await userFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
         if (form.id) {
-          // 更新用户
           const { id, ...updateData } = form;
           await updateUser(id, updateData);
           ElMessage.success('用户更新成功');
         } else {
-          // 创建用户
           await createUser(form);
           ElMessage.success('用户创建成功');
         }
@@ -192,6 +238,7 @@ const handleSubmit = async () => {
   });
 };
 
+// 删除用户
 const handleDelete = (id) => {
   ElMessageBox.confirm('确定要删除这个用户吗？此操作无法撤销。', '警告', {
     confirmButtonText: '确定删除',
@@ -205,10 +252,43 @@ const handleDelete = (id) => {
     } catch (error) {
       ElMessage.error(error.message || '删除失败');
     }
-  }).catch(() => {
-    // 用户取消操作
+  }).catch(() => {});
+};
+
+// --- 密码修改相关方法 ---
+
+// 重置密码表单
+const resetPasswordForm = () => {
+  passwordForm.newPassword = '';
+  if(passwordFormRef.value) {
+    passwordFormRef.value.clearValidate();
+  }
+};
+
+// 打开密码修改对话框
+const handleOpenPasswordDialog = (row) => {
+  resetPasswordForm();
+  currentUser.value = { ...row };
+  passwordDialogVisible.value = true;
+};
+
+// 提交新密码
+const handlePasswordSubmit = async () => {
+  if (!passwordFormRef.value) return;
+  await passwordFormRef.value.validate(async (valid) => {
+    if (valid) {
+      try {
+        await updateUserPassword(currentUser.value.id, passwordForm.newPassword);
+        ElMessage.success('密码更新成功');
+        passwordDialogVisible.value = false;
+      } catch (error) {
+        ElMessage.error(error.message || '密码更新失败');
+      }
+    }
   });
 };
+
+// --- 生命周期钩子 ---
 
 onMounted(() => {
   fetchUsers();

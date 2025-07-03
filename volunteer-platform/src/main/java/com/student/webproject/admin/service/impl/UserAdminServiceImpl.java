@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.student.webproject.admin.dto.UserCreateDTO;
+import com.student.webproject.admin.dto.UserPasswordUpdateDTO;
 import com.student.webproject.admin.dto.UserUpdateDTO;
 import com.student.webproject.admin.service.UserAdminService;
 import com.student.webproject.common.response.Result;
@@ -73,5 +74,22 @@ public class UserAdminServiceImpl implements UserAdminService {
         }
         userMapper.deleteById(id);
         return Result.success(null, "用户删除成功");
+    }
+
+    @Override
+    public Result<Void> updateUserPassword(Long id, UserPasswordUpdateDTO dto) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 对新密码进行加密
+        String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
+        user.setPassword(encodedPassword);
+
+        // 更新数据库
+        userMapper.updateById(user);
+
+        return Result.success(null, "密码更新成功");
     }
 }

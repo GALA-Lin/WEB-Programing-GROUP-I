@@ -2,6 +2,7 @@ package com.student.webproject.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.student.webproject.admin.dto.UserCreateDTO;
+import com.student.webproject.admin.dto.UserPasswordUpdateDTO;
 import com.student.webproject.admin.dto.UserUpdateDTO;
 import com.student.webproject.admin.service.UserAdminService;
 import com.student.webproject.common.response.Result;
@@ -35,5 +36,10 @@ public class AdminUserController {
     @DeleteMapping("/{id}")
     public Result<Void> deleteUser(@PathVariable Long id) {
         return userAdminService.deleteUser(id);
+    }
+
+    @PutMapping("/{id}/password")
+    public Result<Void> updateUserPassword(@PathVariable Long id, @RequestBody UserPasswordUpdateDTO dto) {
+        return userAdminService.updateUserPassword(id, dto);
     }
 }
