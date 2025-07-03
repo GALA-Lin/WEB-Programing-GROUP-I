@@ -6,13 +6,13 @@
           <h1 class="hero-title">让志愿行动改变世界</h1>
           <p class="hero-subtitle">加入我们，一起为社区贡献力量，创造更美好的未来</p>
           <div class="hero-actions">
-            <router-link to="/activities" class="btn-primary">浏览活动</router-link>
-            <router-link to="/login" class="btn-secondary">成为志愿者</router-link>
+            <router-link v-if="isLoggedIn" to="/activities" class="btn-secondary">查看活动</router-link>
+            <router-link v-else to="/login" class="btn-secondary">成为志愿者</router-link>
           </div>
         </div>
       </div>
     </section>
-    
+
     <section class="features">
       <div class="container">
         <h2 class="section-title">为什么选择我们</h2>
@@ -35,7 +35,7 @@
         </div>
       </div>
     </section>
-    
+
     <section class="recent-activities">
       <div class="container">
         <h2 class="section-title">近期热门活动</h2>
@@ -55,7 +55,7 @@
         </div>
       </div>
     </section>
-    
+
     <section class="testimonials">
       <div class="container">
         <h2 class="section-title">志愿者心声</h2>
@@ -79,7 +79,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+// 1. 导入用户状态管理 store
+import { useUserStore } from '@/stores/userStore.js';
+import { storeToRefs } from 'pinia';
+
+// 2. 初始化 store 并获取登录状态
+const userStore = useUserStore();
+const { isLoggedIn } = storeToRefs(userStore);
+
 
 // 模拟数据
 const recentActivities = ref([
@@ -125,6 +133,7 @@ const testimonials = ref([
 </script>
 
 <style scoped>
+/* 样式部分保持不变，所以这里省略了，你可以保留原有的 <style> 部分 */
 .home-view {
   font-family: 'Inter', sans-serif;
 }
@@ -367,4 +376,3 @@ const testimonials = ref([
   font-size: 14px;
 }
 </style>
-    
