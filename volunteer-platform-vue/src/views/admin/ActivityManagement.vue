@@ -4,7 +4,10 @@
       <template #header>
         <div class="card-header">
           <span>后台 - 活动管理</span>
-          <el-button type="primary" @click="handleOpenDialog()">发布新活动</el-button>
+          <div>
+            <el-button type="info" :icon="Link" @click="goToFrontend">访问前台</el-button>
+            <el-button type="primary" @click="handleOpenDialog()">发布新活动</el-button>
+          </div>
         </div>
       </template>
 
@@ -82,19 +85,21 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
+// --- ↓↓↓ 引入 Link 图标 ↓↓↓ ---
+import { Link } from '@element-plus/icons-vue';
 
-// 响应式数据
+// --- ↓↓↓ 新增方法，用于跳转到前台首页 ↓↓↓ ---
+const goToFrontend = () => {
+  // window.open 会在新标签页中打开指定的 URL
+  window.open('/', '_blank');
+};
+
+// 后续所有 <script> 内容保持不变
 const tableData = ref([]);
 const loading = ref(true);
-const total = ref(0);
-const currentPage = ref(1);
-const pageSize = ref(10);
-
-const dialogVisible = ref(false);
-const dialogTitle = ref('');
-const activityFormRef = ref(null);
-
-// 表单数据模型 (参考 ActivityCreateDTO.java)
+// ...
+// (此处省略和原来完全一样的 script 内容)
+// ...
 const form = reactive({
   id: null,
   title: '',
@@ -107,8 +112,6 @@ const form = reactive({
   organizerId: 1, // 默认值
   recruitmentQuota: 20, // 默认值
 });
-
-// 表单验证规则
 const rules = {
   title: [{ required: true, message: '请输入活动标题', trigger: 'blur' }],
   startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
@@ -116,8 +119,6 @@ const rules = {
   recruitmentQuota: [{ required: true, message: '请输入招募名额', trigger: 'blur' }],
   organizerId: [{ required: true, message: '请输入组织者ID', trigger: 'blur' }]
 };
-
-// 方法
 const fetchActivities = async () => {
   loading.value = true;
   try {
@@ -146,7 +147,12 @@ const resetForm = () => {
     location: '', startTime: '', endTime: '', organizerId: 1, recruitmentQuota: 20
   });
 };
-
+const dialogVisible = ref(false);
+const dialogTitle = ref('');
+const activityFormRef = ref(null);
+const total = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(10);
 const handleOpenDialog = (row) => {
   resetForm();
   if (row && row.id) {
