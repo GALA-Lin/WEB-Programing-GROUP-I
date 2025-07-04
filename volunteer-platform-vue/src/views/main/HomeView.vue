@@ -91,19 +91,17 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getPublicActivities } from '@/services/publicActivityApi.js';
+import { getDashboardStats } from '@/services/dashboardApi.js';
 import { gsap } from 'gsap';
 
 const userStore = useUserStore();
 const { isLoggedIn } = userStore;
 
-// --- Mock Data ---
 const recentActivities = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const currentSlide = ref(0);
 
-// --- Impact Stats Animation ---
-const stats = { volunteers: 128, activities: 76, hours: 2450.5, organizations: 15 };
 const animatedStats = reactive({ volunteers: 0, activities: 0, hours: 0, organizations: 0 });
 
 let observer;
@@ -113,38 +111,55 @@ onMounted(() => {
   const impactSection = document.querySelector('.impact-section');
   observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
-      gsap.to(animatedStats, {
-        duration: 2,
-        volunteers: stats.volunteers,
-        activities: stats.activities,
-        hours: stats.hours,
-        organizations: stats.organizations,
-        ease: 'power1.inOut',
-        onUpdate: () => {
-          animatedStats.volunteers = Math.round(animatedStats.volunteers)
-          animatedStats.activities = Math.round(animatedStats.activities)
-          animatedStats.organizations = Math.round(animatedStats.organizations)
-        }
-      });
-      observer.disconnect(); // Animate only once
+      fetchDashboardStatsAndAnimate();
+      observer.disconnect();
     }
   }, { threshold: 0.5 });
 
   if(impactSection) observer.observe(impactSection);
 
-  // Carousel auto-play
   const interval = setInterval(() => {
-    currentSlide.value = (currentSlide.value + 1) % (recentActivities.value.length || 1);
+    if(recentActivities.value.length > 0) {
+      currentSlide.value = (currentSlide.value + 1) % recentActivities.value.length;
+    }
   }, 5000);
-  onUnmounted(() => clearInterval(interval));
+
+  onUnmounted(() => {
+    clearInterval(interval);
+    if(observer) observer.disconnect();
+  });
 });
 
-// --- API Call ---
+const fetchDashboardStatsAndAnimate = async () => {
+  try {
+    const realStats = await getDashboardStats();
+    gsap.to(animatedStats, {
+      duration: 2,
+      volunteers: realStats.totalUsers || 0,
+      activities: realStats.totalActivities || 0,
+      hours: realStats.totalServiceHours || 0,
+      organizations: realStats.totalOrganizations || 0,
+      ease: 'power1.inOut',
+      onUpdate: () => {
+        animatedStats.volunteers = Math.round(animatedStats.volunteers);
+        animatedStats.activities = Math.round(animatedStats.activities);
+        animatedStats.organizations = Math.round(animatedStats.organizations);
+      }
+    });
+  } catch (e) {
+    console.error("获取统计数据失败:", e);
+    animatedStats.volunteers = 100;
+    animatedStats.activities = 50;
+    animatedStats.hours = 2000;
+    animatedStats.organizations = 10;
+  }
+};
+
 const fetchRecentActivities = async () => {
   try {
     loading.value = true;
     error.value = null;
-    const response = await getPublicActivities(1, 6); // Fetch 6 activities for the carousel
+    const response = await getPublicActivities(1, 6);
     if (response && response.list) {
       recentActivities.value = response.list;
     } else {
@@ -159,7 +174,7 @@ const fetchRecentActivities = async () => {
 };
 
 const getCategoryName = (category) => {
-  const categories = { 'environment': '环保', 'education': '教育' };
+  const categories = { '校内服务': '校内服务', '社区服务': '社区服务', '环保': '环保', '教育': '教育' };
   return categories[category] || category || '综合';
 };
 </script>
@@ -172,7 +187,7 @@ const getCategoryName = (category) => {
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
 .section-title { font-size: 2.25rem; font-weight: 700; color: var(--color-text-heading); }
 .section-link { color: var(--color-primary); font-weight: 500; text-decoration: none; }
-.btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.2s; text-decoration: none; border: 1px solid transparent; }
+.btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.2s; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
 .btn-lg { padding: 1rem 2rem; font-size: 1.1rem; }
 .btn-primary { background-color: var(--color-primary); color: white; }
 .btn-primary:hover { background-color: var(--color-primary-hover); transform: translateY(-2px); }
@@ -183,8 +198,8 @@ const getCategoryName = (category) => {
 .btn-primary-outline { color: var(--color-primary); border-color: var(--color-primary); }
 .btn-primary-outline:hover { background-color: var(--color-primary-soft); }
 
-/* Hero Section */
-.hero-section { position: relative; height: 70vh; display: flex; align-items: center; text-align: center; color: white; }
+/* Hero Section - 调整了高度 */
+.hero-section { position: relative; height: 60vh; min-height: 400px; display: flex; align-items: center; text-align: center; color: white; }
 .hero-video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
 .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2; }
 .hero-content { position: relative; z-index: 3; }
@@ -203,12 +218,14 @@ const getCategoryName = (category) => {
 .featured-activities-section { padding: 5rem 1rem; }
 .carousel-wrapper { overflow: hidden; }
 .activities-carousel { display: flex; transition: transform 0.5s ease-in-out; }
-.activity-slide { flex: 0 0 100%; }
-.activity-card { margin: 0 1rem; background: var(--color-surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+.activity-slide { min-width: 100%; }
+@media (min-width: 640px) { .activity-slide { min-width: 50%; } }
+@media (min-width: 992px) { .activity-slide { min-width: 33.333%; } }
+.activity-card { margin: 0 1rem; background: var(--color-surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; height: 100%;}
 .activity-image { width: 100%; height: 220px; object-fit: cover; }
-.card-content { padding: 1.5rem; }
-.category-tag { display: inline-block; background-color: var(--color-primary-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.75rem; }
-.card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+.card-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+.category-tag { display: inline-block; background-color: var(--color-primary-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.75rem; align-self: flex-start; }
+.card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; flex-grow: 1;}
 .card-meta { color: var(--color-text-muted); margin-bottom: 1.5rem; }
 .carousel-dots { text-align: center; margin-top: 2rem; }
 .carousel-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: #d1d5db; margin: 0 5px; cursor: pointer; transition: background 0.3s, transform 0.3s; }
