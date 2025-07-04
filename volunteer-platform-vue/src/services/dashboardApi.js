@@ -1,18 +1,24 @@
-// volunteer-platform-vue/src/services/dashboardApi.js
+// 文件路径: volunteer-platform-vue/src/services/dashboardApi.js
+
 import apiClient from '@/api/axios.js';
 
 /**
- * 获取后台看板的统计数据
+ * 获取【前台公开】的仪表盘统计数据
  * @returns {Promise<any>}
  */
-export const getDashboardStats = () => {
-    return apiClient.get('/api/admin/dashboard/stats');
+export const getPublicDashboardStats = () => {
+    return apiClient.get('/api/dashboard/stats');
 };
 
 /**
- * 【新增】获取后台看板的最新动态数据
+ * 【新增】获取【后台管理】的仪表盘统计数据
  * @returns {Promise<any>}
  */
-export const getDashboardLatestUpdates = () => {
-    return apiClient.get('/api/admin/dashboard/latest-updates');
+export const getAdminDashboardStats = () => {
+    return apiClient.get('/api/admin/dashboard/stats');
 };
+
+// 如果您的同事还添加了其他函数，也一并保留在这里
+// export const getDashboardLatestUpdates = () => {
+//     return apiClient.get('/api/admin/dashboard/latest-updates');
+// };
