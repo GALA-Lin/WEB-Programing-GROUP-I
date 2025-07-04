@@ -35,7 +35,7 @@
       />
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="700px" @close="resetForm">
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="80%" @close="resetForm" top="5vh">
       <el-form ref="newsFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="新闻标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入新闻标题" />
@@ -44,7 +44,7 @@
           <el-input type="textarea" :rows="3" v-model="form.summary" placeholder="请输入新闻摘要" />
         </el-form-item>
         <el-form-item label="新闻正文" prop="content">
-          <el-input type="textarea" :rows="10" v-model="form.content" placeholder="请输入新闻正文（支持Markdown）" />
+          <v-md-editor v-model="form.content" height="400px"></v-md-editor>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -60,6 +60,17 @@ import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getNewsPage, createNews, updateNews, deleteNews } from '@/services/newsAdminApi.js';
 import { Plus } from '@element-plus/icons-vue';
+
+// 【核心修改】引入 v-md-editor 及其样式
+import VMdEditor from '@kangc/v-md-editor';
+import '@kangc/v-md-editor/lib/style/base-editor.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+import hljs from 'highlight.js';
+
+VMdEditor.use(githubTheme, {
+  Hljs: hljs,
+});
 
 const tableData = ref([]);
 const loading = ref(true);
@@ -115,7 +126,9 @@ const handleOpenDialog = (row) => {
   resetForm();
   if (row && row.id) {
     dialogTitle.value = '编辑新闻';
-    Object.assign(form, row);
+    // 模拟从API获取完整内容
+    const fullContentRow = { ...row, content: row.content || '' };
+    Object.assign(form, fullContentRow);
   } else {
     dialogTitle.value = '发布新新闻';
   }
