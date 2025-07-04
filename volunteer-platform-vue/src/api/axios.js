@@ -9,6 +9,18 @@ const apiClient = axios.create({
     }
 });
 
+// 请求拦截器：自动携带 token
+apiClient.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 // 响应拦截器，用于处理后端返回的 {code, message, data} 结构
 apiClient.interceptors.response.use(
     response => {

@@ -1,6 +1,6 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-// 【修改】导入 userStore 以便在路由守卫中使用
+// 【修改���导入 userStore 以便在路由守卫中使用
 import { useUserStore } from '@/stores/userStore.js';
 // 导入我们创建的布局组件
 import MainLayout from '@/layouts/MainLayout.vue';
@@ -23,6 +23,12 @@ const routes = [
     children: [
       { path: '', name: 'Home', component: HomeView },
       { path: 'activities', name: 'Activities', component: ActivitiesView },
+      // 新增活动详情页路由
+      {
+        path: 'activities/:id',
+        name: 'ActivityDetail',
+        component: () => import('@/views/main/ActivityDetailView.vue')
+      },
       {
         path: 'profile',
         name: 'Profile',

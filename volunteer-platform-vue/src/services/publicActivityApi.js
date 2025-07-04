@@ -18,3 +18,30 @@ export const getPublicActivities = (page = 1, pageSize = 10, category = '') => {
         }
     });
 };
+
+/**
+ * 获取活动详情
+ * @param {number|string} id
+ * @returns {Promise<any>}
+ */
+export const getActivityDetail = (id) => {
+    return apiClient.get(`/api/activities/${id}`);
+};
+
+/**
+ * 报名活动
+ * @param {number|string} id
+ * @returns {Promise<any>}
+ */
+export const enrollActivity = (id) => {
+    return apiClient.post(`/api/activities/${id}/enroll`);
+};
+
+/**
+ * 取消报名
+ * @param {number|string} id
+ * @returns {Promise<any>}
+ */
+export const unenrollActivity = (id) => {
+    return apiClient.delete(`/api/activities/${id}/enroll`);
+};
