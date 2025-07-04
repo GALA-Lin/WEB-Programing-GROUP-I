@@ -11,6 +11,7 @@ const apiClient = axios.create({
     }
 });
 
+// 添加一个请求拦截器
 apiClient.interceptors.request.use(
     (config) => {
         // 在发送请求之前，从 localStorage 中获取 token
