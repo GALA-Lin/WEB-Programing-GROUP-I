@@ -46,8 +46,9 @@ CREATE TABLE `organization_members` (
                                         `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                                         `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID (外键)',
                                         `organization_id` BIGINT UNSIGNED NOT NULL COMMENT '组织ID (外键)',
-                                        `join_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入日期',
+                                        `join_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入或申请日期',
                                         `member_role` VARCHAR(20) NOT NULL DEFAULT 'member' COMMENT '在组织中的角色 (如: member, officer)',
+                                        `status` VARCHAR(20) NOT NULL DEFAULT 'approved' COMMENT '成员状态 (pending:待审批, approved:已批准)',
                                         PRIMARY KEY (`id`),
                                         UNIQUE INDEX `uq_user_organization` (`user_id`, `organization_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组织成员关系表';

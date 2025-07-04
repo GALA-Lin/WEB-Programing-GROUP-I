@@ -5,6 +5,8 @@
       <ul>
         <li><router-link to="/admin/activities">活动管理</router-link></li>
         <li><router-link to="/admin/users">用户管理</router-link></li>
+        <li><router-link to="/admin/organizations">组织管理</router-link></li>
+        <li><router-link to="/admin/news">新闻管理</router-link></li>
       </ul>
     </aside>
     <main class="admin-main-content">

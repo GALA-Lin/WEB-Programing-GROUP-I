@@ -9,6 +9,7 @@ import com.student.webproject.common.response.Result;
 import com.student.webproject.user.Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.security.Principal; // 引入 Principal
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -24,13 +25,15 @@ public class AdminUserController {
     }
 
     @PostMapping
-    public Result<User> createUser(@RequestBody UserCreateDTO userCreateDTO) {
-        return userAdminService.createUser(userCreateDTO);
+    public Result<User> createUser(Principal principal, @RequestBody UserCreateDTO userCreateDTO) {
+        // 将 principal (当前登录用户) 传给 Service 层
+        return userAdminService.createUser(principal, userCreateDTO);
     }
 
     @PutMapping("/{id}")
-    public Result<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateDTO userUpdateDTO) {
-        return userAdminService.updateUser(id, userUpdateDTO);
+    public Result<User> updateUser(@PathVariable Long id, Principal principal, @RequestBody UserUpdateDTO userUpdateDTO) {
+        // 将 principal (当前登录用户) 传给 Service 层
+        return userAdminService.updateUser(principal, id, userUpdateDTO);
     }
 
     @DeleteMapping("/{id}")

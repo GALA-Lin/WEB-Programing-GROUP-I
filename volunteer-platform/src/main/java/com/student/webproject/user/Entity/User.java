@@ -1,6 +1,7 @@
 package com.student.webproject.user.Entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,12 +16,10 @@ public class User {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    // 数据库是 student_id, MyBatis Plus 会自动将驼峰命名 studentId 映射过去
     private String studentId;
-
     private String username;
 
-    @JsonIgnore // 关键: 禁止将此字段返回给前端，确保密码安全
+    @JsonIgnore
     private String password;
 
     private String realName;
@@ -28,16 +27,14 @@ public class User {
     private String phoneNumber;
     private String avatarUrl;
     private String role;
+    private Integer status;
     private LocalDateTime createdAt;
+
+    // 【核心修改】确保 updatedAt 字段存在，并使用 @TableField 注解
+    @TableField(update = "now()")
     private LocalDateTime updatedAt;
 
-    /**
-     * 累计志愿服务总时长
-     */
+    // 【核心修改】确保 totalServiceHours 字段存在，并且类型是 BigDecimal
+    @TableField("total_service_hours")
     private BigDecimal totalServiceHours;
-
-    /**
-     * 账户状态 (1:正常, 0:禁用)
-     */
-    private Integer status;
 }

@@ -70,7 +70,7 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="form.email" placeholder="请输入邮箱地址" />
         </el-form-item>
-        <el-form-item label="角色" prop="role">
+        <el-form-item label="角色" prop="role" v-if="userStore.currentUser?.role === 'super_admin'">
           <el-select v-model="form.role" placeholder="请选择角色">
             <el-option label="普通志愿者" value="volunteer"></el-option>
             <el-option label="管理员" value="admin"></el-option>
@@ -116,6 +116,9 @@ import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getUsers, createUser, updateUser, deleteUser, updateUserPassword } from '@/services/userAdminApi.js';
 import { Plus, Link } from '@element-plus/icons-vue';
+import { useUserStore } from '@/stores/userStore.js';
+
+const userStore = useUserStore();
 
 // --- 通用响应式数据 ---
 const tableData = ref([]);
@@ -123,6 +126,7 @@ const loading = ref(true);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
+
 
 // --- 编辑/创建用户对话框相关 ---
 const dialogVisible = ref(false);

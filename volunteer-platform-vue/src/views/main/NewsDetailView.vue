@@ -10,7 +10,9 @@
         <span>发布于: {{ news.publishedAt }}</span>
       </div>
 
-      <div class="news-content" v-html="news.content"></div>
+      <div class="news-content">
+        <v-md-preview :text="news.content"></v-md-preview>
+      </div>
 
       <div class="actions-bar">
         <button class="like-button" @click="handleLike">
@@ -25,16 +27,26 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getNewsDetail, likeNews } from '@/services/newsApi.js';
-import { ElMessage } from 'element-plus'; // 引入 Element Plus 消息提示
+import { ElMessage } from 'element-plus';
+
+// 【核心修改】引入 v-md-editor 的预览组件及其样式
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+import hljs from 'highlight.js';
+
+VMdPreview.use(githubTheme, {
+  Hljs: hljs,
+});
 
 const news = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
 const route = useRoute();
-const newsId = route.params.id; // 从路由中获取新闻ID
+const newsId = route.params.id;
 
-// 获取新闻详情
 const fetchNewsDetail = async () => {
   try {
     loading.value = true;
@@ -47,11 +59,9 @@ const fetchNewsDetail = async () => {
   }
 };
 
-// 处理点赞事件
 const handleLike = async () => {
   try {
     const response = await likeNews(newsId);
-    // 使用后端返回的最新点赞数来更新页面
     if (news.value) {
       news.value.likesCount = response.newLikesCount;
     }
@@ -86,9 +96,7 @@ onMounted(fetchNewsDetail);
   line-height: 1.8;
   font-size: 1.1rem;
 }
-.news-content :deep(p) { /* 让v-html里的p标签生效 */
-  margin-bottom: 1em;
-}
+/* 我们不再需要 deep 选择器，因为 v-md-preview 会自己处理样式 */
 .actions-bar {
   margin-top: 40px;
   text-align: center;

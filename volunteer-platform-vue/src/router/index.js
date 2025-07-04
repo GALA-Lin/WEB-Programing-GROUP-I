@@ -1,22 +1,18 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-// 【修改】导入 userStore 以便在路由守卫中使用
 import { useUserStore } from '@/stores/userStore.js';
-// 导入我们创建的布局组件
 import MainLayout from '@/layouts/MainLayout.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-
-// 导入所有页面级组件
 import HomeView from '@/views/main/HomeView.vue';
 import ActivitiesView from '@/views/main/ActivitiesView.vue';
-import AuthView from '@/views/main/AuthView.vue'; // 统一的登录/注册视图
+import AuthView from '@/views/main/AuthView.vue';
 import ActivityManagement from '@/views/admin/ActivityManagement.vue';
 import NewsView from '@/views/main/NewsView.vue';
 import NewsDetailView from '@/views/main/NewsDetailView.vue';
 
+
 const routes = [
-  // --- 规则一：前台页面路由 ---
-  // 所有访问网站主体的路径，都使用 MainLayout 布局
+  // --- 前台页面路由 ---
   {
     path: '/',
     component: MainLayout,
@@ -29,58 +25,62 @@ const routes = [
         component: () => import('@/views/main/ProfileView.vue'),
         meta: { requiresAuth: true }
       },
+      { path: 'news', name: 'NewsList', component: NewsView },
+      { path: 'news/:id', name: 'NewsDetail', component: NewsDetailView },
       {
-        path: 'news', // 访问 /news 时
-        name: 'NewsList',
-        component: NewsView // 显示 NewsView 组件
+        path: 'organizations',
+        name: 'OrganizationList',
+        component: () => import('@/views/main/OrganizationsView.vue'),
+        meta: { requiresAuth: true }
       },
       {
-        path: 'news/:id', // 访问 /news/具体id 时
-        name: 'NewsDetail',
-        component: NewsDetailView // 显示 NewsDetailView 组件
+        path: 'organizations/:id',
+        name: 'OrganizationDetail',
+        component: () => import('@/views/main/OrganizationDetailView.vue'),
+        meta: { requiresAuth: true }
       }
     ]
   },
-
   {
-    path: '/login', // 【修改】路径变为绝对路径
+    path: '/login',
     name: 'Login',
     component: AuthView,
     props: { mode: 'user' }
   },
 
-  // --- 规则二：后台管理路由 ---
+  // --- 后台管理路由 ---
   {
     path: '/admin',
     component: AdminLayout,
-    // 【修改】启用登录保护
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [
-      // 当访问 /admin 时，自动跳转到活动管理页
       { path: '', redirect: '/admin/activities' },
       {
         path: 'activities',
         name: 'AdminActivityManagement',
         component: ActivityManagement
       },
-
       {
         path: 'users',
         name: 'AdminUserManagement',
-        component: () => import('@/views/admin/UserManagement.vue') // 懒加载组件
+        component: () => import('@/views/admin/UserManagement.vue')
+      },
+      {
+        path: 'news',
+        name: 'AdminNewsManagement',
+        component: () => import('@/views/admin/NewsManagement.vue')
+      },
+      {
+        path: 'organizations',
+        name: 'AdminOrganizationManagement',
+        component: () => import('@/views/admin/OrganizationManagement.vue')
       }
-
-      // 未来可以添加更多后台管理页面...
     ]
   },
-
-  // --- 规则三：独立的管理员登录页 ---
-  // 这个页面不使用任何布局，是单独显示的
   {
     path: '/admin/login',
     name: 'AdminLogin',
     component: AuthView,
-    // 【关键】告诉 AuthView 组件，现在是 'admin' 模式
     props: { mode: 'admin' }
   }
 ];
@@ -90,30 +90,31 @@ const router = createRouter({
   routes,
 });
 
-// 【修改】添加并启用“路由守卫”，用于检查用户是否登录
+// --- ↓↓↓ 核心修改点2：升级路由守卫逻辑 ↓↓↓ ---
 router.beforeEach((to, from, next) => {
-  // 在守卫中可以安全地使用 Pinia store
   const userStore = useUserStore();
 
-  const isTryingToAccessProtectedRoute = to.meta.requiresAuth;
-  const isLoggedIn = userStore.isLoggedIn;
-
-  // 如果目标路由需要认证，但用户未登录
-  if (isTryingToAccessProtectedRoute && !isLoggedIn) {
+  // 检查目标路由是否需要登录
+  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     alert('此页面需要登录后才能访问！');
-
-    // 判断应该跳转到哪个登录页
     if (to.path.startsWith('/admin')) {
-      // 如果是未登录访问后台，则跳转到后台登录页
-      next({ name: 'AdminLogin' });
-    } else {
-      // 否则，跳转到前台普通用户登录页
-      next({ name: 'Login' });
+      return next({ name: 'AdminLogin' });
     }
-  } else {
-    // 如果不需要认证，或用户已登录，则直接放行
-    next();
+    return next({ name: 'Login' });
   }
+
+  // 检查目标路由是否需要管理员权限
+  if (to.meta.requiresAdmin && !userStore.isAdmin) {
+    alert('权限不足！您不是管理员，无法访问此页面。');
+    // 从一个受保护的页面跳转，通常返回上一页或主页
+    if(from.name) {
+      return next(from);
+    }
+    return next('/');
+  }
+
+  // 如果所有检查都通过，则放行
+  next();
 });
 
 export default router;

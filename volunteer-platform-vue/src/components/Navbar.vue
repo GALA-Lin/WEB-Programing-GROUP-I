@@ -74,9 +74,11 @@
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router'; // **【核心修复】补上了这一行 import 语句**
 
 const userStore = useUserStore();
 const { isLoggedIn, currentUser } = storeToRefs(userStore);
+const router = useRouter(); // **【核心修复】获取 router 实例**
 
 const mobileMenuOpen = ref(false);
 
@@ -84,14 +86,19 @@ const closeMenu = () => {
   mobileMenuOpen.value = false;
 };
 
-const logout = () => {
-  userStore.logout();
-  closeMenu();
+// 使用 async/await 修正 logout 函数，并添加了路由跳转
+const logout = async () => {
+  if (confirm('您确定要退出登录吗？')) {
+    await userStore.logout();
+    closeMenu();
+    await router.push('/login'); // 跳转到登录页
+  }
 };
 </script>
 
 <style scoped>
-/* 基础导航栏样式 */
+/* 样式部分没有变化，您可以保留原有的样式 */
+/* ... */
 .navbar {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);

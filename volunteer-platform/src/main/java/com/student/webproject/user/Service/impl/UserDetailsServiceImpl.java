@@ -4,12 +4,13 @@ import com.student.webproject.user.mapper.UserMapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority; // 引入权限类
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List; // 引入 List
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -29,12 +30,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户 '" + username + "' 不存在");
         }
 
-        // 3. 如果用户存在，将其信息包装成 Spring Security 认识的 UserDetails 对象
-        //    我们使用的是 org.springframework.security.core.userdetails.User
+        // --- ↓↓↓ 核心修改点 ↓↓↓ ---
+        // 3. 将用户的角色（例如 "admin"）封装成一个权限对象
+        //    之前这里是一个空的ArrayList<>()
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+        // 4. 返回包含用户名、密码和【权限】的UserDetails对象
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                new ArrayList<>() // 权限列表，暂时留空
+                authorities // 将权限列表传入
         );
     }
 }

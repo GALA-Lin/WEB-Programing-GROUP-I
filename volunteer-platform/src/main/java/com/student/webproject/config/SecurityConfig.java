@@ -4,7 +4,8 @@ import com.student.webproject.security.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,10 +14,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.http.HttpStatus;
 
-import static org.springframework.security.config.Customizer.withDefaults; // 确保导入这个
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -34,47 +35,29 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // --- ↓↓↓ 我们将合并 dev 和 prod 配置，并添加严格的规则 ↓↓↓ ---
     @Bean
-    @Profile("dev")
-    public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        .anyRequest().permitAll()
-
-                )
-                .addFilterBefore(jwtAuthenticationTokenFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
-                // 【新增登出配置】
-                .logout(logout -> logout
-                        // 指定处理登出的URL，前端将请求这个地址
-                        .logoutUrl("/api/auth/logout")
-                        // 登出成功后，我们不需要跳转，而是返回一个HTTP 200 OK状态码
-                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-                );
-
-        return http.build();
-    }
-
-    @Bean
-    @Profile("!dev")
-    public SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz -> authz
+                        // 1. 允许任何人访问 登录、注册接口
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // --- ↓↓↓ 核心修改点：在这里加入 /api/organizations/** ↓↓↓ ---
+                        // 2. 允许任何人访问 活动、新闻、组织列表等公开数据 (GET请求)
+                        .requestMatchers(HttpMethod.GET, "/api/activities/**", "/api/news/**", "/api/organizations/**").permitAll()
+
+                        // 3. 【核心规则】访问所有 /api/admin/ 开头的接口，必须拥有 "super_admin" 或 "admin" 角色
+                        .requestMatchers("/api/admin/**").hasAnyAuthority("super_admin", "admin")
+                        // 4. 除了上面放行的规则外，其他所有请求都必须先登录认证
                         .anyRequest().authenticated()
                 )
-                // 【核心修改】将JWT过滤器添加到安全链中
-                .addFilterBefore(jwtAuthenticationTokenFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
-                // 【新增登出配置】
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
-                        // 指定处理登出的URL，前端将请求这个地址
                         .logoutUrl("/api/auth/logout")
-                        // 登出成功后，我们不需要跳转，而是返回一个HTTP 200 OK状态码
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 );
 
