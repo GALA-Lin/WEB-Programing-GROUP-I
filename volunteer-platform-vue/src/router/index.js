@@ -52,7 +52,6 @@ const routes = [
   {
     path: '/admin',
     component: AdminLayout,
-    // --- ↓↓↓ 核心修改点1：为所有后台路由添加 meta 标记 ↓↓↓ ---
     meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       { path: '', redirect: '/admin/activities' },
@@ -70,6 +69,11 @@ const routes = [
         path: 'news',
         name: 'AdminNewsManagement',
         component: () => import('@/views/admin/NewsManagement.vue')
+      },
+      {
+        path: 'organizations',
+        name: 'AdminOrganizationManagement',
+        component: () => import('@/views/admin/OrganizationManagement.vue')
       }
     ]
   },
