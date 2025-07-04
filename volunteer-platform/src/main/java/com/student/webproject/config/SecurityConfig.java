@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // 1. 允许任何人访问 登录、注册接口
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/admin/auth/login").permitAll()
 
                         // --- ↓↓↓ 核心修改点：在这里加入 /api/organizations/** ↓↓↓ ---
                         // 2. 允许任何人访问 活动、新闻、组织列表等公开数据 (GET请求)
