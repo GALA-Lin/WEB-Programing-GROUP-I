@@ -169,9 +169,21 @@ const handleSave = async () => {
 };
 
 const handleLogout = () => {
-  if (confirm('您确定要退出登录吗？')) {
-    userStore.logout();
-  }
+  ElMessageBox.confirm('您确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+      // 【核心修改】在 .then() 的回调函数前加上 async
+      .then(async () => {
+        // 【核心修改】在调用 logout 前加上 await
+        await userStore.logout();
+        ElMessage.success('您已成功退出');
+        await router.push('/login');
+      })
+      .catch(() => {
+        // 用户取消操作，无需处理
+      });
 };
 
 const formatDateTime = (dateTime) => {
