@@ -1,3 +1,55 @@
+/* volunteer-platform-vue/src/assets/main.css */
+
+/* :root 定义了全局 CSS 变量 */
+:root {
+  /* 基础颜色 */
+  --color-background: #f8f9fa; /* 更柔和的页面背景色 */
+  --color-background-soft: #f1f5f9;
+  --color-surface: #ffffff;    /* 卡片等元素的背景色 */
+
+  /* 文字颜色 */
+  --color-text-heading: #1a202c; /* 标题颜色（近黑色） */
+  --color-text-body: #4a5568;    /* 正文颜色（深灰色） */
+  --color-text-muted: #718096;   /* 辅助文字颜色（灰色） */
+
+  /* 品牌主色 */
+  --color-primary: #3b82f6;      /* 蓝色，用于按钮、链接等 */
+  --color-primary-hover: #2563eb; /* 蓝色悬停效果 */
+  --color-primary-soft: #dbeafe;  /* 柔和的蓝色背景 */
+
+  /* 边框颜色 */
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+
+  /* 字体定义 */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 全局 Body 样式重置 */
+body {
+  margin: 0;
+  font-family: var(--font-sans); /* 应用新的字体 */
+  line-height: 1.6;
+  color: var(--color-text-body); /* 应用新的正文颜色 */
+  background-color: var(--color-background); /* 应用新的背景色 */
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 /* 基础样式 */
 body {
   margin: auto;

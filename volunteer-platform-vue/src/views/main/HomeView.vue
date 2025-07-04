@@ -1,115 +1,154 @@
 <template>
   <div class="home-view">
-    <section class="hero">
+    <section class="hero-section">
+      <video autoplay muted loop playsinline class="hero-video-background">
+        <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <h1 class="hero-title">让志愿行动，改变世界</h1>
+        <p class="hero-subtitle">发现、参与并记录您的每一次善举。油炬智愿，点亮您与社区的光。</p>
+        <div class="hero-actions">
+          <router-link to="/activities" class="btn btn-primary btn-lg">探索活动</router-link>
+          <router-link v-if="!isLoggedIn" to="/login" class="btn btn-outline-light btn-lg">成为志愿者</router-link>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-section">
       <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">让志愿行动改变世界</h1>
-          <p class="hero-subtitle">加入我们，一起为社区贡献力量，创造更美好的未来</p>
-          <div class="hero-actions">
-            <router-link v-if="isLoggedIn" to="/activities" class="btn-secondary">查看活动</router-link>
-            <router-link v-else to="/login" class="btn-secondary">成为志愿者</router-link>
+        <div class="impact-grid">
+          <div class="impact-item">
+            <h2 class="impact-number">{{ animatedStats.volunteers }}</h2>
+            <p class="impact-label">注册志愿者</p>
+          </div>
+          <div class="impact-item">
+            <h2 class="impact-number">{{ animatedStats.activities }}</h2>
+            <p class="impact-label">已举办活动</p>
+          </div>
+          <div class="impact-item">
+            <h2 class="impact-number">{{ animatedStats.hours.toFixed(1) }}</h2>
+            <p class="impact-label">累计服务时长 (小时)</p>
+          </div>
+          <div class="impact-item">
+            <h2 class="impact-number">{{ animatedStats.organizations }}</h2>
+            <p class="impact-label">合作组织</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="features">
+    <section class="featured-activities-section">
       <div class="container">
-        <h2 class="section-title">为什么选择我们</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">1</div>
-            <h3 class="feature-title">丰富的志愿活动</h3>
-            <p class="feature-description">我们提供多样化的志愿活动，满足不同人群的兴趣和能力</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">2</div>
-            <h3 class="feature-title">可靠的组织合作</h3>
-            <p class="feature-description">与经过认证的非营利组织合作，确保您的贡献能真正帮助到需要的人</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">3</div>
-            <h3 class="feature-title">个性化匹配</h3>
-            <p class="feature-description">基于您的兴趣和技能，为您推荐最适合的志愿活动</p>
-          </div>
+        <div class="section-header">
+          <h2 class="section-title">热门活动</h2>
+          <router-link to="/activities" class="section-link">查看全部 &rarr;</router-link>
         </div>
-      </div>
-    </section>
-
-    <section class="recent-activities">
-      <div class="container">
-        <h2 class="section-title">近期活动</h2>
-
-        <div v-if="loading" class="loading-state">正在加载活动...</div>
-        <div v-if="error" class="error-state">{{ error }}</div>
-
-        <div v-if="!loading && !error" class="activities-grid">
-          <div class="activity-card" v-for="activity in recentActivities" :key="activity.id">
-            <img :src="activity.coverImageUrl || 'https://picsum.photos/id/1002/600/400'" alt="活动图片" class="activity-image">
-            <div class="activity-content">
-              <h3 class="activity-title">{{ activity.title }}</h3>
-              <p class="activity-date">{{ activity.startTime }}</p>
-              <p class="activity-location">{{ activity.location }}</p>
-              <router-link :to="`/activities/${activity.id}`" class="btn-view">查看详情</router-link>
-            </div>
-          </div>
-        </div>
-
-        <div class="view-all">
-          <router-link to="/activities" class="btn-view-all">查看全部活动</router-link>
-        </div>
-      </div>
-    </section>
-
-    <section class="testimonials">
-      <div class="container">
-        <h2 class="section-title">志愿者心声</h2>
-        <div class="testimonials-slider">
-          <div class="testimonial" v-for="testimonial in testimonials" :key="testimonial.id">
-            <div class="testimonial-content">
-              <p class="testimonial-text">{{ testimonial.text }}</p>
-              <div class="testimonial-author">
-                <img :src="testimonial.avatar" alt="志愿者头像" class="testimonial-avatar">
-                <div>
-                  <p class="testimonial-name">{{ testimonial.name }}</p>
-                  <p class="testimonial-position">{{ testimonial.position }}</p>
+        <div class="carousel-wrapper">
+          <div class="activities-carousel" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+            <div class="activity-slide" v-for="activity in recentActivities" :key="activity.id">
+              <div class="activity-card">
+                <img :src="activity.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22220%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e2e8f0%22/%3E%3C/svg%3E'" alt="活动图片" class="activity-image">
+                <div class="card-content">
+                  <span class="category-tag">{{ getCategoryName(activity.category) }}</span>
+                  <h3 class="card-title">{{ activity.title }}</h3>
+                  <div class="card-meta">
+                    <span>📍 {{ activity.location }}</span>
+                  </div>
+                  <router-link :to="`/activities/${activity.id}`" class="btn btn-primary-outline">活动详情</router-link>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="carousel-dots">
+          <button v-for="(slide, index) in recentActivities" :key="index" @click="currentSlide = index" :class="{ active: currentSlide === index }"></button>
+        </div>
       </div>
     </section>
+
+    <section class="spotlight-section">
+      <div class="container spotlight-content">
+        <div class="spotlight-image">
+          <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800" alt="Volunteer Spotlight">
+        </div>
+        <div class="spotlight-text">
+          <h2 class="section-title">志愿者风采</h2>
+          <blockquote class="spotlight-quote">
+            “通过‘油炬智愿’，我不仅找到了有意义的活动，更结识了一群志同道合的朋友。每一次付出，都让我感受到了社区的温暖和自己的价值。”
+          </blockquote>
+          <p class="spotlight-author">- 张三, 信息工程学院</p>
+          <router-link to="/register" class="btn btn-secondary">加入我们</router-link>
+        </div>
+      </div>
+    </section>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
-import { storeToRefs } from 'pinia';
-// 1. 导入新创建的API服务
 import { getPublicActivities } from '@/services/publicActivityApi.js';
+import { gsap } from 'gsap';
 
 const userStore = useUserStore();
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn } = userStore;
 
-// 2. 定义加载和错误状态
+// --- Mock Data ---
 const recentActivities = ref([]);
 const loading = ref(true);
 const error = ref(null);
+const currentSlide = ref(0);
 
-// 3. 定义获取活动数据的方法
+// --- Impact Stats Animation ---
+const stats = { volunteers: 128, activities: 76, hours: 2450.5, organizations: 15 };
+const animatedStats = reactive({ volunteers: 0, activities: 0, hours: 0, organizations: 0 });
+
+let observer;
+onMounted(() => {
+  fetchRecentActivities();
+
+  const impactSection = document.querySelector('.impact-section');
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      gsap.to(animatedStats, {
+        duration: 2,
+        volunteers: stats.volunteers,
+        activities: stats.activities,
+        hours: stats.hours,
+        organizations: stats.organizations,
+        ease: 'power1.inOut',
+        onUpdate: () => {
+          animatedStats.volunteers = Math.round(animatedStats.volunteers)
+          animatedStats.activities = Math.round(animatedStats.activities)
+          animatedStats.organizations = Math.round(animatedStats.organizations)
+        }
+      });
+      observer.disconnect(); // Animate only once
+    }
+  }, { threshold: 0.5 });
+
+  if(impactSection) observer.observe(impactSection);
+
+  // Carousel auto-play
+  const interval = setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % (recentActivities.value.length || 1);
+  }, 5000);
+  onUnmounted(() => clearInterval(interval));
+});
+
+// --- API Call ---
 const fetchRecentActivities = async () => {
   try {
     loading.value = true;
     error.value = null;
-    // 调用API，只获取第一页的3条数据作为热门活动
-    const response = await getPublicActivities(1, 3);
+    const response = await getPublicActivities(1, 6); // Fetch 6 activities for the carousel
     if (response && response.list) {
       recentActivities.value = response.list;
     } else {
-      // 如果API没有返回预期的格式，也设置一个错误提示
-      error.value = '无法加载活动数据，格式不正确。';
+      error.value = '无法加载活动数据。';
     }
   } catch (err) {
     console.error('获取热门活动失败:', err);
@@ -119,276 +158,79 @@ const fetchRecentActivities = async () => {
   }
 };
 
-// 4. 在组件挂载时调用该方法
-onMounted(() => {
-  fetchRecentActivities();
-});
-
-
-// 模拟数据 (testimonials 保持不变)
-const testimonials = ref([
-  {
-    id: 1,
-    text: "通过这个平台，我找到了很多志同道合的朋友，一起参与了很多有意义的活动，收获颇丰！",
-    name: "张明",
-    position: "志愿者（1年）",
-    avatar: "https://picsum.photos/id/1012/100/100"
-  },
-  {
-    id: 2,
-    text: "作为一个企业，我们通过这个平台组织了多次员工志愿活动，不仅增强了团队凝聚力，也为社会做出了贡献。",
-    name: "李华",
-    position: "企业社会责任主管",
-    avatar: "https://picsum.photos/id/1027/100/100"
-  }
-]);
+const getCategoryName = (category) => {
+  const categories = { 'environment': '环保', 'education': '教育' };
+  return categories[category] || category || '综合';
+};
 </script>
 
+
 <style scoped>
-/* 样式部分保持不变，所以这里省略了，你可以保留原有的 <style> 部分 */
-.home-view {
-  font-family: 'Inter', sans-serif;
+/* General */
+.home-view { overflow-x: hidden; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.section-title { font-size: 2.25rem; font-weight: 700; color: var(--color-text-heading); }
+.section-link { color: var(--color-primary); font-weight: 500; text-decoration: none; }
+.btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.2s; text-decoration: none; border: 1px solid transparent; }
+.btn-lg { padding: 1rem 2rem; font-size: 1.1rem; }
+.btn-primary { background-color: var(--color-primary); color: white; }
+.btn-primary:hover { background-color: var(--color-primary-hover); transform: translateY(-2px); }
+.btn-secondary { background-color: #f97316; color: white; }
+.btn-secondary:hover { background-color: #ea580c; }
+.btn-outline-light { background-color: transparent; color: white; border-color: white; }
+.btn-outline-light:hover { background-color: rgba(255,255,255,0.1); }
+.btn-primary-outline { color: var(--color-primary); border-color: var(--color-primary); }
+.btn-primary-outline:hover { background-color: var(--color-primary-soft); }
+
+/* Hero Section */
+.hero-section { position: relative; height: 70vh; display: flex; align-items: center; text-align: center; color: white; }
+.hero-video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2; }
+.hero-content { position: relative; z-index: 3; }
+.hero-title { font-size: 3.5rem; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+.hero-subtitle { font-size: 1.25rem; max-width: 600px; margin: 1rem auto 2.5rem; color: #e5e7eb; }
+.hero-actions { display: flex; justify-content: center; gap: 1rem; }
+
+/* Impact Section */
+.impact-section { padding: 4rem 1rem; background: var(--color-background-soft); }
+.impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+.impact-item { text-align: center; }
+.impact-number { font-size: 3rem; font-weight: 700; color: var(--color-primary); }
+.impact-label { font-size: 1rem; color: var(--color-text-muted); }
+
+/* Featured Activities */
+.featured-activities-section { padding: 5rem 1rem; }
+.carousel-wrapper { overflow: hidden; }
+.activities-carousel { display: flex; transition: transform 0.5s ease-in-out; }
+.activity-slide { flex: 0 0 100%; }
+.activity-card { margin: 0 1rem; background: var(--color-surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+.activity-image { width: 100%; height: 220px; object-fit: cover; }
+.card-content { padding: 1.5rem; }
+.category-tag { display: inline-block; background-color: var(--color-primary-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.75rem; }
+.card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+.card-meta { color: var(--color-text-muted); margin-bottom: 1.5rem; }
+.carousel-dots { text-align: center; margin-top: 2rem; }
+.carousel-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: #d1d5db; margin: 0 5px; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.carousel-dots button.active { background: var(--color-primary); transform: scale(1.2); }
+
+/* Spotlight Section */
+.spotlight-section { padding: 5rem 1rem; background: var(--color-background-soft); }
+.spotlight-content { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; }
+.spotlight-image img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.spotlight-quote { font-size: 1.5rem; font-style: italic; color: var(--color-text-heading); border-left: 4px solid var(--color-primary); padding-left: 1.5rem; margin: 2rem 0; }
+.spotlight-author { font-weight: 600; margin-bottom: 2rem; }
+
+@media (max-width: 992px) {
+  .spotlight-content { grid-template-columns: 1fr; }
+  .spotlight-image { order: 2; margin-top: 2rem; }
+  .spotlight-text { order: 1; text-align: center; }
+  .spotlight-quote { margin: 2rem auto; }
+}
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.5rem; }
+  .hero-subtitle { font-size: 1.1rem; }
+  .section-title { font-size: 1.8rem; }
 }
 
-.hero {
-  background-image: url('https://zyh365.com/images/indexbg.jpg');
-  color: white;
-  padding: 100px 0;
-  text-align: center;
-}
-
-.hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 48px;
-  margin-bottom: 24px;
-}
-
-.hero-subtitle {
-  font-size: 20px;
-  margin-bottom: 40px;
-  color: #e0e7ff;
-}
-
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.btn-secondary {
-  background-color: white;
-  color: #2563eb;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-.btn-secondary:hover {
-  background-color: rgba(90, 90, 90, 0.8);
-}
-.features {
-  padding: 80px 0;
-  background-color: #f8fafc;
-}
-
-.section-title {
-  font-size: 32px;
-  text-align: center;
-  margin-bottom: 60px;
-  color: #334155;
-}
-
-.features-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  justify-content: center;
-}
-
-.feature-card {
-  max-width: 300px;
-  background-color: white;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: transform 0.2s;
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-}
-
-.feature-icon {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 48px;
-  height: 48px;
-  background-color: #2563eb;
-  color: white;
-  border-radius: 50%;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.feature-title {
-  font-size: 20px;
-  margin-bottom: 16px;
-  color: #334155;
-}
-
-.feature-description {
-  color: #64748b;
-  line-height: 1.6;
-}
-
-.recent-activities {
-  padding: 80px 0;
-}
-
-.loading-state, .error-state {
-  text-align: center;
-  padding: 40px;
-  color: #64748b;
-  font-size: 1.1rem;
-}
-.error-state {
-  color: #ef4444;
-  background-color: #fef2f2;
-  border-radius: 8px;
-}
-
-.activities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 40px;
-}
-
-.activity-card {
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.activity-card:hover {
-  transform: translateY(-5px);
-}
-
-.activity-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.activity-content {
-  padding: 24px;
-}
-
-.activity-title {
-  font-size: 20px;
-  margin-bottom: 12px;
-  color: #334155;
-}
-
-.activity-date,
-.activity-location {
-  color: #64748b;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.btn-view {
-  display: inline-block;
-  background-color: #2563eb;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  margin-top: 16px;
-}
-
-.btn-view:hover {
-  background-color: #1d4ed8;
-}
-
-.view-all {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.btn-view-all {
-  display: inline-block;
-  background-color: transparent;
-  color: #2563eb;
-  border: 2px solid #2563eb;
-  padding: 10px 24px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.btn-view-all:hover {
-  background-color: #f8fafc;
-}
-
-.testimonials {
-  padding: 80px 0;
-  background-color: #f8fafc;
-}
-
-.testimonials-slider {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  justify-content: center;
-}
-
-.testimonial {
-  max-width: 400px;
-  background-color: white;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.testimonial-text {
-  color: #64748b;
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.testimonial-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.testimonial-name {
-  font-weight: 600;
-  color: #334155;
-}
-
-.testimonial-position {
-  color: #64748b;
-  font-size: 14px;
-}
 </style>
