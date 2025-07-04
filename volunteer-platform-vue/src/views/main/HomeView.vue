@@ -91,7 +91,7 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getPublicActivities } from '@/services/publicActivityApi.js';
-import { getDashboardStats } from '@/services/dashboardApi.js';
+import { getPublicDashboardStats } from '@/services/dashboardApi.js';
 import { gsap } from 'gsap';
 
 const userStore = useUserStore();
@@ -132,7 +132,7 @@ onMounted(() => {
 
 const fetchDashboardStatsAndAnimate = async () => {
   try {
-    const realStats = await getDashboardStats();
+    const realStats = await getPublicDashboardStats();
     gsap.to(animatedStats, {
       duration: 2,
       volunteers: realStats.totalUsers || 0,
