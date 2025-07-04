@@ -58,12 +58,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { getAdminDashboardStats } from '@/services/dashboardApi.js';
+import {onMounted, ref} from 'vue';
+import {useRouter} from 'vue-router';
+import {getAdminDashboardStats} from '@/services/dashboardApi.js';
 import LatestUpdates from '@/components/LatestUpdates.vue'; // 导入新组件
-import { ElMessage } from 'element-plus';
-import { User, Flag, Timer, OfficeBuilding, CirclePlus, DocumentAdd, Search } from '@element-plus/icons-vue';
+import {ElMessage} from 'element-plus';
+import {CirclePlus, DocumentAdd, Flag, OfficeBuilding, Search, Timer, User} from '@element-plus/icons-vue';
 
 const router = useRouter();
 const stats = ref({
@@ -77,8 +77,7 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     loading.value = true;
-    const data = await getAdminDashboardStats();
-    stats.value = data;
+    stats.value = await getAdminDashboardStats();
   } catch (error) {
     ElMessage.error('加载看板数据失败');
     console.error(error);

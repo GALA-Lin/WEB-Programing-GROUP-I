@@ -17,6 +17,9 @@ export const getAdminDashboardStats = () => {
     return apiClient.get('/api/admin/dashboard/stats');
 };
 
+export const getDashboardLatestUpdates = () => {
+    return apiClient.get('/api/admin/dashboard/latest-updates');
+};
 // 如果您的同事还添加了其他函数，也一并保留在这里
 // export const getDashboardLatestUpdates = () => {
 //     return apiClient.get('/api/admin/dashboard/latest-updates');
