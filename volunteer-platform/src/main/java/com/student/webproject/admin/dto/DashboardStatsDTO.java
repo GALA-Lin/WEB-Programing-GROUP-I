@@ -1,4 +1,4 @@
-package com.student.webproject.dashboard.dto;
+package com.student.webproject.admin.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
