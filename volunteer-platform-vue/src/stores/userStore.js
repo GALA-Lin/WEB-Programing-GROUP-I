@@ -39,18 +39,14 @@ export const useUserStore = defineStore('user', () => {
         const responseData = await apiClient.post('/api/auth/login', credentials);
         token.value = responseData.token;
         localStorage.setItem('token', responseData.token);
+
+        // 登录成功后，更新axios的默认请求头
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${responseData.token}`;
 
         await fetchCurrentUser();
         router.push('/profile');
     }
-    async function adminLogin(credentials) {
-        const responseData = await apiClient.post('/api/admin/auth/login', credentials);
-        token.value = responseData.token;
-        localStorage.setItem('token', responseData.token);
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${responseData.token}`;
-        await fetchCurrentUser();
-    }
+
     async function updateCurrentUser(profileUpdateDTO) {
         try {
             const response = await apiClient.put('/api/users/me', profileUpdateDTO);
@@ -64,7 +60,13 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
-
+    async function adminLogin(credentials) {
+        const responseData = await apiClient.post('/api/auth/login', credentials);
+        token.value = responseData.token;
+        localStorage.setItem('token', responseData.token);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${responseData.token}`;
+        await fetchCurrentUser();
+    }
 
     async function logout() {
         try {
