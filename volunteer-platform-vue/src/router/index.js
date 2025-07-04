@@ -10,6 +10,7 @@ import ActivityManagement from '@/views/admin/ActivityManagement.vue';
 import NewsView from '@/views/main/NewsView.vue';
 import NewsDetailView from '@/views/main/NewsDetailView.vue';
 
+
 const routes = [
   // --- 前台页面路由 ---
   {
@@ -52,6 +53,11 @@ const routes = [
         path: 'users',
         name: 'AdminUserManagement',
         component: () => import('@/views/admin/UserManagement.vue')
+      },
+      {
+        path: 'news',
+        name: 'AdminNewsManagement',
+        component: () => import('@/views/admin/NewsManagement.vue')
       }
     ]
   },

@@ -35,7 +35,6 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // --- ↓↓↓ 我们将合并 dev 和 prod 配置，并添加严格的规则 ↓↓↓ ---
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
