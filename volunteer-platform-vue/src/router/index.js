@@ -132,12 +132,16 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-// 新增 afterEach 导航守卫
 router.afterEach((to) => {
-  // 确保 store 已被初始化
-  if (tagsViewStoreInstance && to.meta.title) {
+  // 【修改点】在这里添加了对路由名称的判断
+  if (
+      tagsViewStoreInstance &&
+      to.meta.title &&
+      to.path.startsWith('/admin') &&
+      to.name !== 'AdminLogin' // 排除名为 'AdminLogin' 的路由
+  ) {
     tagsViewStoreInstance.addView(to);
   }
-});
+})
 
 export default router;
