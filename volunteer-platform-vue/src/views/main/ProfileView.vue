@@ -1,4 +1,3 @@
-// 文件路径: volunteer-platform-vue/src/views/main/ProfileView.vue
 <template>
   <div class="profile-page">
     <div class="profile-container">
@@ -6,7 +5,11 @@
         <h1 class="card-title">用户中心</h1>
         <p class="card-subtitle">查看或更新你的个人信息</p>
 
-        <div v-if="userStore.currentUser" class="profile-form">
+        <div v-if="!userStore.currentUser && !error" class="loading-skeleton">
+          <el-skeleton :rows="5" animated />
+        </div>
+
+        <div v-else-if="userStore.currentUser" class="profile-form">
           <div class="avatar-section">
             <img :src="userStore.currentUser.avatarUrl || defaultAvatar" alt="Avatar" class="avatar">
             <h2 class="username">{{ userStore.currentUser.username }}</h2>
@@ -14,7 +17,7 @@
           </div>
 
           <div class="service-hours-display">
-            <div class="hours-value">{{ userStore.currentUser.totalServiceHours?.toFixed(2) || '0.00' }}</div>
+            <div class="hours-value">{{ formattedTotalHours }}</div>
             <div class="hours-label">累计志愿时长 (小时)</div>
           </div>
 
@@ -23,7 +26,7 @@
               <el-input v-model="editForm.realName" />
             </el-form-item>
             <el-form-item label="学号">
-              <el-input :value="userStore.currentUser.studentId" disabled />
+              <el-input :value="userStore.currentUser.studentId || 'N/A'" disabled />
             </el-form-item>
             <el-form-item label="邮箱">
               <el-input v-model="editForm.email" />
@@ -52,7 +55,7 @@
         <el-tabs v-model="activeTab" class="profile-tabs">
           <el-tab-pane label="时长明细" name="records">
             <div v-if="loadingRecords">加载中...</div>
-            <el-timeline v-else-if="serviceRecords.length">
+            <el-timeline v-else-if="serviceRecords.length > 0">
               <el-timeline-item
                   v-for="record in serviceRecords"
                   :key="record.activityId"
@@ -61,7 +64,7 @@
               >
                 <el-card>
                   <h4>{{ record.activityTitle }}</h4>
-                  <p class="hours-badge">+ {{ record.serviceHours.toFixed(2) }} 小时</p>
+                  <p class="hours-badge">+ {{ record.serviceHours?.toFixed(2) }} 小时</p>
                   <p class="remarks" v-if="record.remarks">{{ record.remarks }}</p>
                 </el-card>
               </el-timeline-item>
@@ -71,7 +74,7 @@
 
           <el-tab-pane label="我报名的活动" name="enrollments">
             <div v-if="loadingEnrollments">加载中...</div>
-            <div v-else-if="enrolledActivities.length" class="enrolled-list">
+            <div v-else-if="enrolledActivities.length > 0" class="enrolled-list">
               <div v-for="activity in enrolledActivities" :key="activity.activityId" class="activity-item">
                 <div class="activity-info">
                   <p class="activity-title">{{ activity.title }}</p>
@@ -89,14 +92,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getServiceRecords, getEnrolledActivities } from '@/services/profileApi.js';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const router = useRouter();
 const isEditing = ref(false);
 const defaultAvatar = 'https://ui-avatars.com/api/?name=User&background=random';
+const error = ref(null);
 
 const activeTab = ref('records');
 const serviceRecords = ref([]);
@@ -118,11 +124,19 @@ watch(() => userStore.currentUser, (newProfile) => {
   }
 }, { immediate: true, deep: true });
 
+const formattedTotalHours = computed(() => {
+  const hours = userStore.currentUser?.totalServiceHours;
+  if (typeof hours === 'number' || typeof hours === 'string') {
+    return parseFloat(hours).toFixed(2);
+  }
+  return '0.00';
+});
+
 const fetchServiceRecords = async () => {
   loadingRecords.value = true;
   try {
     serviceRecords.value = await getServiceRecords();
-  } catch (error) {
+  } catch (err) {
     ElMessage.error('获取时长明细失败');
   } finally {
     loadingRecords.value = false;
@@ -133,19 +147,23 @@ const fetchEnrolledActivities = async () => {
   loadingEnrollments.value = true;
   try {
     enrolledActivities.value = await getEnrolledActivities();
-  } catch (error) {
+  } catch (err) {
     ElMessage.error('获取报名活动失败');
   } finally {
     loadingEnrollments.value = false;
   }
 };
 
-onMounted(() => {
-  if (!userStore.currentUser) {
-    userStore.fetchCurrentUser();
+onMounted(async () => {
+  try {
+    if (!userStore.currentUser) {
+      await userStore.fetchCurrentUser();
+    }
+    fetchServiceRecords();
+    fetchEnrolledActivities();
+  } catch (err) {
+    error.value = '无法加载用户信息，请重新登录。';
   }
-  fetchServiceRecords();
-  fetchEnrolledActivities();
 });
 
 const startEditing = () => { isEditing.value = true; };
@@ -163,7 +181,8 @@ const handleSave = async () => {
   try {
     await userStore.updateCurrentUser(editForm.value);
     isEditing.value = false;
-  } catch (error) {
+    ElMessage.success('信息更新成功！');
+  } catch (err) {
     // store中已处理提示
   }
 };
@@ -174,16 +193,11 @@ const handleLogout = () => {
     cancelButtonText: '取消',
     type: 'warning',
   })
-      // 【核心修改】在 .then() 的回调函数前加上 async
       .then(async () => {
-        // 【核心修改】在调用 logout 前加上 await
         await userStore.logout();
         ElMessage.success('您已成功退出');
-        await router.push('/login');
       })
-      .catch(() => {
-        // 用户取消操作，无需处理
-      });
+      .catch(() => {});
 };
 
 const formatDateTime = (dateTime) => {
@@ -203,94 +217,6 @@ const getStatusType = (status) => {
 </script>
 
 <style scoped>
-/* 整体布局 */
-.profile-page {
-  min-height: calc(100vh - 120px);
-  padding: 40px;
-  background-color: #f4f7f9;
-}
-.profile-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 30px;
-}
-
-/* 左侧卡片 */
-.profile-card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 30px;
-}
-.card-title {
-  font-size: 24px; text-align: center; color: #333;
-}
-.card-subtitle {
-  text-align: center; color: #777; margin-bottom: 25px;
-}
-.avatar-section {
-  text-align: center; margin-bottom: 20px;
-}
-.avatar {
-  width: 100px; height: 100px; border-radius: 50%;
-  border: 4px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 10px;
-}
-.username { font-size: 20px; font-weight: 600; }
-.user-role { font-size: 14px; color: #999; }
-
-.service-hours-display {
-  text-align: center;
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f0faff;
-  border-radius: 8px;
-}
-.hours-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: #0056b3;
-}
-.hours-label {
-  font-size: 14px;
-  color: #0056b3;
-}
-
-.actions {
-  margin-top: 25px; display: flex; justify-content: center; gap: 15px;
-}
-
-.logout-section {
-  text-align: center; margin-top: 25px; padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-/* 右侧Tabs */
-.details-tabs {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 20px 30px;
-}
-.hours-badge {
-  color: #409eff; font-weight: bold;
-}
-.remarks {
-  color: #909399; font-size: 14px; margin-top: 8px;
-}
-.enrolled-list {
-  display: flex; flex-direction: column; gap: 15px;
-}
-.activity-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 15px; border: 1px solid #e9ecef; border-radius: 8px;
-}
-.activity-title {
-  font-weight: 500;
-}
-.activity-time {
-  font-size: 14px; color: #6c757d;
-}
+/* 此处省略所有 <style> 样式代码，它们与之前的版本相同 */
+.profile-page{min-height:calc(100vh - 120px);padding:40px;background-color:#f4f7f9}.profile-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:350px 1fr;gap:30px}.profile-card{background-color:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:30px}.card-title{font-size:24px;text-align:center;color:#333}.card-subtitle{text-align:center;color:#777;margin-bottom:25px}.avatar-section{text-align:center;margin-bottom:20px}.avatar{width:100px;height:100px;border-radius:50%;border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.1);margin-bottom:10px}.username{font-size:20px;font-weight:600}.user-role{font-size:14px;color:#999}.service-hours-display{text-align:center;margin:20px 0;padding:15px;background-color:#f0faff;border-radius:8px}.hours-value{font-size:32px;font-weight:700;color:#0056b3}.hours-label{font-size:14px;color:#0056b3}.actions{margin-top:25px;display:flex;justify-content:center;gap:15px}.logout-section{text-align:center;margin-top:25px;padding-top:20px;border-top:1px solid #f0f0f0}.details-tabs{background-color:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:20px 30px}.hours-badge{color:#409eff;font-weight:700}.remarks{color:#909399;font-size:14px;margin-top:8px}.enrolled-list{display:flex;flex-direction:column;gap:15px}.activity-item{display:flex;justify-content:space-between;align-items:center;padding:15px;border:1px solid #e9ecef;border-radius:8px}.activity-title{font-weight:500}.activity-time{font-size:14px;color:#6c757d}
 </style>
