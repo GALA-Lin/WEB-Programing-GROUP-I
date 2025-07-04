@@ -44,11 +44,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // 1. 允许任何人访问 登录、注册接口
                         .requestMatchers("/api/auth/**").permitAll()
-                        // 2. 允许任何人访问 新闻、活动列表等公开数据 (GET请求)
+                        // 2. 允许任何人以GET方式，访问活动和新闻的公开数据
                         .requestMatchers(HttpMethod.GET, "/api/activities/**", "/api/news/**").permitAll()
-                        // 3. 【核心规则】访问所有 /api/admin/ 开头的接口，必须拥有 "super_admin" 或 "admin" 角色
+
+                        // --- ↓↓↓ 新增的核心修正 ↓↓↓ ---
+                        // 3. 允许任何已登录的用户，对新闻进行点赞 (POST请求)
+                        .requestMatchers(HttpMethod.POST, "/api/news/*/like").authenticated()
+                        // --- ↑↑↑ 修正结束 ↑↑↑ ---
+
+                        // 4. 【核心规则】访问所有 /api/admin/ 开头的接口，必须拥有 "super_admin" 或 "admin" 角色
                         .requestMatchers("/api/admin/**").hasAnyAuthority("super_admin", "admin")
-                        // 4. 除了上面放行的规则外，其他所有请求都必须先登录认证
+                        // 5. 除了上面放行的规则外，其他所有请求都必须先登录认证
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
