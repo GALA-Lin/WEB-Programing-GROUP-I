@@ -5,7 +5,7 @@ import apiClient from '@/api/axios.js';
  * 获取后台看板的统计数据
  * @returns {Promise<any>}
  */
-export const getDashboardStats = () => {
+export const getAdminDashboardStats = () => {
     return apiClient.get('/api/admin/dashboard/stats');
 };
 
