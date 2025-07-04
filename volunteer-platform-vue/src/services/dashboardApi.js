@@ -1,5 +1,4 @@
-// 文件路径: volunteer-platform-vue/src/services/dashboardApi.js
-
+// volunteer-platform-vue/src/services/dashboardApi.js
 import apiClient from '@/api/axios.js';
 
 /**

@@ -60,7 +60,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { getDashboardStats } from '@/services/dashboardApi.js';
+import { getAdminDashboardStats } from '@/services/dashboardApi.js';
 import LatestUpdates from '@/components/LatestUpdates.vue'; // 导入新组件
 import { ElMessage } from 'element-plus';
 import { User, Flag, Timer, OfficeBuilding, CirclePlus, DocumentAdd, Search } from '@element-plus/icons-vue';
@@ -77,7 +77,7 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     loading.value = true;
-    const data = await getDashboardStats();
+    const data = await getAdminDashboardStats();
     stats.value = data;
   } catch (error) {
     ElMessage.error('加载看板数据失败');
