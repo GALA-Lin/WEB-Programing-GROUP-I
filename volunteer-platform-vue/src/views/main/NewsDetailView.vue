@@ -3,7 +3,6 @@
     <div v-if="loading" class="loading-container">
       <el-skeleton animated>
         <template #template>
-          <el-skeleton-item variant="image" style="width: 100%; height: 300px;" />
           <div class="container" style="padding: 24px;">
             <el-skeleton-item variant="h1" style="width: 60%; margin-bottom: 20px;" />
             <el-skeleton :rows="5" />
@@ -21,12 +20,11 @@
     </div>
 
     <article v-if="news" class="news-article">
-      <header class="article-header" :style="{ backgroundImage: `url(${news.coverImageUrl || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=1200'})` }">
-        <div class="header-overlay"></div>
+      <header class="article-header">
         <div class="container header-content">
           <h1 class="article-title">{{ news.title }}</h1>
           <div class="article-meta-header">
-            <span><el-icon><User /></el-icon>{{ news.authorName }}</span>
+            <span><el-icon><User /></el-icon>{{ news.authorName || '匿名作者' }}</span>
             <span><el-icon><Calendar /></el-icon>发布于 {{ news.publishedAt }}</span>
           </div>
         </div>
@@ -103,54 +101,52 @@ onMounted(fetchNewsDetail);
 </script>
 
 <style scoped>
+/* 【变更】整体页面背景色 */
 .news-detail-page {
+  background-color: var(--color-background-soft);
+}
+
+.loading-container, .error-container {
+  padding: 2rem;
+  background-color: var(--color-surface);
+  min-height: 100vh;
+}
+
+.news-article {
   background-color: var(--color-surface);
 }
 
-.loading-container {
-  padding: 2rem;
-}
-
-.error-container {
-  padding: 4rem 0;
-}
-
+/* 【变更】文章头部的全新样式 */
 .article-header {
-  position: relative;
-  width: 100%;
-  height: 45vh;
-  min-height: 300px;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 3rem 0;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   text-align: center;
-  color: white;
 }
-.header-overlay {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
-}
+
 .header-content {
-  position: relative;
-  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 0 1rem;
 }
+
 .article-title {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 800;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  margin-bottom: 1rem;
+  color: var(--color-text-heading);
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
 }
+
 .article-meta-header {
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  font-size: 0.9rem;
-  opacity: 0.9;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
 }
+
 .article-meta-header span {
   display: flex;
   align-items: center;
@@ -161,11 +157,15 @@ onMounted(fetchNewsDetail);
   padding-top: 3rem;
   padding-bottom: 4rem;
 }
+
 .article-content {
-  max-width: 760px;
+  max-width: 800px;
   margin: 0 auto;
+  background-color: var(--color-surface);
+  padding: 0 2rem; /* 增加内边距，让内容更舒适 */
 }
 
+/* 保持正文样式不变 */
 .article-content :deep(h1),
 .article-content :deep(h2),
 .article-content :deep(h3) {
@@ -189,9 +189,9 @@ onMounted(fetchNewsDetail);
 }
 
 .actions-bar {
-  max-width: 760px;
+  max-width: 800px;
   margin: 3rem auto 0;
-  padding-top: 2rem;
+  padding: 2rem 2rem 0;
   border-top: 1px solid var(--color-border);
   text-align: center;
 }
