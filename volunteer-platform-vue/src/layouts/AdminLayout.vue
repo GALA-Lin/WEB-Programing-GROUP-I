@@ -34,6 +34,10 @@
           <el-icon><Document /></el-icon>
           <template #title><span>新闻管理</span></template>
         </el-menu-item>
+        <el-menu-item index="/admin/records">
+          <el-icon><Clock /></el-icon>
+          <template #title><span>时长管理</span></template>
+        </el-menu-item>
       </el-menu>
     </aside>
 
