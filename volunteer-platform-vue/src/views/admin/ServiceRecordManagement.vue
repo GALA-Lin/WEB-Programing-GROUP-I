@@ -27,10 +27,12 @@
 
       <el-pagination
           background
-          layout="prev, pager, next, total"
+          :layout="'total, sizes, prev, pager, next'"
           :total="total"
+          :page-sizes="[10, 20, 50, 100]"
           :page-size="pageSize"
           :current-page="currentPage"
+          @size-change="handleSizeChange"
           @current-change="handlePageChange"
           style="margin-top: 20px; justify-content: flex-end;"
       />
@@ -100,7 +102,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import {ElMessage, ElMessageBox, ElPagination} from 'element-plus';
 import { getServiceRecords, createServiceRecord, updateServiceRecord, deleteServiceRecord, importServiceRecords } from '@/services/serviceRecordAdminApi.js';
 import { downloadImportTemplate } from '@/services/serviceRecordAdminApi.js'; // 【修改】导入新API
 import { Plus, Upload, Download } from '@element-plus/icons-vue'; // 【修改】导入新图标
@@ -111,7 +113,11 @@ const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const loading = ref(true);
-
+const handleSizeChange = (newSize) => {
+  pageSize.value = newSize;
+  currentPage.value = 1;
+  fetchRecords();
+};
 const handleDownloadTemplate = async () => {
   try {
     const blob = await downloadImportTemplate();

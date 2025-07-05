@@ -19,7 +19,7 @@
         <el-table-column prop="location" label="地点" width="180" show-overflow-tooltip />
         <el-table-column prop="startTime" label="开始时间" width="180" />
         <el-table-column prop="recruitmentQuota" label="名额" width="100" align="center"/>
-        <el-table-column fixed="right" label="操作" width="150" align="center">
+        <el-table-column fixed="right" label="操作" width="180" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
             <el-button link type="success" size="small" @click="handleViewEnrollments(scope.row)">查看报名</el-button>
@@ -31,10 +31,12 @@
       <div class="pagination-container">
         <el-pagination
             background
-            layout="prev, pager, next, total"
+            :layout="'total, sizes, prev, pager, next'"
             :total="total"
+            :page-sizes="[10, 20, 50, 100]"
             :page-size="pageSize"
             :current-page="currentPage"
+            @size-change="handleSizeChange"
             @current-change="handlePageChange"
         />
       </div>
@@ -130,6 +132,14 @@ const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const activityFormRef = ref(null);
 
+const handleSizeChange = (newSize) => {
+  // 1. 更新每页的条数
+  pageSize.value = newSize;
+  // 2. 将当前页码重置为第一页，这是一个好的用户体验实践
+  currentPage.value = 1;
+  // 3. 重新获取数据
+  fetchActivities();
+};
 
 
 const getInitialForm = () => ({
