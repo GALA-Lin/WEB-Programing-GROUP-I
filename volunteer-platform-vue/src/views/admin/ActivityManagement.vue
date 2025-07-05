@@ -5,7 +5,6 @@
         <div class="card-header">
           <span>后台 - 活动管理</span>
           <div>
-            <el-button :icon="Link" @click="goToFrontend">访问前台</el-button>
             <el-button type="primary" :icon="Plus" @click="handleOpenDialog()">
               发布新活动
             </el-button>
