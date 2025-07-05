@@ -69,6 +69,12 @@ const routes = [
         meta: { title: '活动管理' }
       },
       {
+        path: 'activities/:id/records', // 使用嵌套路由，清晰地表示它属于某个活动
+        name: 'AdminServiceRecordManagement',
+        component: () => import('@/views/admin/ServiceRecordManagement.vue'),
+        meta: { title: '活动时长管理' } // title 用于面包屑导航
+      },
+      {
         path: 'users',
         name: 'AdminUserManagement',
         component: () => import('@/views/admin/UserManagement.vue'),
