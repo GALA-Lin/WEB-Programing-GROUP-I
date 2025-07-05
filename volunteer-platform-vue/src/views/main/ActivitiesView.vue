@@ -8,235 +8,228 @@
     <div class="container">
       <div class="filter-section">
         <div class="filter-controls">
-          <select v-model="selectedCategory" class="filter-select">
-            <option value="">全部分类</option>
-            <option value="environment">环境保护</option>
-            <option value="education">教育支持</option>
-          </select>
-          <input type="text" v-model="searchTerm" placeholder="搜索活动名称、地点..." class="filter-search">
-          <button @click="searchActivities" class="btn btn-primary">搜索</button>
+          <el-input v-model="searchTerm" placeholder="搜索活动名称、地点..." clearable @change="searchActivities" class="filter-search">
+            <template #prepend>
+              <el-select v-model="selectedCategory" placeholder="全部分类" @change="searchActivities" style="width: 130px;">
+                <el-option label="全部分类" value=""></el-option>
+                <el-option label="校内服务" value="校内服务"></el-option>
+                <el-option label="社区服务" value="社区服务"></el-option>
+                <el-option label="环保" value="环保"></el-option>
+                <el-option label="教育" value="教育"></el-option>
+                <el-option label="文化传播" value="文化传播"></el-option>
+              </el-select>
+            </template>
+          </el-input>
         </div>
       </div>
 
-      <div v-if="loading" class="loading-state">正在加载活动...</div>
+      <div v-if="loading" class="loading-state">
+        <el-skeleton animated>
+          <template #template>
+            <div class="activities-grid">
+              <el-skeleton-item v-for="i in 6" :key="i" variant="image" style="width: 100%; height: 220px; border-radius: 12px;" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
       <div v-if="error" class="error-state">{{ error }}</div>
 
-      <div v-if="!loading && !error" class="activities-grid">
-        <div class="activity-card" v-for="activity in paginatedActivities" :key="activity.id">
-          <div class="activity-image-wrapper">
-            <img :src="activity.image" :alt="activity.title" class="activity-image" />
-            <span class="activity-category-tag">{{ getCategoryName(activity.category) }}</span>
-          </div>
-          <div class="activity-content">
-            <h3 class="activity-title">
-              <router-link :to="`/activities/${activity.id}`">{{ activity.title }}</router-link>
-            </h3>
-            <p class="activity-organizer">由 <strong>{{ activity.organizer.name }}</strong> 主办</p>
-
-            <div class="activity-meta">
-              <div class="meta-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10s10-4.486 10-10S17.514 2 12 2m0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8s8 3.589 8 8s-3.589 8-8 8"/><path fill="currentColor" d="M13 7h-2v5.414l3.293 3.293l1.414-1.414L13 11.586z"/></svg>
-                <span>{{ formatDate(activity.date) }}</span>
-              </div>
-              <div class="meta-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C7.589 2 4 5.589 4 10c0 4.411 8 12 8 12s8-7.589 8-12c0-4.411-3.589-8-8-8m0 12c-2.206 0-4-1.794-4-4s1.794-4 4-4s4 1.794 4 4s-1.794 4-4 4"/></svg>
-                <span>{{ activity.location }}</span>
-              </div>
+      <div v-if="!loading && paginatedActivities.length > 0">
+        <div class="activities-grid">
+          <div class="activity-card" v-for="activity in paginatedActivities" :key="activity.id">
+            <div class="activity-image-wrapper">
+              <router-link :to="`/activities/${activity.id}`">
+                <img :src="activity.coverImageUrl || `https://source.unsplash.com/random/400x300?sig=${activity.id}`" :alt="activity.title" class="activity-image" />
+              </router-link>
+              <span class="activity-category-tag">{{ activity.category }}</span>
             </div>
+            <div class="activity-content">
+              <h3 class="activity-title">
+                <router-link :to="`/activities/${activity.id}`">{{ activity.title }}</router-link>
+              </h3>
 
-            <div class="enrollment-progress">
-              <div class="progress-bar">
-                <div class="progress-bar-inner" :style="{ width: (activity.participants / activity.maxParticipants * 100) + '%' }"></div>
+              <div class="activity-meta">
+                <div class="meta-item">
+                  <el-icon><Calendar /></el-icon>
+                  <span>{{ formatDate(activity.startTime) }}</span>
+                </div>
+                <div class="meta-item">
+                  <el-icon><LocationInformation /></el-icon>
+                  <span>{{ activity.location }}</span>
+                </div>
               </div>
-              <div class="progress-text">
-                <span>{{ activity.participants }} / {{ activity.maxParticipants }} 人</span>
-              </div>
-            </div>
 
-            <div class="activity-actions">
-              <router-link :to="`/activities/${activity.id}`" class="btn btn-primary-outline">查看详情</router-link>
+              <div class="enrollment-progress">
+                <el-progress :percentage="getEnrollmentPercentage(activity)" :stroke-width="6" :color="getStatusColor(activity.status)"/>
+                <div class="progress-text">
+                  <span>{{ activity.currentEnrollment }} / {{ activity.recruitmentQuota }} 人</span>
+                  <el-tag :type="getStatusType(activity.status)" size="small" effect="light">{{ getStatusText(activity.status) }}</el-tag>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
+        <div class="pagination-wrapper">
+          <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="total"
+              :page-size="pageSize"
+              :current-page="currentPage"
+              @current-change="handlePageChange"
+          />
+        </div>
       </div>
-      <div v-if="!loading && totalPages > 1" class="pagination">
-        <button @click="currentPage--" :disabled="currentPage === 1" class="page-btn">上一页</button>
-        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
-        <button @click="currentPage++" :disabled="currentPage === totalPages" class="page-btn">下一页</button>
+      <div v-if="!loading && paginatedActivities.length === 0" class="empty-state">
+        <el-empty description="暂无相关活动"></el-empty>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-// 您的 <script setup> 部分保持不变，这里为了简洁省略了
-// 我们只修改 <template> 和 <style> 部分
 import { ref, computed, onMounted } from 'vue';
+import { getPublicActivities } from '@/services/publicActivityApi.js';
+import { ElMessage, ElSkeleton, ElSkeletonItem, ElPagination, ElIcon, ElTag, ElProgress, ElInput, ElSelect, ElOption, ElEmpty } from 'element-plus';
+import { Calendar, LocationInformation } from '@element-plus/icons-vue';
 
 const selectedCategory = ref('');
 const searchTerm = ref('');
 const loading = ref(true);
 const error = ref(null);
 const activities = ref([]);
+const total = ref(0);
 const currentPage = ref(1);
-const itemsPerPage = ref(6); // 每页显示6个活动
+const pageSize = ref(9); // 每页9个活动，方便3x3布局
 
-// 模拟的活动数据 (与您项目中的保持一致)
-const allActivities = [
-  { id: 1, title: "城市公园清洁日", category: "environment", image: "https://images.unsplash.com/photo-1599059813005-72827a055398?q=80&w=800", date: "2025-10-15", location: "奥林匹克公园", duration: 4, participants: 25, maxParticipants: 50, description: "...", rating: 4.8, reviews: 124, organizer: { name: "绿色北京环保协会", avatar: "..." } },
-  { id: 2, title: "山区小学支教活动", category: "education", image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=800", date: "2025-10-20", location: "河北承德", duration: 10, participants: 12, maxParticipants: 20, description: "...", rating: 4.9, reviews: 87, organizer: { name: "爱心支教联盟", avatar: "..." } },
-  { id: 3, title: "敬老院陪伴日", category: "elderly", image: "https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=800", date: "2025-10-16", location: "上海康桥镇敬老院", duration: 3, participants: 18, maxParticipants: 30, description: "...", rating: 4.7, reviews: 105, organizer: { name: "夕阳红关爱协会", avatar: "..." } },
-  { id: 4, title: "自闭症儿童关爱", category: "children", image: "https://images.unsplash.com/photo-1512428209355-e51c243a4e5c?q=80&w=800", date: "2025-10-22", location: "广州特殊教育学校", duration: 5, participants: 24, maxParticipants: 25, description: "...", rating: 4.8, reviews: 93, organizer: { name: "星星点灯中心", avatar: "..." } },
-  { id: 5, title: "社区环保宣传", category: "environment", image: "https://images.unsplash.com/photo-1576495199011-bde07d3b5336?q=80&w=800", date: "2025-10-18", location: "深圳科技园社区", duration: 4, participants: 38, maxParticipants: 40, description: "...", rating: 4.6, reviews: 78, organizer: { name: "绿色家园社区", avatar: "..." } },
-  { id: 6, title: "图书捐赠整理", category: "education", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=800", date: "2025-10-25", location: "杭州西湖区图书馆", duration: 6, participants: 8, maxParticipants: 15, description: "...", rating: 4.5, reviews: 65, organizer: { name: "阅读点亮未来", avatar: "..." } }
-];
-
-const filteredActivities = computed(() => {
-  return allActivities.filter(activity => {
-    const categoryMatch = !selectedCategory.value || activity.category === selectedCategory.value;
-    const searchMatch = !searchTerm.value ||
-        activity.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-        activity.location.toLowerCase().includes(searchTerm.value.toLowerCase());
-    return categoryMatch && searchMatch;
-  });
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredActivities.value.length / itemsPerPage.value);
-});
-
-const paginatedActivities = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredActivities.value.slice(start, end);
-});
+const paginatedActivities = computed(() => activities.value);
 
 const searchActivities = () => {
   currentPage.value = 1;
-}
+  fetchActivities();
+};
+
+const fetchActivities = async () => {
+  loading.value = true;
+  try {
+    // 假设 getPublicActivities 已被修改为接受搜索词
+    const response = await getPublicActivities(currentPage.value, pageSize.value, selectedCategory.value, searchTerm.value);
+    activities.value = response.list || [];
+    total.value = response.total || 0;
+  } catch (err) {
+    error.value = '加载活动列表失败，请稍后再试。';
+    ElMessage.error(error.value);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchActivities();
+};
 
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+  if (!dateString) return '待定';
+  return new Date(dateString).toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
 };
 
-const getCategoryName = (category) => {
-  const categories = {
-    'environment': '环境保护', 'education': '教育支持', 'elderly': '关爱老人',
-    'children': '关爱儿童', 'disaster': '灾害救援', 'animal': '动物保护',
-    'sports': '体育赛事', 'culture': '文化传播'
-  };
-  return categories[category] || category;
+const getEnrollmentPercentage = (activity) => {
+  if (!activity.recruitmentQuota) return 0;
+  return Math.min(Math.round((activity.currentEnrollment / activity.recruitmentQuota) * 100), 100);
 };
+
+const getStatusText = (status) => {
+  const map = { recruiting: '招募中', ongoing: '进行中', finished: '已结束', canceled: '已取消' };
+  return map[status] || '未知';
+}
+const getStatusType = (status) => {
+  const map = { recruiting: 'success', ongoing: 'primary', finished: 'info', canceled: 'warning' };
+  return map[status] || 'info';
+}
+const getStatusColor = (status) => {
+  const map = { recruiting: '#67c23a', ongoing: '#409eff', finished: '#909399', canceled: '#e6a23c' };
+  return map[status] || '#909399';
+}
 
 onMounted(() => {
-  setTimeout(() => {
-    activities.value = allActivities;
-    loading.value = false;
-  }, 500);
+  fetchActivities();
 });
 </script>
 
 <style scoped>
-/* 样式使用了我们在 main.css 中定义的变量 */
 .activities-page {
   background-color: var(--color-background);
   min-height: 100vh;
 }
-
 .page-header {
   text-align: center;
   padding: 4rem 1rem 3rem;
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
 }
-
 .page-title {
   font-size: 2.5rem;
   font-weight: 800;
   color: var(--color-text-heading);
-  margin-bottom: 0.5rem;
 }
-
 .page-subtitle {
   font-size: 1.1rem;
   color: var(--color-text-muted);
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0.5rem auto 0;
 }
-
 .container {
   padding: 2rem 20px;
 }
-
-/* 筛选区域 */
 .filter-section {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
 }
 .filter-controls {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  max-width: 600px;
+  width: 100%;
 }
-.filter-select, .filter-search {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 1rem;
-  background-color: var(--color-surface);
-  flex-grow: 1;
-}
-.filter-select:focus, .filter-search:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
-}
-
-/* 状态提示 */
-.loading-state, .error-state {
+.loading-state, .error-state, .empty-state {
   text-align: center;
   padding: 4rem;
   font-size: 1.2rem;
   color: var(--color-text-muted);
 }
-.error-state {
-  color: #c53030;
-  background-color: #fff5f5;
-  border-radius: 8px;
-}
-
-/* 活动卡片网格 */
 .activities-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
 }
-
 .activity-card {
   background-color: var(--color-surface);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
 }
-
 .activity-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
 }
-
 .activity-image-wrapper {
   position: relative;
   height: 200px;
+  background-color: #f0f2f5;
 }
-
 .activity-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
-
+.activity-card:hover .activity-image {
+  transform: scale(1.05);
+}
 .activity-category-tag {
   position: absolute;
   top: 1rem;
@@ -247,22 +240,21 @@ onMounted(() => {
   border-radius: 99px;
   font-size: 0.8rem;
   font-weight: 500;
+  backdrop-filter: blur(4px);
 }
-
 .activity-content {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
-
 .activity-title {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-text-heading);
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
 }
-
 .activity-title a {
   color: inherit;
   text-decoration: none;
@@ -270,105 +262,34 @@ onMounted(() => {
 .activity-title a:hover {
   color: var(--color-primary);
 }
-
-.activity-organizer {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  margin-bottom: 1rem;
-}
-
 .activity-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-bottom: 1rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
-
 .meta-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--color-text-body);
 }
-
-.meta-item svg {
-  color: var(--color-primary);
-  flex-shrink: 0;
-}
-
-/* 报名进度条 */
 .enrollment-progress {
-  margin: 1rem 0;
-}
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background-color: var(--color-background-soft);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.progress-bar-inner {
-  height: 100%;
-  background-color: var(--color-primary);
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  margin-top: auto;
+  padding-top: 1rem;
 }
 .progress-text {
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.8rem;
   color: var(--color-text-muted);
   margin-top: 0.25rem;
 }
-
-.activity-actions {
-  margin-top: auto; /* 将按钮推到底部 */
-  padding-top: 1rem;
-  text-align: center; /* 新增：使按钮居中 */
-}
-
-.btn {
-  padding: 0.6rem 1.2rem; /* 调整按钮内边距 */
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-  display: inline-block; /* 使按钮宽度自适应内容 */
-  font-size: 0.9rem; /* 稍微缩小字体 */
-}
-
-.btn-primary-outline {
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-}
-.btn-primary-outline:hover {
-  background-color: var(--color-primary-soft);
-}
-
-/* 分页 */
-.pagination {
+.pagination-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.page-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-surface);
-  border-radius: 6px;
-  cursor: pointer;
-}
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.page-info {
-  font-weight: 500;
-  color: var(--color-text-muted);
+  margin-top: 3rem;
 }
 </style>

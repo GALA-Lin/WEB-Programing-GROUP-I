@@ -1,107 +1,340 @@
 <template>
-  <div class="org-detail-view-container">
-    <div v-if="loading" class="loading">加载中...</div>
-    <div v-else-if="organization" class="org-detail-view">
-      <el-card class="box-card">
-        <template #header>
-          <div class="card-header">
-            <h1 class="org-title">{{ organization.name }}</h1>
-            <div>
-              <el-button v-if="!organization.isMember" @click="handleApply" type="success" :icon="Plus">申请加入</el-button>
-              <el-button v-if="organization.isMember" @click="handleLeave" type="danger" :icon="Minus">退出组织</el-button>
+  <div class="news-detail-page">
+    <div v-if="loading" class="loading-container">
+      <el-skeleton animated>
+        <template #template>
+          <el-skeleton-item variant="image" style="width: 100%; height: 300px;" />
+          <div style="padding: 14px;">
+            <el-skeleton-item variant="p" style="width: 50%" />
+            <el-skeleton-item variant="text" style="margin-right: 16px;" />
+            <el-skeleton-item variant="text" style="width: 30%;" />
+            <el-skeleton :rows="5" />
+          </div>
+        </template>
+      </el-skeleton>
+    </div>
+
+    <div v-if="error" class="error-tip">{{ error }}</div>
+
+    <article v-if="news" class="news-article">
+      <header class="article-header" :style="{ backgroundImage: `url(${news.coverImageUrl || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=1200'})` }">
+        <div class="header-overlay"></div>
+        <div class="container header-content">
+          <h1 class="article-title">{{ news.title }}</h1>
+          <div class="article-meta-header">
+            <span><el-icon><User /></el-icon>{{ news.authorName }}</span>
+            <span><el-icon><Calendar /></el-icon>发布于 {{ news.publishedAt }}</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="container article-body-container">
+        <div class="article-content">
+          <v-md-preview :text="news.content"></v-md-preview>
+        </div>
+
+        <div class="actions-bar">
+          <div class="like-wrapper">
+            <button class="like-button" @click="handleLikeToggle" :class="{ liked: isLiked }" :disabled="isLiking">
+              <el-icon><Pointer /></el-icon>
+              <span>{{ isLiked ? '已赞' : '点赞' }} ({{ news.likesCount }})</span>
+            </button>
+          </div>
+          <div class="share-wrapper">
+            <span>分享至:</span>
+            <div class="social-icons">
+              <a href="#" class="social-icon" aria-label="WeChat"><img src="https://i.postimg.cc/L851hPnG/wechat.png" alt="WeChat"/></a>
+              <a href="#" class="social-icon" aria-label="Weibo"><img src="https://i.postimg.cc/8c3Kym9p/sina-weibo.png" alt="Weibo"/></a>
+              <button class="social-icon" aria-label="Copy Link"><el-icon><Link /></el-icon></button>
             </div>
           </div>
-        </template>
-        <div class="org-info">
-          <p><strong>负责人:</strong> {{ organization.leaderName }}</p>
-          <p><strong>成员数:</strong> {{ organization.totalMembers }}</p>
-          <p><strong>简介:</strong> {{ organization.description }}</p>
         </div>
-      </el-card>
 
-      <el-card class="box-card members-card">
-        <template #header>
-          <div class="card-header">
-            <span>成员列表</span>
+        <div class="author-card">
+          <img :src="news.authorAvatar || 'https://ui-avatars.com/api/?name=Admin&background=random&color=fff'" alt="Author Avatar" class="author-avatar">
+          <div class="author-info">
+            <span class="author-label">本文作者</span>
+            <h4 class="author-name">{{ news.authorName }}</h4>
+            <p class="author-bio">“油炬智愿”平台内容管理员，致力于传播志愿精神，分享感动瞬间。</p>
           </div>
-        </template>
-        <el-table :data="organization.members" stripe style="width: 100%">
-          <el-table-column label="头像" width="80">
-            <template #default="scope">
-              <el-avatar :src="scope.row.avatarUrl || defaultAvatar" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="realName" label="姓名" />
-          <el-table-column prop="memberRole" label="角色">
-            <template #default="scope">
-              <el-tag :type="scope.row.memberRole === 'officer' ? 'warning' : 'info'">
-                {{ scope.row.memberRole === 'officer' ? '干部' : '成员' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="joinDate" label="加入日期" />
-        </el-table>
-      </el-card>
-    </div>
+        </div>
+
+      </div>
+    </article>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getOrganizationDetails, applyToOrganization, leaveOrganization } from '@/services/organizationApi.js';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Minus } from '@element-plus/icons-vue';
+// ▼▼▼ 引入新增的 unlikeNews 服务 ▼▼▼
+import { getNewsDetail, likeNews, unlikeNews } from '@/services/newsApi.js';
+import { ElMessage, ElSkeleton, ElSkeletonItem, ElIcon } from 'element-plus';
+import { User, Calendar, Pointer, Link } from '@element-plus/icons-vue';
+
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+import hljs from 'highlight.js';
+
+VMdPreview.use(githubTheme, { Hljs: hljs });
+
+const news = ref(null);
+const loading = ref(true);
+const error = ref(null);
+const isLiked = ref(false);
+const isLiking = ref(false); // 新增状态，防止重复点击
 
 const route = useRoute();
-const organization = ref(null);
-const loading = ref(true);
-const defaultAvatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+const newsId = route.params.id;
 
-const fetchDetails = async () => {
+const fetchNewsDetail = async () => {
   try {
     loading.value = true;
-    organization.value = await getOrganizationDetails(route.params.id);
-  } catch (error) {
-    ElMessage.error('加载组织详情失败');
+    const response = await getNewsDetail(newsId);
+    news.value = response;
+    // 【重要】后端需要返回 isLiked 字段告诉前端当前用户是否已点赞
+    isLiked.value = response.isLiked || false;
+  } catch (err) {
+    error.value = '无法加载新闻详情。';
+    console.error(err);
   } finally {
     loading.value = false;
   }
 };
 
-const handleApply = async () => {
+// ▼▼▼【核心改造】重构点赞函数为 "handleLikeToggle" ▼▼▼
+const handleLikeToggle = async () => {
+  if (isLiking.value) return; // 如果正在处理中，则直接返回
+  isLiking.value = true;
+
   try {
-    await applyToOrganization(route.params.id);
-    ElMessage.success('申请成功，请等待审批');
-    // 这里可以不刷新页面，或者提示用户审批后状态会更新
-  } catch (error) {
-    ElMessage.error(error.message || '申请失败');
+    let response;
+    if (isLiked.value) {
+      // --- 如果已点赞，则调用取消点赞的接口 ---
+      response = await unlikeNews(newsId);
+      ElMessage.info('已取消点赞');
+    } else {
+      // --- 如果未点赞，则调用点赞接口 ---
+      response = await likeNews(newsId);
+      ElMessage.success('感谢您的支持！');
+    }
+
+    // --- 根据后端返回的最新点赞数，更新页面 ---
+    if (news.value) {
+      news.value.likesCount = response.newLikesCount;
+    }
+    // --- 切换本地的点赞状态 ---
+    isLiked.value = !isLiked.value;
+
+  } catch (err) {
+    ElMessage.error('操作失败，请稍后再试。');
+    console.error(err);
+  } finally {
+    isLiking.value = false; // 无论成功失败，都解除锁定
   }
 };
 
-const handleLeave = async () => {
-  ElMessageBox.confirm('确定要退出该组织吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    try {
-      await leaveOrganization(route.params.id);
-      ElMessage.success('已退出组织');
-      await fetchDetails(); // 刷新数据
-    } catch (error) {
-      ElMessage.error(error.message || '操作失败');
-    }
-  });
-};
-
-onMounted(fetchDetails);
+onMounted(fetchNewsDetail);
 </script>
 
 <style scoped>
-.org-detail-view-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; }
-.org-title { margin: 0; font-size: 24px; }
-.org-info p { margin: 10px 0; }
-.members-card { margin-top: 20px; }
+/* 样式部分保持不变，这里省略 */
+.news-detail-page {
+  background-color: var(--color-surface);
+}
+
+.loading-container {
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+/* 1. 文章页眉样式 */
+.article-header {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 300px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+.header-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
+}
+.header-content {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 2rem;
+}
+.article-title {
+  font-size: 3rem;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  margin-bottom: 1rem;
+}
+.article-meta-header {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.article-meta-header span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 2. 文章主体布局 */
+.article-body-container {
+  padding-top: 3rem;
+  padding-bottom: 4rem;
+}
+.article-content {
+  max-width: 720px; /* 黄金阅读宽度 */
+  margin: 0 auto;
+}
+
+/* 3. 使用 :deep() 精细化排版 v-md-preview 渲染出的内容 */
+.article-content :deep(h1),
+.article-content :deep(h2),
+.article-content :deep(h3) {
+  color: var(--color-text-heading);
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+  font-weight: 700;
+}
+.article-content :deep(p) {
+  line-height: 1.8;
+  margin-bottom: 1.5em;
+  font-size: 1.05rem;
+  color: var(--color-text-body);
+}
+.article-content :deep(blockquote) {
+  border-left: 4px solid var(--color-primary);
+  padding-left: 1.5em;
+  margin: 2em 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.article-content :deep(ul),
+.article-content :deep(ol) {
+  padding-left: 2em;
+}
+
+/* 4. 互动与分享栏 */
+.actions-bar {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  cursor: pointer;
+  background-color: var(--color-background-soft);
+  transition: all 0.2s;
+}
+.like-button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: scale(1.05);
+}
+.like-button.liked {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+.like-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.share-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-text-muted);
+}
+.social-icons {
+  display: flex;
+  gap: 0.5rem;
+}
+.social-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-background-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-body);
+  border: none;
+}
+.social-icon:hover {
+  background-color: var(--color-border);
+}
+.social-icon img {
+  width: 20px;
+}
+
+/* 5. 作者信息卡片 */
+.author-card {
+  max-width: 720px;
+  margin: 2rem auto 0;
+  background-color: var(--color-background-soft);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.author-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.author-info {
+  flex-grow: 1;
+}
+.author-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+.author-name {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+.author-bio {
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media(max-width: 768px) {
+  .article-title { font-size: 2rem; }
+  .actions-bar { flex-direction: column; gap: 1.5rem; }
+}
 </style>
