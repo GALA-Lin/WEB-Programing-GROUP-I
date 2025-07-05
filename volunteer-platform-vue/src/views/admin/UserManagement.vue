@@ -43,10 +43,12 @@
 
       <el-pagination
           background
-          layout="prev, pager, next, total"
+          :layout="'total, sizes, prev, pager, next'"
           :total="total"
+          :page-sizes="[10, 20, 50, 100]"
           :page-size="pageSize"
           :current-page="currentPage"
+          @size-change="handleSizeChange"
           @current-change="handlePageChange"
           style="margin-top: 20px; justify-content: flex-end;"
       />
@@ -112,7 +114,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import {ElMessage, ElMessageBox, ElPagination} from 'element-plus';
 import { getUsers, createUser, updateUser, deleteUser, updateUserPassword } from '@/services/userAdminApi.js';
 import { Plus, Link } from '@element-plus/icons-vue';
 import { useUserStore } from '@/stores/userStore.js';
@@ -126,7 +128,14 @@ const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
-
+const handleSizeChange = (newSize) => {
+  // 1. 更新每页的条数
+  pageSize.value = newSize;
+  // 2. 将当前页码重置为第一页，这是一个好的用户体验实践
+  currentPage.value = 1;
+  // 3. 重新获取数据
+  fetchUsers();
+};
 // --- 编辑/创建用户对话框相关 ---
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
