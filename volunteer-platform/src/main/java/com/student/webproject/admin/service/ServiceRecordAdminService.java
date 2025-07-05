@@ -7,6 +7,10 @@ import com.student.webproject.admin.dto.ServiceRecordCreateDTO;
 import com.student.webproject.admin.dto.ServiceRecordViewDTO;
 import com.student.webproject.common.response.Result;
 import com.student.webproject.user.Entity.ServiceRecord;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public interface ServiceRecordAdminService {
     Result<IPage<ServiceRecordViewDTO>> listServiceRecords(Long page, Long pageSize);
@@ -31,4 +35,19 @@ public interface ServiceRecordAdminService {
      * @return 返回空结果
      */
     Result<Void> deleteServiceRecord(Long recordId);
+
+    /**
+     * 【新增】从Excel文件批量导入服务时长记录
+     * @param file 上传的Excel文件
+     * @param activityId 要关联的活动ID
+     * @return 返回操作结果，例如成功导入了多少条记录
+     * @throws IOException 文件读取异常
+     */
+    Result<String> importServiceRecordsFromExcel(MultipartFile file, Long activityId) throws IOException;
+    /**
+     * 【新增】下载批量导入服务时长的Excel模板
+     * @return 包含Excel模板文件的字节输入流
+     * @throws IOException
+     */
+    ByteArrayInputStream downloadExcelTemplate() throws IOException;
 }

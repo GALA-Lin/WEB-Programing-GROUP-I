@@ -9,7 +9,15 @@ import com.student.webproject.admin.service.ServiceRecordAdminService;
 import com.student.webproject.common.response.Result;
 import com.student.webproject.user.Entity.ServiceRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/admin/service-records")
@@ -52,5 +60,37 @@ public class ServiceRecordAdminController {
             @RequestParam(defaultValue = "10") Long pageSize
     ) {
         return serviceRecordAdminService.listServiceRecords(page, pageSize);
+    }
+    /**
+     * 【新增】处理Excel文件上传的API端点
+     * @param file 上传的文件
+     * @param activityId 表单中附带的活动ID
+     * @return 处理结果
+     * @throws IOException
+     */
+    @PostMapping("/import")
+    public Result<String> importFromExcel(@RequestParam("file") MultipartFile file, @RequestParam("activityId") Long activityId) throws IOException {
+        // 检查文件是否为空
+        if (file.isEmpty()) {
+            return Result.error(400, "上传失败，文件为空。");
+        }
+        return serviceRecordAdminService.importServiceRecordsFromExcel(file, activityId);
+    }
+    /**
+     * 【新增】提供Excel模板下载的API端点
+     */
+    @GetMapping("/template")
+    public ResponseEntity<InputStreamResource> downloadTemplate() throws IOException {
+        String fileName = "时长导入模板.xlsx";
+        ByteArrayInputStream bis = serviceRecordAdminService.downloadExcelTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(bis));
     }
 }

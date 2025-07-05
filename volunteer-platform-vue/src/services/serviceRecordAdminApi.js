@@ -38,3 +38,19 @@ export const updateServiceRecord = (id, recordData) => {
 export const deleteServiceRecord = (id) => {
     return apiClient.delete(`/api/admin/service-records/${id}`);
 };
+export const importServiceRecords = (file, activityId) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('activityId', activityId);
+
+    return apiClient.post('/api/admin/service-records/import', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data' // 关键：设置为表单上传类型
+        }
+    });
+};
+export const downloadImportTemplate = () => {
+    return apiClient.get('/api/admin/service-records/template', {
+        responseType: 'blob' // 关键：告诉axios期望接收一个二进制文件
+    });
+};
