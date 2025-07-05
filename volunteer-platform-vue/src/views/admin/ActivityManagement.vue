@@ -22,6 +22,7 @@
         <el-table-column fixed="right" label="操作" width="150" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
+            <el-button link type="success" size="small" @click="handleViewEnrollments(scope.row)">查看报名</el-button>
             <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -96,6 +97,18 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="enrollmentDialogVisible" :title="`'${currentActivity.title}' - 报名详情`" width="700px">
+      <el-button type="primary" :icon="Download" @click="handleExportEnrollments" style="margin-bottom: 15px;">
+        导出为Excel
+      </el-button>
+      <el-table :data="enrollmentData" v-loading="enrollmentLoading">
+        <el-table-column prop="realName" label="姓名" />
+        <el-table-column prop="studentId" label="学号" />
+        <el-table-column prop="phoneNumber" label="手机号" />
+        <el-table-column prop="enrolledAt" label="报名时间" />
+      </el-table>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -106,9 +119,8 @@ import {
   ElDialog, ElForm, ElFormItem, ElInput, ElButton, ElIcon, ElSelect, ElOption,
   ElInputNumber, ElDatePicker
 } from 'element-plus';
-import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
-import { Plus, Link } from '@element-plus/icons-vue';
-
+import { getActivities, createActivity, updateActivity, deleteActivity, getEnrollments, exportEnrollments } from '@/services/activityApi.js';
+import { Plus,Link, Download } from '@element-plus/icons-vue';
 const tableData = ref([]);
 const loading = ref(true);
 const total = ref(0);
@@ -117,6 +129,8 @@ const pageSize = ref(10);
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const activityFormRef = ref(null);
+
+
 
 const getInitialForm = () => ({
   id: null,
@@ -142,9 +156,12 @@ const rules = reactive({
   // coverImageUrl 是选填项，所以可以不加规则
 });
 
-const goToFrontend = () => {
-  window.open('/', '_blank');
-};
+// --- 报名详情对话框 ---
+const enrollmentDialogVisible = ref(false);
+const enrollmentLoading = ref(false);
+const currentActivity = ref({});
+const enrollmentData = ref([]);
+
 
 const fetchActivities = async () => {
   loading.value = true;
@@ -217,6 +234,35 @@ const handleDelete = (id) => {
       ElMessage.error(error.message || '删除失败');
     }
   }).catch(() => {});
+};
+const handleViewEnrollments = async (activity) => {
+  currentActivity.value = activity;
+  enrollmentDialogVisible.value = true;
+  enrollmentLoading.value = true;
+  try {
+    const data = await getEnrollments(activity.id);
+    enrollmentData.value = data;
+  } catch (error) {
+    ElMessage.error('获取报名列表失败');
+  } finally {
+    enrollmentLoading.value = false;
+  }
+};
+
+const handleExportEnrollments = async () => {
+  try {
+    const blob = await exportEnrollments(currentActivity.value.id);
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${currentActivity.value.title}-报名表.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+    ElMessage.success('导出成功！');
+  } catch (error) {
+    ElMessage.error('导出失败');
+  }
 };
 
 onMounted(() => {
