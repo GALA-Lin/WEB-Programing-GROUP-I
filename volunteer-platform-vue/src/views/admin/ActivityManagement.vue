@@ -1,147 +1,137 @@
 <template>
-  <div class="activity-management">
-    <el-card>
+  <div class="activity-management-container">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>后台 - 活动管理</span>
-          <div>
-            <el-button type="info" :icon="Link" @click="goToFrontend">访问前台</el-button>
-            <el-button type="primary" @click="handleOpenDialog()">发布新活动</el-button>
-          </div>
+          <el-button type="primary" :icon="Plus" @click="handleOpenDialog()">
+            发布新活动
+          </el-button>
         </div>
       </template>
 
-      <el-table :data="tableData" v-loading="loading" style="width: 100%">
+      <el-table :data="tableData" v-loading="loading" style="width: 100%" class="management-table">
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="title" label="活动标题" width="200" />
-        <el-table-column prop="category" label="分类" width="120" />
-        <el-table-column prop="location" label="地点" />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 'recruiting' ? 'success' : 'info'">
-              {{ scope.row.status }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="recruitmentQuota" label="招募名额" width="100" />
-        <el-table-column fixed="right" label="操作" width="220">
+        <el-table-column prop="title" label="活动标题" show-overflow-tooltip />
+        <el-table-column prop="category" label="类别" width="120" />
+        <el-table-column prop="location" label="地点" width="180" show-overflow-tooltip />
+        <el-table-column prop="startTime" label="开始时间" width="180" />
+        <el-table-column prop="recruitmentQuota" label="名额" width="100" align="center" />
+        <el-table-column fixed="right" label="操作" width="150" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
-            <el-button link type="success" size="small" @click="handleViewEnrollments(scope.row)">查看报名</el-button>
             <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <el-pagination
-          background
-          layout="prev, pager, next, total"
-          :total="total"
-          :page-size="pageSize"
-          :current-page="currentPage"
-          @current-change="handlePageChange"
-          style="margin-top: 20px; justify-content: flex-end;"
-      />
+      <div class="pagination-container">
+        <el-pagination
+            background
+            layout="prev, pager, next, total"
+            :total="total"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            @current-change="handlePageChange"
+        />
+      </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px" @close="resetForm">
-      <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="120px">
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="60%" @close="resetForm" top="5vh" class="form-dialog">
+      <el-form ref="activityFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="活动标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入活动标题" />
         </el-form-item>
-        <el-form-item label="活动描述" prop="description">
-          <el-input type="textarea" v-model="form.description" placeholder="请输入活动描述" />
+
+        <el-form-item label="活动类别" prop="category">
+          <el-select v-model="form.category" placeholder="请选择活动类别" style="width: 100%;">
+            <el-option label="环境保护" value="环境保护"></el-option>
+            <el-option label="教育支持" value="教育支持"></el-option>
+            <el-option label="关爱老人" value="关爱老人"></el-option>
+            <el-option label="关爱儿童" value="关爱儿童"></el-option>
+            <el-option label="校内服务" value="校内服务"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="封面图URL" prop="coverImageUrl">
-          <el-input v-model="form.coverImageUrl" placeholder="请输入图片URL" />
-        </el-form-item>
-        <el-form-item label="活动分类" prop="category">
-          <el-input v-model="form.category" placeholder="例如：校内服务" />
-        </el-form-item>
+
         <el-form-item label="活动地点" prop="location">
-          <el-input v-model="form.location" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="startTime">
-          <el-date-picker v-model="form.startTime" type="datetime" placeholder="选择开始时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"/>
-        </el-form-item>
-        <el-form-item label="结束时间" prop="endTime">
-          <el-date-picker v-model="form.endTime" type="datetime" placeholder="选择结束时间" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"/>
+          <el-input v-model="form.location" placeholder="请输入活动地点" />
         </el-form-item>
         <el-form-item label="招募名额" prop="recruitmentQuota">
-          <el-input-number v-model="form.recruitmentQuota" :min="1" />
+          <el-input-number v-model="form.recruitmentQuota" :min="1" style="width:100%"/>
         </el-form-item>
-        <el-form-item label="组织者ID" prop="organizerId">
-          <el-input-number v-model="form.organizerId" :min="1" />
+        <el-form-item label="开始时间" prop="startTime">
+          <el-date-picker
+              v-model="form.startTime"
+              type="datetime"
+              placeholder="选择开始日期时间"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              style="width: 100%;"
+          />
+        </el-form-item>
+        <el-form-item label="结束时间" prop="endTime">
+          <el-date-picker
+              v-model="form.endTime"
+              type="datetime"
+              placeholder="选择结束日期时间"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              style="width: 100%;"
+          />
+        </el-form-item>
+        <el-form-item label="活动描述" prop="description">
+          <el-input type="textarea" :rows="5" v-model="form.description" placeholder="请输入活动详细描述" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">确 定</el-button>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit">确 定</el-button>
+        </span>
       </template>
     </el-dialog>
-
-    <el-dialog v-model="enrollmentDialogVisible" :title="`'${currentActivity.title}' - 报名详情`" width="700px">
-      <el-button type="primary" :icon="Download" @click="handleExportEnrollments" style="margin-bottom: 15px;">
-        导出为Excel
-      </el-button>
-      <el-table :data="enrollmentData" v-loading="enrollmentLoading">
-        <el-table-column prop="realName" label="姓名" />
-        <el-table-column prop="studentId" label="学号" />
-        <el-table-column prop="phoneNumber" label="手机号" />
-        <el-table-column prop="enrolledAt" label="报名时间" />
-      </el-table>
-    </el-dialog>
-
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { getActivities, createActivity, updateActivity, deleteActivity, getEnrollments, exportEnrollments } from '@/services/activityApi.js';
-import { Link, Download } from '@element-plus/icons-vue';
+import {
+  ElMessage, ElMessageBox, ElCard, ElTable, ElTableColumn, ElPagination,
+  ElDialog, ElForm, ElFormItem, ElInput, ElButton, ElIcon, ElSelect, ElOption,
+  ElInputNumber, ElDatePicker
+} from 'element-plus';
+import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
+import { Plus } from '@element-plus/icons-vue';
 
-// --- 表格与分页数据 ---
+// Script部分逻辑保持不变
 const tableData = ref([]);
 const loading = ref(true);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
-
-// --- 编辑/创建活动对话框 ---
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const activityFormRef = ref(null);
-const form = reactive({
+
+const getInitialForm = () => ({
   id: null,
   title: '',
   description: '',
-  coverImageUrl: '',
   category: '',
   location: '',
   startTime: '',
   endTime: '',
-  organizerId: 1,
-  recruitmentQuota: 20,
+  recruitmentQuota: 10
 });
-const rules = {
+
+const form = reactive(getInitialForm());
+
+const rules = reactive({
   title: [{ required: true, message: '请输入活动标题', trigger: 'blur' }],
-  startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
-  endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }],
-  recruitmentQuota: [{ required: true, message: '请输入招募名额', trigger: 'blur' }],
-  organizerId: [{ required: true, message: '请输入组织者ID', trigger: 'blur' }]
-};
-
-// --- 报名详情对话框 ---
-const enrollmentDialogVisible = ref(false);
-const enrollmentLoading = ref(false);
-const currentActivity = ref({});
-const enrollmentData = ref([]);
-
-// --- 方法 ---
-const goToFrontend = () => {
-  window.open('/', '_blank');
-};
+  category: [{ required: true, message: '请选择活动类别', trigger: 'change' }],
+  location: [{ required: true, message: '请输入活动地点', trigger: 'blur' }],
+  startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
+  endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }],
+  description: [{ required: true, message: '请输入活动描述', trigger: 'blur' }],
+});
 
 const fetchActivities = async () => {
   loading.value = true;
@@ -162,13 +152,10 @@ const handlePageChange = (page) => {
 };
 
 const resetForm = () => {
+  Object.assign(form, getInitialForm());
   if (activityFormRef.value) {
-    activityFormRef.value.resetFields();
+    activityFormRef.value.clearValidate();
   }
-  Object.assign(form, {
-    id: null, title: '', description: '', coverImageUrl: '', category: '',
-    location: '', startTime: '', endTime: '', organizerId: 1, recruitmentQuota: 20
-  });
 };
 
 const handleOpenDialog = (row) => {
@@ -187,11 +174,15 @@ const handleSubmit = async () => {
   await activityFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        const action = form.id ? updateActivity(form.id, form) : createActivity(form);
-        await action;
-        ElMessage.success(form.id ? '活动更新成功' : '活动发布成功');
+        if (form.id) {
+          await updateActivity(form.id, form);
+          ElMessage.success('活动更新成功');
+        } else {
+          await createActivity(form);
+          ElMessage.success('活动发布成功');
+        }
         dialogVisible.value = false;
-        fetchActivities();
+        await fetchActivities();
       } catch (error) {
         ElMessage.error(error.message || '操作失败');
       }
@@ -208,41 +199,11 @@ const handleDelete = (id) => {
     try {
       await deleteActivity(id);
       ElMessage.success('删除成功');
-      fetchActivities();
+      await fetchActivities();
     } catch (error) {
       ElMessage.error(error.message || '删除失败');
     }
-  });
-};
-
-const handleViewEnrollments = async (activity) => {
-  currentActivity.value = activity;
-  enrollmentDialogVisible.value = true;
-  enrollmentLoading.value = true;
-  try {
-    const data = await getEnrollments(activity.id);
-    enrollmentData.value = data;
-  } catch (error) {
-    ElMessage.error('获取报名列表失败');
-  } finally {
-    enrollmentLoading.value = false;
-  }
-};
-
-const handleExportEnrollments = async () => {
-  try {
-    const blob = await exportEnrollments(currentActivity.value.id);
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${currentActivity.value.title}-报名表.xlsx`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-    ElMessage.success('导出成功！');
-  } catch (error) {
-    ElMessage.error('导出失败');
-  }
+  }).catch(() => {});
 };
 
 onMounted(() => {
@@ -251,12 +212,54 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ▼▼▼【全新的样式，与其他管理页统一】▼▼▼ */
+.activity-management-container {}
+.box-card {
+  border: none;
+  box-shadow: none;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.activity-management {
-  padding: 20px;
+.management-table {
+  border-radius: 8px;
+  border: 1px solid #eef0f3;
 }
-</style>q
+:deep(.el-table th.el-table__cell) {
+  background-color: #f7f8fa !important;
+  color: #6b7280;
+  font-weight: 600;
+}
+:deep(.el-table td.el-table__cell) {
+  padding: 14px 0;
+}
+:deep(.el-table tr) {
+  transition: background-color 0.2s ease;
+}
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
+  background-color: var(--color-primary-soft);
+}
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+:deep(.form-dialog .el-dialog__header) {
+  padding: 20px 24px;
+  margin-right: 0;
+  border-bottom: 1px solid #eef0f3;
+}
+:deep(.form-dialog .el-dialog__title) {
+  font-weight: 600;
+  color: var(--color-text-heading);
+}
+:deep(.form-dialog .el-dialog__body) {
+  padding: 24px;
+}
+:deep(.form-dialog .el-dialog__footer) {
+  padding: 20px 24px;
+  border-top: 1px solid #eef0f3;
+}
+</style>

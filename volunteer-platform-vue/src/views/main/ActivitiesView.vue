@@ -1,15 +1,12 @@
 <template>
   <div class="activities-view">
-    <!-- 页面标题 -->
     <div class="page-header">
       <h1 class="page-title">志愿活动列表</h1>
       <p class="page-subtitle">探索并参与我们的志愿活动，一起为社会贡献力量</p>
     </div>
 
-    <!-- 筛选栏 -->
     <div class="filter-bar">
       <div class="filter-row">
-        <!-- 搜索框 -->
         <div class="filter-item search-item">
           <label for="search">搜索</label>
           <div class="search-container">
@@ -30,7 +27,6 @@
           </div>
         </div>
 
-        <!-- 每页显示数量 -->
         <div class="filter-item page-size-item">
           <label for="pageSize">每页显示</label>
           <select id="pageSize" v-model="itemsPerPage" class="smooth-select page-size-select">
@@ -38,7 +34,6 @@
           </select>
         </div>
 
-        <!-- 活动类别 -->
         <div class="filter-item">
           <label for="category">活动类别</label>
           <select id="category" v-model="selectedCategory" class="smooth-select">
@@ -47,12 +42,9 @@
             <option value="教育支持">教育支持</option>
             <option value="关爱老人">关爱老人</option>
             <option value="关爱儿童">关爱儿童</option>
-            <option value="灾害救援">灾害救援</option>
-            <option value="校内���务">校内服务</option>
+            <option value="校内服务">校内服务</option>
           </select>
         </div>
-
-        <!-- 活动地点 -->
         <div class="filter-item">
           <label for="location">活动地点</label>
           <select id="location" v-model="selectedLocation" class="smooth-select">
@@ -61,7 +53,6 @@
           </select>
         </div>
 
-        <!-- 活动日期 -->
         <div class="filter-item">
           <label for="date">活动日期</label>
           <select id="date" v-model="selectedDate" class="smooth-select">
@@ -75,15 +66,11 @@
       </div>
     </div>
 
-    <!-- 加载状态 -->
     <div v-if="loading" class="loading">加载中...</div>
 
-    <!-- 错误提示 -->
     <div v-if="error" class="error">{{ error }}</div>
 
-    <!-- 主要内容容器 -->
     <div class="main-content">
-      <!-- 活动列表 -->
       <div class="activities-list">
         <div class="activity-item" v-for="activity in paginatedActivities" :key="activity.id" @click="goToDetail(activity.id)" style="cursor:pointer">
           <div class="activity-image">
@@ -168,7 +155,6 @@
         </div>
       </div>
 
-      <!-- 分页控件放在最下方 -->
       <div class="pagination">
         <button type="button" class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
           上一页
@@ -234,7 +220,6 @@ const getLocationName = (location) => {
     'hangzhou': '杭州',
     '学校图书馆三楼': '学校图书馆三楼',
   };
-  // 支持活动地点为中文或英文，或直接包含地名
   return locations[location] || location;
 };
 
@@ -269,7 +254,6 @@ const filteredActivities = computed(() => {
     result = result.filter(a => a.category === selectedCategory.value);
   }
   if (selectedLocation.value) {
-    // 支持地点为中文或英文，或直接包含地名
     result = result.filter(a => a.location && (a.location.includes(selectedLocation.value) || getLocationName(a.location) === getLocationName(selectedLocation.value)));
   }
   if (selectedDate.value) {
@@ -331,7 +315,6 @@ const isEnrolled = (activityId) => enrolledActivities.value.includes(activityId)
 const enrollActivity = async (activityId) => {
   try {
     loadingEnrollments.value.push(activityId);
-    // 这里可以调用后端报名接口
     const activity = activities.value.find(a => a.id === activityId);
     if (activity && activity.currentEnrollment < activity.recruitmentQuota) {
       activity.currentEnrollment += 1;
@@ -345,7 +328,6 @@ const enrollActivity = async (activityId) => {
 const unenrollActivity = async (activityId) => {
   try {
     loadingEnrollments.value.push(activityId);
-    // 这里可以     用后端取消报名接口
     const activity = activities.value.find(a => a.id === activityId);
     if (activity && activity.currentEnrollment > 0) {
       activity.currentEnrollment -= 1;
@@ -357,7 +339,6 @@ const unenrollActivity = async (activityId) => {
 };
 
 const uniqueLocations = computed(() => {
-  // 从所有活动中提取唯一地点
   const set = new Set();
   activities.value.forEach(a => {
     if (a.location && a.location.trim()) set.add(a.location.trim());
@@ -394,375 +375,60 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-body, .activities-view {
-  background: #f7f8fa;
-  min-height: 100vh;
-}
-
-.page-header {
-  text-align: center;
-  margin-bottom: 32px;
-  padding: 32px 0 16px 0;
-  background: #fff;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 2px 8px 0 rgba(59,130,246,0.04);
-  color: #222;
-  position: relative;
-}
-.page-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-.page-title::before {
-  content: '';
-}
-.page-subtitle {
-  font-size: 1rem;
-  margin-top: 8px;
-  color: #888;
-  text-shadow: none;
-}
-
-/* 筛选区排版优化 */
-.filter-bar {
-  margin-bottom: 24px;
-}
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-end;
-  justify-content: center;
-}
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  min-width: 120px;
-}
-.search-item {
-  flex: 1;
-  min-width: 200px;
-  max-width: 320px;
-}
-/* 让“每页显示”右移，避免与搜索框叠加 */
-.filter-item.page-size-item {
-  margin-left: 24px;
-}
+body, .activities-view { background: #f7f8fa; min-height: 100vh; }
+.page-header { text-align: center; margin-bottom: 32px; padding: 32px 0 16px 0; background: #fff; border-radius: 0 0 16px 16px; box-shadow: 0 2px 8px 0 rgba(59,130,246,0.04); color: #222; position: relative; }
+.page-title { font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; text-shadow: none; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.page-subtitle { font-size: 1rem; margin-top: 8px; color: #888; text-shadow: none; }
+.filter-bar { margin-bottom: 24px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: center; }
+.filter-item { display: flex; flex-direction: column; min-width: 120px; }
+.search-item { flex: 1; min-width: 200px; max-width: 320px; }
+.filter-item.page-size-item { margin-left: 24px; }
 @media (max-width: 900px) {
-  .filter-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .filter-item, .search-item {
-    min-width: 0;
-    width: 100%;
-    margin-left: 0 !important;
-  }
+  .filter-row { flex-direction: column; gap: 8px; }
+  .filter-item, .search-item { min-width: 0; width: 100%; margin-left: 0 !important; }
 }
-.filter-item label {
-  font-size: 0.98rem;
-  font-weight: 500;
-  color: #444;
-  margin-bottom: 4px;
-  text-align: left;
-  letter-spacing: 0.2px;
-}
-.smooth-select, .search-input {
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  font-size: 1rem;
-  padding: 8px 10px;
-  transition: box-shadow 0.2s, border-color 0.2s;
-  box-shadow: none;
-  width: 100%;
-}
-.smooth-select:focus, .search-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
-}
-.search-container {
-  position: relative;
-  width: 100%;
-}
-.search-button {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #2563eb;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  box-shadow: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.search-button:hover {
-  background: #1d4ed8;
-}
-
-/* 活动卡片排版优化 */
-.activities-list {
-  display: grid;
-  gap: 32px;
-  margin-bottom: 48px;
-  grid-template-columns: 1fr;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.activity-item {
-  display: flex;
-  flex-direction: row;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 16px 0 rgba(59,130,246,0.06);
-  border: 1.5px solid #e5e7eb;
-  position: relative;
-  min-height: 220px;
-}
-.activity-image {
-  position: relative;
-  width: 200px;
-  min-width: 160px;
-  height: 200px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 0 14px 14px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 24px;
-  margin-bottom: 24px;
-}
-.activity-image img {
-  width: 90%;
-  height: 90%;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
-  margin: 0 auto;
-}
-.activity-category {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #2563eb;
-  color: #fff;
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 2px 10px;
-  border-radius: 8px;
-  box-shadow: none;
-  letter-spacing: 0.2px;
-}
-.activity-content {
-  flex: 1;
-  padding: 14px 14px 10px 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 0;
-}
-.activity-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
-}
-.activity-title {
-  font-size: 1.08rem;
-  font-weight: 600;
-  color: #222;
-  margin: 0;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
-}
-.activity-rating {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.rating-stars {
-  display: flex;
-}
-.star-icon {
-  width: 14px;
-  height: 14px;
-  fill: #fbbf24;
-  color: #fbbf24;
-  filter: none;
-  transition: none;
-}
-.rating-number {
-  font-size: 0.92rem;
-  color: #888;
-}
-.activity-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.95rem;
-  color: #444;
-  background: #f3f4f6;
-  border-radius: 6px;
-  padding: 2px 8px;
-  box-shadow: none;
-}
-.detail-icon {
-  width: 14px;
-  height: 14px;
-  color: #2563eb;
-}
-.activity-description {
-  flex: 1;
-  color: #444;
-  line-height: 1.5;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-  background: #f7f8fa;
-  border-radius: 4px;
-  padding: 4px 8px;
-  box-shadow: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-height: 48px;
-}
-.activity-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4px;
-}
-.activity-organizer {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.organizer-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #e5e7eb;
-  box-shadow: none;
-}
-.organizer-name {
-  font-size: 0.95rem;
-  color: #888;
-  font-weight: 500;
-}
-.activity-actions {
-  display: flex;
-  gap: 6px;
-}
-.btn {
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.2s;
-  box-shadow: none;
-  border: none;
-  cursor: pointer;
-}
-.btn-outline {
-  background: #fff;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-}
-.btn-outline:hover {
-  background: #f3f4f6;
-  color: #1d4ed8;
-  border-color: #1d4ed8;
-}
-.btn-primary {
-  background: #2563eb;
-  color: #fff;
-}
-.btn-primary:hover {
-  background: #1d4ed8;
-  color: #fff;
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 40px;
-}
-.page-btn, .page-number {
-  background: #fff;
-  color: #2563eb;
-  border: 1px solid #e5e7eb;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  box-shadow: none;
-}
-.page-btn:hover, .page-number:hover {
-  background: #f3f4f6;
-  color: #1d4ed8;
-  border-color: #1d4ed8;
-}
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.page-number.active {
-  background: #2563eb;
-  color: #fff;
-  border-color: #2563eb;
-}
+.filter-item label { font-size: 0.98rem; font-weight: 500; color: #444; margin-bottom: 4px; text-align: left; letter-spacing: 0.2px; }
+.smooth-select, .search-input { border-radius: 6px; border: 1px solid #d1d5db; background: #fff; font-size: 1rem; padding: 8px 10px; transition: box-shadow 0.2s, border-color 0.2s; box-shadow: none; width: 100%; }
+.smooth-select:focus, .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px #2563eb22; }
+.search-container { position: relative; width: 100%; }
+.search-button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #2563eb; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: none; cursor: pointer; transition: background 0.2s; }
+.search-button:hover { background: #1d4ed8; }
+.activities-list { display: grid; gap: 32px; margin-bottom: 48px; grid-template-columns: 1fr; max-width: 1100px; margin-left: auto; margin-right: auto; }
+.activity-item { display: flex; flex-direction: row; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 4px 16px 0 rgba(59,130,246,0.06); border: 1.5px solid #e5e7eb; position: relative; min-height: 220px; }
+.activity-image { position: relative; width: 200px; min-width: 160px; height: 200px; flex-shrink: 0; overflow: hidden; border-radius: 0 14px 14px 0; display: flex; align-items: center; justify-content: center; margin-top: 24px; margin-bottom: 24px; }
+.activity-image img { width: 90%; height: 90%; object-fit: cover; border-radius: 12px; display: block; margin: 0 auto; }
+.activity-category { position: absolute; top: 10px; left: 10px; background: #2563eb; color: #fff; font-size: 0.92rem; font-weight: 500; padding: 2px 10px; border-radius: 8px; box-shadow: none; letter-spacing: 0.2px; }
+.activity-content { flex: 1; padding: 14px 14px 10px 14px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.activity-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.activity-title { font-size: 1.1rem; font-weight: 600; color: #222; margin: 0; letter-spacing: 0.2px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; min-height: calc(1.1rem * 1.5 * 2); }
+.activity-rating { display: flex; align-items: center; gap: 6px; }
+.rating-stars { display: flex; }
+.star-icon { width: 14px; height: 14px; fill: #fbbf24; color: #fbbf24; filter: none; transition: none; }
+.rating-number { font-size: 0.92rem; color: #888; }
+.activity-details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.detail-item { display: flex; align-items: center; gap: 4px; font-size: 0.95rem; color: #444; background: #f3f4f6; border-radius: 6px; padding: 2px 8px; box-shadow: none; }
+.detail-icon { width: 14px; height: 14px; color: #2563eb; }
+.activity-description { flex: 1; color: #444; line-height: 1.5; margin-bottom: 8px; font-size: 0.95rem; background: #f7f8fa; border-radius: 4px; padding: 4px 8px; box-shadow: none; overflow: hidden; text-overflow: ellipsis; max-height: 48px; }
+.activity-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.activity-organizer { display: flex; align-items: center; gap: 6px; }
+.organizer-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #e5e7eb; box-shadow: none; }
+.organizer-name { font-size: 0.95rem; color: #888; font-weight: 500; }
+.activity-actions { display: flex; gap: 6px; }
+.btn { padding: 6px 14px; border-radius: 8px; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; box-shadow: none; border: none; cursor: pointer; }
+.btn-outline { background: #fff; color: #2563eb; border: 1px solid #2563eb; }
+.btn-outline:hover { background: #f3f4f6; color: #1d4ed8; border-color: #1d4ed8; }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover { background: #1d4ed8; color: #fff; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 40px; }
+.page-btn, .page-number { background: #fff; color: #2563eb; border: 1px solid #e5e7eb; padding: 6px 14px; border-radius: 8px; font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; box-shadow: none; }
+.page-btn:hover, .page-number:hover { background: #f3f4f6; color: #1d4ed8; border-color: #1d4ed8; }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.page-number.active { background: #2563eb; color: #fff; border-color: #2563eb; }
 @media (max-width: 900px) {
-  .activities-list {
-    grid-template-columns: 1fr;
-  }
-  .activity-item {
-    flex-direction: column;
-    align-items: stretch;
-    min-width: 0;
-    min-height: 0;
-  }
-  .activity-image {
-    width: 100%;
-    height: 180px;
-    border-radius: 14px 14px 0 0;
-    margin-top: 16px;
-    margin-bottom: 0;
-  }
-  .activity-image img {
-    border-radius: 12px;
-    width: 90%;
-    height: 90%;
-  }
-  .activity-title {
-    max-width: 100%;
-  }
+  .activities-list { grid-template-columns: 1fr; }
+  .activity-item { flex-direction: column; align-items: stretch; min-width: 0; min-height: 0; }
+  .activity-image { width: 100%; height: 180px; border-radius: 14px 14px 0 0; margin-top: 16px; margin-bottom: 0; }
+  .activity-image img { border-radius: 12px; width: 90%; height: 90%; }
 }
 </style>

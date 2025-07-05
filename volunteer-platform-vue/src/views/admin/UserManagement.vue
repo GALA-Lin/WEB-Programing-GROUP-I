@@ -5,7 +5,6 @@
         <div class="card-header">
           <span>后台 - 用户管理</span>
           <div>
-            <el-button type="info" :icon="Link" @click="goToFrontend">访问前台</el-button>
             <el-button type="primary" @click="handleOpenDialog()">
               <el-icon><Plus /></el-icon>
               <span>添加新用户</span>
@@ -173,11 +172,6 @@ const passwordRules = reactive({
 });
 
 // --- 主要方法 ---
-
-// 跳转到前台
-const goToFrontend = () => {
-  window.open('/', '_blank');
-};
 
 // 获取用户列表
 const fetchUsers = async () => {
