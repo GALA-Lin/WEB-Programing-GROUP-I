@@ -61,7 +61,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     async function adminLogin(credentials) {
-        const responseData = await apiClient.post('/api/auth/login', credentials);
+        const responseData = await apiClient.post('/api/admin/auth/login', credentials);
         token.value = responseData.token;
         localStorage.setItem('token', responseData.token);
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${responseData.token}`;

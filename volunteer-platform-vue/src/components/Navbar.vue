@@ -1,11 +1,11 @@
 <template>
-  <header class="navbar">
+  <header class="navbar" :class="{ 'is-scrolled': scrolled }">
     <div class="container">
       <div class="navbar-content">
         <router-link to="/" class="navbar-logo">
           <img
-              src="data:image/png;base64,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"
-              alt="志愿平台logo"
+              src="https://i.postimg.cc/D006GCf7/logo-oil.png"
+              alt="油炬智愿 Logo"
               class="logo-image"
           />
           <span class="logo-text">油炬智愿</span>
@@ -14,138 +14,168 @@
         <nav class="navbar-nav desktop-nav">
           <router-link to="/" class="nav-link">首页</router-link>
           <router-link to="/news" class="nav-link">新闻资讯</router-link>
-          <router-link to="/activities" class="nav-link">活动列表</router-link>
+          <router-link to="/activities" class="nav-link">活动广场</router-link>
           <router-link to="/organizations" class="nav-link">组织列表</router-link>
-          <router-link to="/about" class="nav-link">关于我们</router-link>
         </nav>
 
-        <button
-            class="mobile-menu-button"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-            :class="{ open: mobileMenuOpen }"
-            aria-label="菜单"
-        >
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
+        <div class="navbar-actions">
+          <div v-if="!isLoggedIn" class="desktop-actions">
+            <router-link to="/login" class="btn btn-primary">登录 / 注册</router-link>
+          </div>
 
-        <div class="navbar-actions desktop-actions">
-          <router-link to="/login" v-if="!isLoggedIn" class="btn-login">登录/注册</router-link>
-
-          <div v-else class="user-dropdown">
+          <div v-else class="user-dropdown desktop-actions">
             <div class="user-dropdown-trigger">
+              <img :src="currentUser?.avatarUrl || defaultAvatar" alt="avatar" class="user-avatar">
               <span class="user-name">{{ currentUser?.username }}</span>
-              <span class="arrow-down"></span>
+              <svg class="arrow-down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
             </div>
             <div class="user-dropdown-menu">
-              <router-link to="/profile" class="dropdown-item">个人中心</router-link>
-              <button @click="logout" class="dropdown-item logout-button">退出登录</button>
+              <router-link to="/profile" class="dropdown-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6m0 14c-2.03 0-4.43-.82-6.14-2.88a9.96 9.96 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20"/></svg>
+                个人中心
+              </router-link>
+              <router-link to="/admin/activities" class="dropdown-item" v-if="isAdmin">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11z"/></svg>
+                后台管理
+              </router-link>
+              <div class="dropdown-divider"></div>
+              <button @click="logout" class="dropdown-item logout-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z"/></svg>
+                退出登录
+              </button>
             </div>
           </div>
+
+          <button class="mobile-menu-button" @click="mobileMenuOpen = !mobileMenuOpen" :class="{ open: mobileMenuOpen }">
+            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="mobile-nav-container" :class="{ 'mobile-nav-open': mobileMenuOpen }">
-      <nav class="mobile-nav">
-        <router-link to="/" class="mobile-nav-link" @click="closeMenu">首页</router-link>
-        <router-link to="/news" class="mobile-nav-link" @click="closeMenu">新闻资讯</router-link>
-        <router-link to="/activities" class="mobile-nav-link" @click="closeMenu">活动列表</router-link>
-        <router-link to="/organizations" class="mobile-nav-link" @click="closeMenu">组织列表</router-link>
-        <router-link to="/about" class="mobile-nav-link" @click="closeMenu">关于我们</router-link>
-
-        <div class="mobile-actions">
-          <div v-if="!isLoggedIn">
-            <router-link to="/login" class="mobile-btn" @click="closeMenu">登录</router-link>
+    <transition name="mobile-nav-fade">
+      <nav class="mobile-nav" v-if="mobileMenuOpen" @click.self="closeMenu">
+        <div class="mobile-nav-content">
+          <router-link to="/" class="mobile-nav-link" @click="closeMenu">首页</router-link>
+          <router-link to="/news" class="mobile-nav-link" @click="closeMenu">新闻资讯</router-link>
+          <router-link to="/activities" class="mobile-nav-link" @click="closeMenu">活动广场</router-link>
+          <router-link to="/organizations" class="mobile-nav-link" @click="closeMenu">组织列表</router-link>
+          <div class="mobile-actions-divider"></div>
+          <div v-if="!isLoggedIn" class="mobile-action-item">
+            <router-link to="/login" class="btn btn-primary" @click="closeMenu">登录 / 注册</router-link>
           </div>
-          <div v-else class="mobile-user-menu">
-            <router-link to="/profile" class="mobile-user-name" @click="closeMenu">你好, {{ currentUser?.username }}</router-link>
-            <button @click="logout" class="mobile-btn-logout">退出登录</button>
+          <div v-else>
+            <router-link to="/profile" class="mobile-nav-link" @click="closeMenu">个人中心</router-link>
+            <router-link to="/admin/activities" class="mobile-nav-link" v-if="isAdmin" @click="closeMenu">后台管理</router-link>
+            <div class="mobile-action-item">
+              <button @click="logout" class="btn btn-danger-outline">退出登录</button>
+            </div>
           </div>
         </div>
       </nav>
-    </div>
-    <div class="overlay" v-if="mobileMenuOpen" @click="closeMenu"></div>
+    </transition>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router'; // **【核心修复】补上了这一行 import 语句**
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
-const { isLoggedIn, currentUser } = storeToRefs(userStore);
-const router = useRouter(); // **【核心修复】获取 router 实例**
+const { isLoggedIn, currentUser, isAdmin } = storeToRefs(userStore);
+const router = useRouter();
 
+const defaultAvatar = 'https://ui-avatars.com/api/?name=User&background=random&color=fff';
 const mobileMenuOpen = ref(false);
+const scrolled = ref(false);
 
 const closeMenu = () => {
   mobileMenuOpen.value = false;
 };
 
-// 使用 async/await 修正 logout 函数，并添加了路由跳转
 const logout = async () => {
-  if (confirm('您确定要退出登录吗？')) {
-    await userStore.logout();
-    closeMenu();
-    await router.push('/login'); // 跳转到登录页
-  }
+  await userStore.logout();
+  closeMenu();
 };
+
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 10;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
 </script>
 
 <style scoped>
-/* 样式部分没有变化，您可以保留原有的样式 */
-/* ... */
+/* 使用了我们新定义的 CSS 变量 */
 .navbar {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid transparent;
 }
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
+
+.navbar.is-scrolled {
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--color-border);
 }
+
 .navbar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 64px;
 }
+
 .navbar-logo {
   display: flex;
   align-items: center;
   text-decoration: none;
 }
+
 .logo-image {
-  height: 40px;
-  margin-right: 8px;
-  object-fit: contain;
-}
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a202c;
+  height: 36px;
+  width: auto;
+  margin-right: 12px;
 }
 
-/* 桌面端导航 */
-.desktop-nav {
-  display: flex;
-  gap: 32px;
+.logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-heading);
 }
+
+.desktop-nav {
+  display: none; /* 默认隐藏，仅在桌面端显示 */
+}
+
+@media (min-width: 768px) {
+  .desktop-nav {
+    display: flex;
+    gap: 32px;
+  }
+}
+
 .nav-link {
-  color: #4a5568;
+  color: var(--color-text-body);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
-  white-space: nowrap;
   position: relative;
-  padding: 4px 0;
+  padding: 8px 4px;
 }
 .nav-link::after {
   content: '';
@@ -155,240 +185,231 @@ const logout = async () => {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2563eb;
-  transition: width 0.3s;
+  background-color: var(--color-primary);
+  transition: width 0.3s ease;
 }
-.nav-link:hover::after,
-.nav-link.router-link-exact-active::after {
+.nav-link:hover, .nav-link.router-link-exact-active {
+  color: var(--color-primary);
+}
+.nav-link:hover::after, .nav-link.router-link-exact-active::after {
   width: 100%;
 }
-.nav-link:hover,
-.nav-link.router-link-exact-active {
-  color: #2563eb;
-}
 
-/* 桌面端用户操作区 */
-.desktop-actions {
+.navbar-actions {
   display: flex;
   align-items: center;
 }
-.btn-login {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
-  text-decoration: none;
-  margin-left: 10px;
-  white-space: nowrap;
-  font-weight: 500;
+
+.desktop-actions {
+  display: none;
 }
-.btn-login:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+@media (min-width: 768px) {
+  .desktop-actions {
+    display: flex;
+  }
 }
 
-/* 下拉菜单 */
+.btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
 .user-dropdown {
   position: relative;
-  cursor: pointer;
+  /* 新增：增加一个透明的底部内边距，作为鼠标移动的“桥梁” */
+  padding-bottom: 12px;
+  /* 新增：用负外边距抵消掉padding增加的高度，防止布局跳动 */
+  margin-bottom: -12px;
 }
+
 .user-dropdown-trigger {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.user-dropdown-trigger:hover {
+  background-color: var(--color-background-soft);
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-surface);
 }
 .user-name {
-  color: #2d3748;
-  white-space: nowrap;
   font-weight: 500;
+  color: var(--color-text-body);
 }
 .arrow-down {
-  border: solid #666;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg);
   transition: transform 0.2s;
 }
 .user-dropdown:hover .arrow-down {
-  transform: translateY(2px) rotate(225deg);
+  transform: rotate(180deg);
 }
+
 .user-dropdown-menu {
   position: absolute;
+  /* 修改：将 top 的值从 calc(100% + 8px) 改为 100% */
   top: 100%;
   right: 0;
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 8px 0;
-  min-width: 140px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  min-width: 180px;
   z-index: 1010;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(10px);
+  transform: translateY(0); /* 修改：初始时不再向下偏移，让过渡更平滑 */
   transition: opacity 0.2s, transform 0.2s;
 }
+
 .user-dropdown:hover .user-dropdown-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  /* transform: translateY(0); 这一行在上面已经修改，这里保持不变 */
 }
+
 .dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
-  padding: 10px 16px;
+  padding: 10px 12px;
   text-align: left;
-  color: #2d3748;
+  color: var(--color-text-body);
   text-decoration: none;
   background-color: transparent;
   border: none;
   cursor: pointer;
   font-size: 14px;
-  white-space: nowrap;
+  border-radius: 6px;
 }
 .dropdown-item:hover {
-  background-color: #f7fafc;
-  color: #2563eb;
+  background-color: var(--color-background-soft);
+  color: var(--color-text-heading);
+}
+.dropdown-item svg {
+  color: var(--color-text-muted);
+}
+.dropdown-item:hover svg {
+  color: var(--color-primary);
 }
 .logout-button {
-  color: #e53e3e;
+  color: #ef4444;
 }
 .logout-button:hover {
-  color: #c53030;
-  background-color: #fff5f5;
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 8px -8px;
 }
 
 /* 移动端菜单按钮 */
 .mobile-menu-button {
-  display: none;
+  display: block;
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
   z-index: 1100;
 }
+@media (min-width: 768px) {
+  .mobile-menu-button {
+    display: none;
+  }
+}
 .bar {
   display: block;
-  width: 25px;
-  height: 3px;
-  background-color: #333;
+  width: 24px;
+  height: 2px;
+  background-color: var(--color-text-heading);
   margin: 5px auto;
   transition: all 0.3s ease-in-out;
 }
+.mobile-menu-button.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mobile-menu-button.open .bar:nth-child(2) { opacity: 0; }
+.mobile-menu-button.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* 移动端导航容器 */
-.mobile-nav-container {
-  display: none;
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 100%;
-  max-width: 280px;
-  height: 100vh;
-  background-color: #ffffff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  z-index: 1050;
-  overflow-y: auto;
-}
-.mobile-nav-open {
-  right: 0;
-}
+
+/* 移动端导航 */
 .mobile-nav {
+  position: fixed;
+  top: 65px; /* 在导航栏下方 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 1050;
+}
+.mobile-nav-content {
+  background-color: var(--color-surface);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  padding: 80px 24px 24px;
-}
-.mobile-nav-link {
-  color: #2d3748;
-  text-decoration: none;
-  padding: 16px 0;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 16px;
-  font-weight: 500;
-}
-.mobile-nav-link.router-link-exact-active {
-  color: #2563eb;
 }
 
-/* 移动端操作区 */
-.mobile-actions {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #edf2f7;
-}
-.mobile-btn {
-  width: 100%;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+.mobile-nav-link {
+  color: var(--color-text-body);
   text-decoration: none;
-  text-align: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 16px;
   font-weight: 500;
+  text-align: center;
 }
-.mobile-user-menu {
+.mobile-nav-link.router-link-exact-active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  border-radius: 6px;
+}
+.mobile-actions-divider {
+  margin-top: 24px;
+}
+.mobile-action-item {
+  margin-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.mobile-user-name {
-  color: #2d3748;
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 8px 0;
-}
-.mobile-btn-logout {
+.mobile-action-item .btn {
   width: 100%;
-  background-color: #edf2f7;
-  color: #e53e3e;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 6px;
-  cursor: pointer;
   text-align: center;
-  font-weight: 500;
+}
+.btn-danger-outline {
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
 }
 
-/* 遮罩层 */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1040;
+.mobile-nav-fade-enter-active, .mobile-nav-fade-leave-active {
+  transition: opacity 0.3s;
 }
-
-/* 响应式 */
-@media (max-width: 768px) {
-  .desktop-nav,
-  .desktop-actions {
-    display: none;
-  }
-  .mobile-menu-button {
-    display: block;
-  }
-  .mobile-nav-container {
-    display: block;
-  }
-  /* 汉堡菜单动画 */
-  .mobile-menu-button.open .bar:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  .mobile-menu-button.open .bar:nth-child(2) {
-    opacity: 0;
-  }
-  .mobile-menu-button.open .bar:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-  }
+.mobile-nav-fade-enter-from, .mobile-nav-fade-leave-to {
+  opacity: 0;
 }
 </style>

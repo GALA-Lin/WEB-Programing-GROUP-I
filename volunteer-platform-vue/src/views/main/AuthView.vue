@@ -146,12 +146,13 @@
 </template>
 
 <script setup>
+// 您的 <script setup> 部分保持不变，这里为了简洁省略了
+// 我们只修改 <template> 和 <style> 部分
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore.js";
 import apiClient from "@/api/axios.js";
 
-// Props definition
 const props = defineProps({
   mode: {
     type: String,
@@ -162,19 +163,11 @@ const props = defineProps({
 
 const router = useRouter();
 const userStore = useUserStore();
-
 const currentTab = ref("login");
 const errorMessage = ref("");
-
 const isAdminMode = computed(() => props.mode === 'admin');
+const goBack = () => router.go(-1);
 
-// 2. 新增：返回上一页的方法
-const goBack = () => {
-  router.go(-1);
-};
-
-
-// Dynamic UI Text
 const title = computed(() => {
   if (isAdminMode.value) return '后台管理系统';
   return currentTab.value === 'login' ? '欢迎回来!' : '创建您的账户';
@@ -185,12 +178,8 @@ const subtitle = computed(() => {
 });
 const usernamePlaceholder = computed(() => isAdminMode.value ? '请输入管理员用户名' : '请输入您的用户名/学号');
 
-// Login Logic
-const loginForm = ref({
-  username: "",
-  password: "",
-  rememberMe: false,
-});
+const loginForm = ref({ username: "", password: "", rememberMe: false });
+const registerForm = ref({ username: "", realName: "", studentId: "", email: "", password: "", confirmPassword: "", terms: false });
 
 const handleLogin = async () => {
   errorMessage.value = "";
@@ -205,43 +194,36 @@ const handleLogin = async () => {
     }
   } catch (error) {
     errorMessage.value = error.response?.data?.message || `登录认证失败，请检查您的凭据。`;
-    console.error("Login failed:", error);
   }
 };
-
-// Registration Logic
-const registerForm = ref({
-  username: "", realName: "", studentId: "", email: "",
-  password: "", confirmPassword: "", terms: false,
-});
 
 const handleRegister = async () => {
   errorMessage.value = "";
   const { password, confirmPassword } = registerForm.value;
-
   if (password !== confirmPassword) {
     errorMessage.value = "两次输入的密码不一致！";
     return;
   }
-
   if (!registerForm.value.username || !registerForm.value.realName || !registerForm.value.studentId || !registerForm.value.email || !registerForm.value.password) {
     errorMessage.value = "所有字段均为必填项。";
     return;
   }
-
-  await apiClient.post("/api/auth/register", {
-    username: registerForm.value.username,
-    realName: registerForm.value.realName,
-    studentId: registerForm.value.studentId,
-    email: registerForm.value.email,
-    password: registerForm.value.password,
-  });
-
-  alert("注册成功！现在您可以登录了。");
-  switchTab("login");
-  Object.keys(registerForm.value).forEach(key => {
-    registerForm.value[key] = typeof registerForm.value[key] === 'boolean' ? false : '';
-  });
+  try {
+    await apiClient.post("/api/auth/register", {
+      username: registerForm.value.username,
+      realName: registerForm.value.realName,
+      studentId: registerForm.value.studentId,
+      email: registerForm.value.email,
+      password: registerForm.value.password,
+    });
+    alert("注册成功！现在您可以登录了。");
+    switchTab("login");
+    Object.keys(registerForm.value).forEach(key => {
+      registerForm.value[key] = typeof registerForm.value[key] === 'boolean' ? false : '';
+    });
+  } catch(error) {
+    errorMessage.value = error.response?.data?.message || '注册失败，请稍后重试。';
+  }
 };
 
 const switchTab = (tab) => {
@@ -253,7 +235,7 @@ const switchTab = (tab) => {
 <style scoped>
 /* ===== 全局样式与背景 ===== */
 .auth-page-container {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -263,7 +245,7 @@ const switchTab = (tab) => {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #f8f9fa;
+  background-color: var(--color-background);
 }
 
 .background-shapes {
@@ -273,8 +255,8 @@ const switchTab = (tab) => {
   width: 100%;
   height: 100%;
   background-image:
-      radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.1), transparent 30%),
-      radial-gradient(circle at 85% 20%, rgba(34, 197, 94, 0.1), transparent 30%);
+      radial-gradient(circle at 15% 85%, hsla(217, 91%, 60%, 0.1), transparent 30%),
+      radial-gradient(circle at 85% 20%, hsla(142, 69%, 52%, 0.1), transparent 30%);
   z-index: 1;
 }
 
@@ -293,17 +275,17 @@ const switchTab = (tab) => {
   min-height: 680px;
   display: grid;
   grid-template-columns: 1fr;
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: all 0.3s ease-in-out;
+  border: 1px solid var(--color-border);
 }
 
 /* ===== 左侧展示面板 ===== */
 .auth-showcase-panel {
   display: none;
-  background: linear-gradient(145deg, #1e40af 0%, #3b82f6 100%);
+  background: linear-gradient(145deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   padding: 3rem;
   flex-direction: column;
@@ -346,10 +328,9 @@ const switchTab = (tab) => {
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  position: relative; /* 为导航按钮定位 */
+  position: relative;
 }
 
-/* 3. 新增导航按钮样式 */
 .top-navigation {
   position: absolute;
   top: 1.5rem;
@@ -367,35 +348,34 @@ const switchTab = (tab) => {
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
 }
-
 .nav-button:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--color-background-soft);
+  color: var(--color-text-body);
 }
 
 
 .form-header {
   text-align: left;
   margin-bottom: 1.5rem;
-  margin-top: 3rem; /* 为顶部导航留出空间 */
+  margin-top: 3rem;
 }
 
 .form-title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-text-heading);
   margin: 0 0 0.25rem 0;
 }
 
 .form-subtitle {
   font-size: 0.95rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
@@ -403,7 +383,7 @@ const switchTab = (tab) => {
 .auth-tabs {
   display: flex;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .auth-tabs button {
@@ -413,7 +393,7 @@ const switchTab = (tab) => {
   font-weight: 600;
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--color-text-muted);
   cursor: pointer;
   position: relative;
   transition: color 0.3s ease;
@@ -426,13 +406,13 @@ const switchTab = (tab) => {
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #3b82f6;
+  background-color: var(--color-primary);
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 .auth-tabs button.active {
-  color: #1d4ed8;
+  color: var(--color-primary);
 }
 
 .auth-tabs button.active::after {
@@ -457,14 +437,8 @@ const switchTab = (tab) => {
 }
 
 /* ===== 表单组与输入框 ===== */
-.form-row {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
+.form-row { display: flex; gap: 0.75rem; }
+.form-row .form-group { flex: 1; }
 
 .form-group {
   display: flex;
@@ -475,7 +449,7 @@ const switchTab = (tab) => {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-body);
   margin-bottom: 0.3rem;
 }
 
@@ -483,20 +457,20 @@ const switchTab = (tab) => {
 .form-group input[type="password"],
 .form-group input[type="email"] {
   width: 100%;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background-color: #f9fafb;
+  background-color: var(--color-background-soft);
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  background-color: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  background-color: var(--color-surface);
 }
 
 /* ===== 表单选项与链接 ===== */
@@ -506,44 +480,40 @@ const switchTab = (tab) => {
   align-items: center;
   font-size: 0.875rem;
 }
-
 .checkbox-group, .terms-agreement {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
-
 .checkbox-group label, .terms-agreement label {
-  color: #4b5563;
+  color: var(--color-text-body);
   margin: 0;
   font-weight: 400;
   font-size: 0.85rem;
   line-height: 1.5;
 }
-
 .checkbox-group input, .terms-agreement input {
   width: 1rem;
   height: 1rem;
   border-radius: 4px;
   flex-shrink: 0;
 }
-
 .form-link {
-  color: #3b82f6;
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 .form-link:hover {
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
   text-decoration: underline;
 }
 
 /* ===== 提交按钮 ===== */
 .submit-button {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.85rem;
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
@@ -554,7 +524,6 @@ const switchTab = (tab) => {
   transition: transform 0.2s, box-shadow 0.2s;
   margin-top: 0.75rem;
 }
-
 .submit-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 7px 20px -5px rgba(59, 130, 246, 0.4);
@@ -567,91 +536,25 @@ const switchTab = (tab) => {
 }
 
 /* ===== 第三方登录 ===== */
-.social-login-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.75rem;
-  margin: 0.25rem 0;
-}
-.social-login-divider::before,
-.social-login-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #e5e7eb;
-}
+.social-login-divider { display: flex; align-items: center; text-align: center; color: #9ca3af; font-size: 0.75rem; margin: 0.25rem 0; }
+.social-login-divider::before, .social-login-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--color-border); }
 .social-login-divider:not(:empty)::before { margin-right: .5em; }
 .social-login-divider:not(:empty)::after { margin-left: .5em; }
-
-.social-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.social-button {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-.social-button:hover {
-  border-color: #9ca3af;
-  background-color: #f9fafb;
-}
-.social-button img {
-  width: 20px;
-  height: 20px;
-}
+.social-buttons { display: flex; gap: 1rem; }
+.social-button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--color-border); background-color: var(--color-surface); cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+.social-button:hover { border-color: #9ca3af; background-color: var(--color-background-soft); }
+.social-button img { width: 20px; height: 20px; }
 
 /* ===== 底部与错误提示 ===== */
-.switch-mode-footer {
-  text-align: center;
-  margin-top: auto;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.form-link.subtle {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-.form-link.subtle:hover {
-  color: #111827;
-}
-
-.error-message {
-  color: #c81e1e;
-  background-color: #fee2e2;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-align: center;
-  margin: 0.25rem 0;
-}
+.switch-mode-footer { text-align: center; margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
+.form-link.subtle { font-size: 0.9rem; color: var(--color-text-muted); }
+.form-link.subtle:hover { color: var(--color-text-heading); }
+.error-message { color: #c81e1e; background-color: #fee2e2; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 500; text-align: center; margin: 0.25rem 0; }
 
 /* ===== 动画效果 ===== */
-.form-slide-enter-active, .form-slide-leave-active {
-  transition: opacity 0.2s, transform 0.2s ease-out;
-}
-.form-slide-enter-from {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.form-slide-leave-to {
-  opacity: 0;
-  transform: translateX(-20px);
-}
+.form-slide-enter-active, .form-slide-leave-active { transition: opacity 0.2s, transform 0.2s ease-out; }
+.form-slide-enter-from { opacity: 0; transform: translateX(20px); }
+.form-slide-leave-to { opacity: 0; transform: translateX(-20px); }
 
 /* ===== 响应式设计 (桌面端) ===== */
 @media (min-width: 1024px) {
@@ -665,16 +568,8 @@ const switchTab = (tab) => {
     display: flex;
   }
 }
-
 @media (max-width: 480px) {
-  .top-navigation {
-    position: static;
-    margin-bottom: 1rem;
-    justify-content: space-between;
-  }
-  .form-header {
-    margin-top: 1rem;
-  }
+  .top-navigation { position: static; margin-bottom: 1rem; justify-content: space-between; }
+  .form-header { margin-top: 1rem; }
 }
-
 </style>

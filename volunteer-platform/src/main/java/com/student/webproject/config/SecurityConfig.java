@@ -44,15 +44,24 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // 1. 允许任何人访问 登录、注册接口
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/admin/auth/login").permitAll()
+                        // =================  规则顺序修正  =================
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login"
+                        ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/activities/**",
+                                "/api/news/**",
+                                "/api/organizations/**",
+                                "/api/dashboard/**" // 允许仪表盘数据接口被公开访问
+                        ).permitAll()
 
-                        // --- ↓↓↓ 核心修改点：在这里加入 /api/organizations/** ↓↓↓ ---
-                        // 2. 允许任何人访问 活动、新闻、组织列表等公开数据 (GET请求)
-                        .requestMatchers(HttpMethod.GET, "/api/activities/**", "/api/news/**", "/api/organizations/**").permitAll()
-
-                        // 3. 【核心规则】访问所有 /api/admin/ 开头的接口，必须拥有 "super_admin" 或 "admin" 角色
+                        // 2. 接着配置需要特定权限的路径
                         .requestMatchers("/api/admin/**").hasAnyAuthority("super_admin", "admin")
-                        // 4. 除了上面放行的规则外，其他所有请求都必须先登录认证
+
+                        // 3. 【必须是最后一条】其他所有未匹配的请求，都必须认证（登录）
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)

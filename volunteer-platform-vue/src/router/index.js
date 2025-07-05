@@ -1,6 +1,6 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '@/stores/userStore.js';
+import { useTagsViewStore } from '@/stores/tagsView.js'; // 导入 tagsView store
 import MainLayout from '@/layouts/MainLayout.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import HomeView from '@/views/main/HomeView.vue';
@@ -17,27 +17,27 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
-      { path: '', name: 'Home', component: HomeView },
-      { path: 'activities', name: 'Activities', component: ActivitiesView },
+      { path: '', name: 'Home', component: HomeView, meta: { title: '首页' } },
+      { path: 'activities', name: 'Activities', component: ActivitiesView, meta: { title: '活动列表' } },
       {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/main/ProfileView.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, title: '个人中心' }
       },
-      { path: 'news', name: 'NewsList', component: NewsView },
-      { path: 'news/:id', name: 'NewsDetail', component: NewsDetailView },
+      { path: 'news', name: 'NewsList', component: NewsView, meta: { title: '新闻资讯' } },
+      { path: 'news/:id', name: 'NewsDetail', component: NewsDetailView, meta: { title: '新闻详情' } },
       {
         path: 'organizations',
         name: 'OrganizationList',
         component: () => import('@/views/main/OrganizationsView.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, title: '组织列表' }
       },
       {
         path: 'organizations/:id',
         name: 'OrganizationDetail',
         component: () => import('@/views/main/OrganizationDetailView.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, title: '组织详情' }
       }
     ]
   },
@@ -45,7 +45,8 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: AuthView,
-    props: { mode: 'user' }
+    props: { mode: 'user' },
+    meta: { title: '登录' }
   },
 
   // --- 后台管理路由 ---
@@ -54,26 +55,36 @@ const routes = [
     component: AdminLayout,
     meta: { requiresAuth: true, requiresAdmin: true },
     children: [
-      { path: '', redirect: '/admin/activities' },
+      { path: '', redirect: '/admin/dashboard' },
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        component: () => import('@/views/admin/DashboardView.vue'),
+        meta: { title: '数据看板', affix: true } // affix: true 表示标签不可关闭
+      },
       {
         path: 'activities',
         name: 'AdminActivityManagement',
-        component: ActivityManagement
+        component: ActivityManagement,
+        meta: { title: '活动管理' }
       },
       {
         path: 'users',
         name: 'AdminUserManagement',
-        component: () => import('@/views/admin/UserManagement.vue')
+        component: () => import('@/views/admin/UserManagement.vue'),
+        meta: { title: '用户管理' }
       },
       {
         path: 'news',
         name: 'AdminNewsManagement',
-        component: () => import('@/views/admin/NewsManagement.vue')
+        component: () => import('@/views/admin/NewsManagement.vue'),
+        meta: { title: '新闻管理' }
       },
       {
         path: 'organizations',
         name: 'AdminOrganizationManagement',
-        component: () => import('@/views/admin/OrganizationManagement.vue')
+        component: () => import('@/views/admin/OrganizationManagement.vue'),
+        meta: { title: '组织管理' }
       }
     ]
   },
@@ -81,7 +92,8 @@ const routes = [
     path: '/admin/login',
     name: 'AdminLogin',
     component: AuthView,
-    props: { mode: 'admin' }
+    props: { mode: 'admin' },
+    meta: { title: '后台登录' }
   }
 ];
 
@@ -90,12 +102,21 @@ const router = createRouter({
   routes,
 });
 
-// --- ↓↓↓ 核心修改点2：升级路由守卫逻辑 ↓↓↓ ---
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
+// 在 beforeEach 之外定义，确保它只被初始化一次
+let tagsViewStoreInstance = null;
+let userStoreInstance = null;
 
-  // 检查目标路由是否需要登录
-  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+router.beforeEach((to, from, next) => {
+  // 仅在第一次导航时初始化 stores
+  if (!userStoreInstance) {
+    userStoreInstance = useUserStore();
+  }
+  if (!tagsViewStoreInstance) {
+    tagsViewStoreInstance = useTagsViewStore();
+  }
+
+  // 登录和权限检查逻辑
+  if (to.meta.requiresAuth && !userStoreInstance.isLoggedIn) {
     alert('此页面需要登录后才能访问！');
     if (to.path.startsWith('/admin')) {
       return next({ name: 'AdminLogin' });
@@ -103,18 +124,24 @@ router.beforeEach((to, from, next) => {
     return next({ name: 'Login' });
   }
 
-  // 检查目标路由是否需要管理员权限
-  if (to.meta.requiresAdmin && !userStore.isAdmin) {
+  if (to.meta.requiresAdmin && !userStoreInstance.isAdmin) {
     alert('权限不足！您不是管理员，无法访问此页面。');
-    // 从一个受保护的页面跳转，通常返回上一页或主页
-    if(from.name) {
-      return next(from);
-    }
-    return next('/');
+    return next(from.name ? from : '/');
   }
 
-  // 如果所有检查都通过，则放行
   next();
 });
+
+router.afterEach((to) => {
+  // 【修改点】在这里添加了对路由名称的判断
+  if (
+      tagsViewStoreInstance &&
+      to.meta.title &&
+      to.path.startsWith('/admin') &&
+      to.name !== 'AdminLogin' // 排除名为 'AdminLogin' 的路由
+  ) {
+    tagsViewStoreInstance.addView(to);
+  }
+})
 
 export default router;

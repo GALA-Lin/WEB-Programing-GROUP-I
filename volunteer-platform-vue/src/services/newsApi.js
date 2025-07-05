@@ -32,3 +32,13 @@ export const getNewsDetail = (newsId) => {
 export const likeNews = (newsId) => {
     return apiClient.post(`/api/news/${newsId}/like`);
 };
+
+/**
+ * 取消点赞新闻
+ * @param {number} newsId - 新闻的ID
+ * @returns {Promise<any>}
+ */
+export const unlikeNews = (newsId) => {
+    // 【重要】我们约定使用 DELETE 方法来表示取消点赞
+    return apiClient.delete(`/api/news/${newsId}/like`);
+};

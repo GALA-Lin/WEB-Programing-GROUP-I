@@ -8,13 +8,12 @@ import apiClient from '@/api/axios.js';
  * @returns {Promise<any>}
  */
 export const getPublicActivities = (page = 1, pageSize = 10, category = '') => {
-    // 【重要修改】移除了 currentUserId 参数
-    // 后端会通过我们请求头里的 Authorization (Token) 来识别用户
-    return apiClient.get('/api/activities', {
-        params: {
-            page,
-            pageSize,
-            category
-        }
-    });
+    // 使用 params 对象来传递参数，而不是手动拼接字符串
+    const params = {
+        page,
+        pageSize,
+        category
+    };
+
+    return apiClient.get('/api/activities', { params });
 };
