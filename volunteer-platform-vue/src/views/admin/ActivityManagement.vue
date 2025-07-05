@@ -30,22 +30,6 @@
             <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="220">
-          <template #default="scope">
-            <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
-
-            <el-button
-                link
-                type="success"
-                size="small"
-                @click="goToServiceRecordPage(scope.row)"
-            >
-              管理时长
-            </el-button>
-
-            <el-button link type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
-          </template>
-        </el-table-column>
       </el-table>
 
       <el-pagination
@@ -98,7 +82,6 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
@@ -110,15 +93,7 @@ const goToFrontend = () => {
   // window.open 会在新标签页中打开指定的 URL
   window.open('/', '_blank');
 };
-const goToServiceRecordPage = (row) => {
-  router.push({
-    name: 'AdminServiceRecordManagement',
-    params: { id: row.id },
-    query: { title: row.title } // 通过query传递活动标题，方便页面展示
-  });
-};
 
-const router = useRouter();
 // 后续所有 <script> 内容保持不变
 const tableData = ref([]);
 const loading = ref(true);
