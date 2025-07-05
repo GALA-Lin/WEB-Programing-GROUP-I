@@ -17,6 +17,14 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
+      { path: '', name: 'Home', component: HomeView },
+      { path: 'activities', name: 'Activities', component: ActivitiesView },
+      // 新增活动详情页路由
+      {
+        path: 'activities/:id',
+        name: 'ActivityDetail',
+        component: () => import('@/views/main/ActivityDetailView.vue')
+      },
       { path: '', name: 'Home', component: HomeView, meta: { title: '首页' } },
       { path: 'activities', name: 'Activities', component: ActivitiesView, meta: { title: '活动列表' } },
       {
