@@ -93,6 +93,12 @@ const routes = [
         name: 'AdminOrganizationManagement',
         component: () => import('@/views/admin/OrganizationManagement.vue'),
         meta: { title: '组织管理' }
+      },
+      {
+        path: 'records',
+        name: 'AdminServiceRecordManagement',
+        component: () => import('@/views/admin/ServiceRecordManagement.vue'),
+        meta: { title: '时长管理' }
       }
     ]
   },

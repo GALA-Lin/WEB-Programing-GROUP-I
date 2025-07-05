@@ -1,46 +1,45 @@
 <template>
-  <div class="admin-layout-horizontal">
-    <header class="top-navbar">
-      <div class="navbar-content">
-        <div class="logo-area">
-          <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="logo"/>
-          <span class="logo-text">油炬智愿 · 后台</span>
-        </div>
-
-        <el-menu
-            :default-active="$route.path"
-            class="top-menu"
-            mode="horizontal"
-            router
-            :ellipsis="false"
-        >
-          <el-menu-item index="/admin/dashboard">
-            <el-icon><DataLine /></el-icon>
-            <span>数据看板</span>
-          </el-menu-item>
-          <el-menu-item index="/admin/activities">
-            <el-icon><Flag /></el-icon>
-            <span>活动管理</span>
-          </el-menu-item>
-          <el-menu-item index="/admin/users">
-            <el-icon><User /></el-icon>
-            <span>用户管理</span>
-          </el-menu-item>
-          <el-menu-item index="/admin/organizations">
-            <el-icon><OfficeBuilding /></el-icon>
-            <span>组织管理</span>
-          </el-menu-item>
-          <el-menu-item index="/admin/news">
-            <el-icon><Document /></el-icon>
-            <span>新闻管理</span>
-          </el-menu-item>
-        </el-menu>
-
-        <div class="right-menu">
-          <AdminHeader />
-        </div>
+  <div class="admin-layout" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="sidebar-logo"/>
+        <h3 v-if="!isSidebarCollapsed">油炬智愿后台</h3>
       </div>
-    </header>
+      <el-menu
+          :default-active="$route.path"
+          class="admin-menu"
+          router
+          :collapse="isSidebarCollapsed"
+          background-color="#304156"
+          text-color="#bfcbd9"
+          active-text-color="#409EFF"
+      >
+        <el-menu-item index="/admin/dashboard">
+          <el-icon><DataLine /></el-icon>
+          <template #title><span>数据看板</span></template>
+        </el-menu-item>
+        <el-menu-item index="/admin/activities">
+          <el-icon><Flag /></el-icon>
+          <template #title><span>活动管理</span></template>
+        </el-menu-item>
+        <el-menu-item index="/admin/users">
+          <el-icon><User /></el-icon>
+          <template #title><span>用户管理</span></template>
+        </el-menu-item>
+        <el-menu-item index="/admin/organizations">
+          <el-icon><OfficeBuilding /></el-icon>
+          <template #title><span>组织管理</span></template>
+        </el-menu-item>
+        <el-menu-item index="/admin/news">
+          <el-icon><Document /></el-icon>
+          <template #title><span>新闻管理</span></template>
+        </el-menu-item>
+        <el-menu-item index="/admin/records">
+          <el-icon><Clock /></el-icon>
+          <template #title><span>时长管理</span></template>
+        </el-menu-item>
+      </el-menu>
+    </aside>
 
     <div class="main-container">
       <div class="header-section">
