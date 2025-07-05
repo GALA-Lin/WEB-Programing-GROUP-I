@@ -39,10 +39,12 @@
           <select id="category" v-model="selectedCategory" class="smooth-select">
             <option value="">全部类别</option>
             <option value="环境保护">环境保护</option>
+            <option value="体育活动">体育活动</option>
             <option value="教育支持">教育支持</option>
             <option value="关爱老人">关爱老人</option>
             <option value="关爱儿童">关爱儿童</option>
             <option value="校内服务">校内服务</option>
+            <option value="校外服务">校外服务</option>
           </select>
         </div>
         <div class="filter-item">

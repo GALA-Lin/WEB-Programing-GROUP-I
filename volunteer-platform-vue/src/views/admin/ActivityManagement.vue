@@ -4,9 +4,12 @@
       <template #header>
         <div class="card-header">
           <span>后台 - 活动管理</span>
-          <el-button type="primary" :icon="Plus" @click="handleOpenDialog()">
-            发布新活动
-          </el-button>
+          <div>
+            <el-button :icon="Link" @click="goToFrontend">访问前台</el-button>
+            <el-button type="primary" :icon="Plus" @click="handleOpenDialog()">
+              发布新活动
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -16,7 +19,7 @@
         <el-table-column prop="category" label="类别" width="120" />
         <el-table-column prop="location" label="地点" width="180" show-overflow-tooltip />
         <el-table-column prop="startTime" label="开始时间" width="180" />
-        <el-table-column prop="recruitmentQuota" label="名额" width="100" align="center" />
+        <el-table-column prop="recruitmentQuota" label="名额" width="100" align="center"/>
         <el-table-column fixed="right" label="操作" width="150" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="handleOpenDialog(scope.row)">编辑</el-button>
@@ -46,10 +49,12 @@
         <el-form-item label="活动类别" prop="category">
           <el-select v-model="form.category" placeholder="请选择活动类别" style="width: 100%;">
             <el-option label="环境保护" value="环境保护"></el-option>
+            <el-option label="体育活动" value="体育活动"></el-option>
             <el-option label="教育支持" value="教育支持"></el-option>
             <el-option label="关爱老人" value="关爱老人"></el-option>
             <el-option label="关爱儿童" value="关爱儿童"></el-option>
             <el-option label="校内服务" value="校内服务"></el-option>
+            <el-option label="校外服务" value="校外服务"></el-option>
           </el-select>
         </el-form-item>
 
@@ -77,6 +82,10 @@
               style="width: 100%;"
           />
         </el-form-item>
+
+        <el-form-item label="封面图URL" prop="coverImageUrl">
+          <el-input v-model="form.coverImageUrl" placeholder="请输入活动封面图片的URL" />
+        </el-form-item>
         <el-form-item label="活动描述" prop="description">
           <el-input type="textarea" :rows="5" v-model="form.description" placeholder="请输入活动详细描述" />
         </el-form-item>
@@ -99,9 +108,8 @@ import {
   ElInputNumber, ElDatePicker
 } from 'element-plus';
 import { getActivities, createActivity, updateActivity, deleteActivity } from '@/services/activityApi.js';
-import { Plus } from '@element-plus/icons-vue';
+import { Plus, Link } from '@element-plus/icons-vue';
 
-// Script部分逻辑保持不变
 const tableData = ref([]);
 const loading = ref(true);
 const total = ref(0);
@@ -115,6 +123,7 @@ const getInitialForm = () => ({
   id: null,
   title: '',
   description: '',
+  coverImageUrl: '', // 确保初始表单数据中包含此字段
   category: '',
   location: '',
   startTime: '',
@@ -131,7 +140,12 @@ const rules = reactive({
   startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
   endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }],
   description: [{ required: true, message: '请输入活动描述', trigger: 'blur' }],
+  // coverImageUrl 是选填项，所以可以不加规则
 });
+
+const goToFrontend = () => {
+  window.open('/', '_blank');
+};
 
 const fetchActivities = async () => {
   loading.value = true;
@@ -212,7 +226,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ▼▼▼【全新的样式，与其他管理页统一】▼▼▼ */
 .activity-management-container {}
 .box-card {
   border: none;
@@ -222,6 +235,9 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-heading);
 }
 .management-table {
   border-radius: 8px;
