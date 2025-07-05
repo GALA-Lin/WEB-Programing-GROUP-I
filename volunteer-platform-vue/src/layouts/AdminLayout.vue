@@ -63,7 +63,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { DataLine, Flag, User, OfficeBuilding, Document } from '@element-plus/icons-vue';
+// 【修改】从 element-plus/icons-vue 导入 Clock 图标
+import { DataLine, Flag, User, OfficeBuilding, Document, Clock } from '@element-plus/icons-vue';
 import AdminHeader from '@/components/AdminHeader.vue';
 import TagsView from '@/components/tagIndex.vue';
 import { useTagsViewStore } from '@/stores/tagsView.js';
@@ -78,6 +79,7 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .admin-layout {
   display: flex;
   height: 100vh;

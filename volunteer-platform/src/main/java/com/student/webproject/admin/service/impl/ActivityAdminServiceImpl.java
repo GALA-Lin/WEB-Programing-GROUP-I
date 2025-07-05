@@ -3,11 +3,21 @@ package com.student.webproject.admin.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.student.webproject.admin.dto.ActivityCreateDTO;
+import com.student.webproject.admin.dto.EnrollmentViewDTO;
 import com.student.webproject.admin.entity.Activity;
 import com.student.webproject.admin.mapper.AdminActivityMapper;
 import com.student.webproject.admin.service.ActivityAdminService;
 import com.student.webproject.common.response.Result;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +30,44 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
 
     public ActivityAdminServiceImpl(AdminActivityMapper activityMapper) {
         this.activityMapper = activityMapper;
+    }
+    // 【新增】查询报名名单的业务逻辑
+    @Override
+    public Result<List<EnrollmentViewDTO>> getEnrollmentsByActivityId(Long activityId) {
+        List<EnrollmentViewDTO> enrollments = activityMapper.selectEnrollmentsByActivityId(activityId);
+        return Result.success(enrollments, "报名名单查询成功");
+    }
+
+    // 【新增】导出报名名单为Excel的业务逻辑
+    @Override
+    public ByteArrayInputStream exportEnrollmentsToExcel(Long activityId) throws IOException {
+        List<EnrollmentViewDTO> enrollments = activityMapper.selectEnrollmentsByActivityId(activityId);
+        Activity activity = activityMapper.selectById(activityId);
+        String sheetName = "活动报名表-" + (activity != null ? activity.getTitle() : activityId);
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet(sheetName);
+
+            // 创建表头
+            String[] headers = {"姓名", "学号", "手机号", "报名时间"};
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                headerRow.createCell(i).setCellValue(headers[i]);
+            }
+
+            // 填充数据
+            int rowIdx = 1;
+            for (EnrollmentViewDTO enrollment : enrollments) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(enrollment.getRealName());
+                row.createCell(1).setCellValue(enrollment.getStudentId());
+                row.createCell(2).setCellValue(enrollment.getPhoneNumber());
+                row.createCell(3).setCellValue(enrollment.getEnrolledAt().format(FORMATTER));
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        }
     }
 
     @Override

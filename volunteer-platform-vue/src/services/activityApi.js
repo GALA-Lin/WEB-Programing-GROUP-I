@@ -39,3 +39,19 @@ export const updateActivity = (id, activityData) => {
 export const deleteActivity = (id) => {
     return apiClient.delete(`/api/admin/activities/${id}`);
 };
+
+/**
+ * 获取活动报名列表
+ */
+export const getEnrollments = (activityId) => {
+    return apiClient.get(`/api/admin/activities/${activityId}/enrollments`);
+};
+
+/**
+ * 导出活动报名表为Excel
+ */
+export const exportEnrollments = (activityId) => {
+    return apiClient.get(`/api/admin/activities/${activityId}/enrollments/export`, {
+        responseType: 'blob' // 关键：告诉axios期望接收一个二进制文件
+    });
+};
