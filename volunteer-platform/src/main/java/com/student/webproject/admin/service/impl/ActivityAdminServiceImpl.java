@@ -33,7 +33,7 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
         activity.setOrganizerId(dto.getOrganizerId());
         activity.setRecruitmentQuota(dto.getRecruitmentQuota());
 
-        // --- ↓↓↓ 关键修改：在解析前，将'T'替换为空格，兼容两种格式 ↓↓↓ ---
+
         activity.setStartTime(LocalDateTime.parse(dto.getStartTime().replace('T', ' '), FORMATTER));
         activity.setEndTime(LocalDateTime.parse(dto.getEndTime().replace('T', ' '), FORMATTER));
 

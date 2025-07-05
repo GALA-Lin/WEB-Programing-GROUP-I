@@ -1,48 +1,50 @@
 <template>
-  <div class="admin-layout" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
-    <aside class="admin-sidebar">
-      <div class="sidebar-header">
-        <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="sidebar-logo"/>
-        <h3 v-if="!isSidebarCollapsed">油炬智愿后台</h3>
+  <div class="admin-layout-horizontal">
+    <header class="top-navbar">
+      <div class="navbar-content">
+        <div class="logo-area">
+          <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="logo"/>
+          <span class="logo-text">油炬智愿 · 后台</span>
+        </div>
+
+        <el-menu
+            :default-active="$route.path"
+            class="top-menu"
+            mode="horizontal"
+            router
+            :ellipsis="false"
+        >
+          <el-menu-item index="/admin/dashboard">
+            <el-icon><DataLine /></el-icon>
+            <span>数据看板</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/activities">
+            <el-icon><Flag /></el-icon>
+            <span>活动管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/users">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/organizations">
+            <el-icon><OfficeBuilding /></el-icon>
+            <span>组织管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/news">
+            <el-icon><Document /></el-icon>
+            <span>新闻管理</span>
+          </el-menu-item>
+        </el-menu>
+
+        <div class="right-menu">
+          <AdminHeader />
+        </div>
       </div>
-      <el-menu
-          :default-active="$route.path"
-          class="admin-menu"
-          router
-          :collapse="isSidebarCollapsed"
-          background-color="#304156"
-          text-color="#bfcbd9"
-          active-text-color="#409EFF"
-      >
-        <el-menu-item index="/admin/dashboard">
-          <el-icon><DataLine /></el-icon>
-          <template #title><span>数据看板</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/activities">
-          <el-icon><Flag /></el-icon>
-          <template #title><span>活动管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/users">
-          <el-icon><User /></el-icon>
-          <template #title><span>用户管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/organizations">
-          <el-icon><OfficeBuilding /></el-icon>
-          <template #title><span>组织管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/news">
-          <el-icon><Document /></el-icon>
-          <template #title><span>新闻管理</span></template>
-        </el-menu-item>
-      </el-menu>
-    </aside>
+    </header>
 
     <div class="main-container">
       <div class="header-section">
-        <AdminHeader
-            :is-collapsed="isSidebarCollapsed"
-            @toggle-sidebar="toggleSidebar"
-        />
+        <Breadcrumb class="breadcrumb-container" />
         <TagsView />
       </div>
 
@@ -58,84 +60,105 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { DataLine, Flag, User, OfficeBuilding, Document } from '@element-plus/icons-vue';
 import AdminHeader from '@/components/AdminHeader.vue';
 import TagsView from '@/components/tagIndex.vue';
+import Breadcrumb from '@/components/Breadcrumb.vue'; // 引入面包屑
 import { useTagsViewStore } from '@/stores/tagsView.js';
 
 const tagsViewStore = useTagsViewStore();
 const cachedViews = computed(() => tagsViewStore.cachedViews);
-
-const isSidebarCollapsed = ref(false);
-const toggleSidebar = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value;
-};
 </script>
 
 <style scoped>
-.admin-layout {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
-.admin-sidebar {
-  width: 220px;
-  background-color: #304156;
-  transition: width 0.28s;
-  flex-shrink: 0;
+.admin-layout-horizontal {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  background-color: #f0f2f5;
 }
-.sidebar-header {
+
+/* 顶部导航栏样式 */
+.top-navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #e6e6e6;
+  height: 60px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 15px 10px;
-  gap: 10px;
-  color: white;
-  flex-shrink: 0;
-  transition: padding 0.28s;
+  padding: 0 20px;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
 }
-.sidebar-logo {
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
   width: 32px;
   height: 32px;
+  margin-right: 12px;
 }
-.sidebar-header h3 {
-  margin: 0;
+
+.logo-text {
   font-size: 18px;
-  white-space: nowrap;
+  font-weight: 600;
+  color: var(--color-text-heading);
 }
-.admin-menu {
+
+.top-menu {
   flex-grow: 1;
-  border-right: none;
-  overflow-y: auto;
+  border-bottom: none;
+  margin-left: 50px; /* 与Logo区域拉开距离 */
 }
-.admin-menu:not(.el-menu--collapse) {
-  width: 220px;
+/* 覆盖Element Plus菜单项的默认下边距 */
+.top-menu.el-menu--horizontal > .el-menu-item {
+  height: 59px;
 }
+
+.right-menu {
+  display: flex;
+  align-items: center;
+}
+
+/* 主内容区域 */
 .main-container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: margin-left 0.28s;
 }
+
 .header-section {
   flex-shrink: 0;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  /* 调整面包屑和标签页的样式 */
+  padding-left: 20px;
 }
+.breadcrumb-container {
+  line-height: 40px; /* 调整面包屑行高 */
+}
+/* 调整标签页容器的边框 */
+:deep(.tags-view-container) {
+  border-top: 1px solid #d8dce5;
+  border-bottom: none;
+  box-shadow: none;
+  height: 38px;
+}
+
 .admin-main-content {
   flex-grow: 1;
   padding: 20px;
-  background-color: #f0f2f5;
   overflow-y: auto;
-}
-.sidebar-collapsed .admin-sidebar {
-  width: 64px !important;
-}
-.sidebar-collapsed .sidebar-header {
-  padding: 15px 0;
 }
 </style>
