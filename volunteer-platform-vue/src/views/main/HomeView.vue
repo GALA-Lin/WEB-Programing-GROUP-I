@@ -64,50 +64,33 @@
           <router-link to="/activities" class="section-link">查看全部 &rarr;</router-link>
         </div>
       </div>
-      <div class="horizontal-scroll-container">
-        <div class="activity-card" v-for="activity in recentActivities" :key="activity.id">
-          <router-link :to="`/activities/${activity.id}`" class="card-link">
-            <div class="card-image-wrapper">
-              <img :src="activity.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22220%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e2e8f0%22/%3E%3C/svg%3E'" :alt="activity.title" class="activity-image"/>
-              <span class="category-tag">{{ activity.category }}</span>
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">{{ activity.title }}</h3>
-              <p class="card-location">📍 {{ activity.location }}</p>
-            </div>
-          </router-link>
-        </div>
-      </div>
-    </section>
-
-    <section class="recent-news-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">近期新闻</h2>
-          <router-link to="/news" class="section-link">查看全部 &rarr;</router-link>
-        </div>
-        <div class="news-grid">
-          <div class="news-card" v-for="newsItem in recentNews" :key="newsItem.id">
-            <router-link :to="`/news/${newsItem.id}`" class="card-link">
-              <div class="news-card-content">
-                <h3 class="card-title">{{ newsItem.title }}</h3>
-                <p class="card-summary">{{ newsItem.summary }}</p>
-                <span class="card-meta">{{ newsItem.publishedAt }}</span>
+      <div class="carousel-container">
+        <div class="horizontal-scroll-container">
+          <div class="activity-card" v-for="(activity, index) in doubledActivities" :key="`${activity.id}-${index}`">
+            <router-link :to="`/activities/${activity.id}`" class="card-link">
+              <div class="card-image-wrapper">
+                <img :src="activity.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22220%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e2e8f0%22/%3E%3C/svg%3E'" :alt="activity.title" class="activity-image"/>
+                <span class="category-tag">{{ activity.category }}</span>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{ activity.title }}</h3>
+                <p class="card-location">📍 {{ activity.location }}</p>
               </div>
             </router-link>
           </div>
         </div>
       </div>
     </section>
+
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+// 【新增】导入 computed
+import { ref, reactive, onMounted, computed } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getPublicActivities } from '@/services/publicActivityApi.js';
 import { getPublicDashboardStats } from '@/services/dashboardApi.js';
-import { getNewsList } from '@/services/newsApi.js';
 import { gsap } from 'gsap';
 import { User, Flag, Timer, OfficeBuilding } from '@element-plus/icons-vue';
 
@@ -115,12 +98,18 @@ const userStore = useUserStore();
 const { isLoggedIn } = userStore;
 
 const recentActivities = ref([]);
-const recentNews = ref([]);
 const animatedStats = reactive({ volunteers: 0, activities: 0, hours: 0, organizations: 0 });
+
+// 【新增】创建双倍列表以实现无缝滚动
+// 只有当有活动时，才创建双倍列表
+const doubledActivities = computed(() => {
+  return recentActivities.value.length > 0
+      ? [...recentActivities.value, ...recentActivities.value]
+      : [];
+});
 
 onMounted(() => {
   fetchRecentActivities();
-  fetchRecentNews();
   fetchDashboardStatsAndAnimate();
 });
 
@@ -132,17 +121,6 @@ const fetchRecentActivities = async () => {
     }
   } catch (err) {
     console.error('获取热门活动失败:', err);
-  }
-};
-
-const fetchRecentNews = async () => {
-  try {
-    const response = await getNewsList(1, 4); // 获取4条新闻用于网格布局
-    if (response && response.list) {
-      recentNews.value = response.list;
-    }
-  } catch (err) {
-    console.error('获取近期新闻失败:', err);
   }
 };
 
@@ -169,15 +147,16 @@ const fetchDashboardStatsAndAnimate = async () => {
 </script>
 
 <style scoped>
-/* 省略了部分不变的样式 */
+/* 省略了大部分不变的样式... */
 .home-page { position: relative; overflow-x: hidden; background-color: var(--color-background); }
 .background-shapes { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
 .shape { position: absolute; border-radius: 50%; opacity: 0.1; filter: blur(80px); }
 .shape-1 { width: 400px; height: 400px; background-color: var(--color-primary); top: -100px; left: -100px; }
 .shape-2 { width: 500px; height: 500px; background-color: #8b5cf6; bottom: -150px; right: -150px; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
-.section-header { text-align: center; margin-bottom: 3rem; }
+.section-header { display: flex; justify-content: space-between; align-items: baseline; text-align: left; margin-bottom: 2rem; }
 .section-title { font-size: 2.25rem; font-weight: 800; color: var(--color-text-heading); }
+.section-link { color: var(--color-primary); font-weight: 500; text-decoration: none; }
 .hero-section { position: relative; width: 100%; height: 75vh; min-height: 500px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .hero-video-background { position: absolute; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%) scale(1.25); min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: 1; }
 .hero-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 2; }
@@ -193,39 +172,44 @@ const fetchDashboardStatsAndAnimate = async () => {
 .impact-number { font-size: 2rem; font-weight: 700; color: var(--color-text-heading); }
 .impact-label { font-size: 0.9rem; color: var(--color-text-muted); }
 
-/* ▼▼▼【全新样式】▼▼▼ */
-/* 公共头部样式 */
-.featured-activities-section .section-header, .recent-news-section .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  text-align: left;
-  margin-bottom: 2rem;
-}
-.section-link {
-  color: var(--color-primary);
-  font-weight: 500;
-  text-decoration: none;
+/* ▼▼▼【热门活动 - 自动滚动播放效果】▼▼▼ */
+.featured-activities-section {
+  padding: 4rem 0 6rem;
 }
 
-/* 热门活动 - 横向滚动 */
-.featured-activities-section {
-  padding: 4rem 0;
+/* 【新增】定义滚动动画 */
+@keyframes infinite-scroll {
+  from { transform: translateX(0); }
+  /* 移动距离为列表总宽度的一半（因为我们复制了一份） */
+  to { transform: translateX(-50%); }
 }
+
+/* 【新增】外部容器，用于隐藏滚动条和溢出的内容 */
+.carousel-container {
+  overflow: hidden;
+  /* 添加左右遮罩效果，让滚动看起来更自然 */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* 【变更】滚动容器应用动画 */
 .horizontal-scroll-container {
   display: flex;
+  width: fit-content; /* 让容器宽度等于所有卡片宽度之和 */
   gap: 1.5rem;
-  overflow-x: auto;
-  padding: 1rem;
-  margin: 0 -1rem; /* 让卡片可以贴近边缘 */
-  scroll-snap-type: x mandatory;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  padding: 1rem 0;
+  /* 应用动画：动画名 动画时长 速度曲线 无限循环 */
+  /* 时长可以根据卡片数量和宽度调整，比如 8 张卡片 * 5s/张 = 40s */
+  animation: infinite-scroll 40s linear infinite;
 }
-.horizontal-scroll-container::-webkit-scrollbar { display: none; }
+
+/* 【新增】鼠标悬停时暂停动画 */
+.carousel-container:hover .horizontal-scroll-container {
+  animation-play-state: paused;
+}
+
 .activity-card {
-  flex: 0 0 320px;
-  scroll-snap-align: start;
+  flex: 0 0 320px; /* 固定卡片宽度，防止缩放 */
 }
 .card-link { text-decoration: none; color: inherit; display: block; border-radius: 12px; overflow: hidden; background: var(--color-surface); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .card-link:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -236,51 +220,4 @@ const fetchDashboardStatsAndAnimate = async () => {
 .activity-card .card-title { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.25rem; }
 .card-location { font-size: 0.9rem; color: var(--color-text-muted); }
 
-/* 近期新闻 - 网格布局 */
-.recent-news-section {
-  padding: 4rem 0 6rem;
-  background-color: var(--color-background-soft);
-}
-.news-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-.news-card .card-link {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-.news-card .card-content {
-  padding: 1.5rem;
-}
-.news-card .card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  /* 多行文字溢出显示省略号 */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: calc(1.1rem * 1.5 * 2); /* 字体大小 * 行高 * 行数 */
-}
-.news-card .card-summary {
-  font-size: 0.95rem;
-  color: var(--color-text-body);
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: calc(0.95rem * 1.6 * 3);
-}
-.news-card .card-meta {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-}
 </style>
