@@ -34,6 +34,11 @@
             <el-icon><Document /></el-icon>
             <span>新闻管理</span>
           </el-menu-item>
+          <el-menu-item index="/admin/records">
+            <el-icon><Timer /></el-icon>
+            <span>时长管理</span>
+          </el-menu-item>
+
         </el-menu>
 
         <div class="right-menu">
