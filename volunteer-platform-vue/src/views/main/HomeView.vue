@@ -1,39 +1,57 @@
 <template>
-  <div class="home-view">
-    <section class="hero-section">
+  <div class="home-page">
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+    </div>
+
+    <header class="hero-section">
       <video autoplay muted loop playsinline class="hero-video-background">
-        <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4">
+        <source src="/1803239b1f9720a4cd36336320f4f6d6_raw.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-      <div class="hero-overlay"></div>
+      <div class="hero-video-overlay"></div>
+
       <div class="container hero-content">
         <h1 class="hero-title">让志愿行动，改变世界</h1>
         <p class="hero-subtitle">发现、参与并记录您的每一次善举。油炬智愿，点亮您与社区的光。</p>
         <div class="hero-actions">
           <router-link to="/activities" class="btn btn-primary btn-lg">探索活动</router-link>
-          <router-link v-if="!isLoggedIn" to="/login" class="btn btn-outline-light btn-lg">成为志愿者</router-link>
+          <router-link to="/login" class="btn btn-secondary btn-lg" v-if="!isLoggedIn">成为志愿者</router-link>
         </div>
       </div>
-    </section>
+    </header>
 
     <section class="impact-section">
       <div class="container">
         <div class="impact-grid">
           <div class="impact-item">
-            <h2 class="impact-number">{{ animatedStats.volunteers }}</h2>
-            <p class="impact-label">注册志愿者</p>
+            <div class="impact-icon"><User /></div>
+            <div class="impact-text">
+              <span class="impact-number">{{ animatedStats.volunteers }}</span>
+              <span class="impact-label">注册志愿者</span>
+            </div>
           </div>
           <div class="impact-item">
-            <h2 class="impact-number">{{ animatedStats.activities }}</h2>
-            <p class="impact-label">已举办活动</p>
+            <div class="impact-icon"><Flag /></div>
+            <div class="impact-text">
+              <span class="impact-number">{{ animatedStats.activities }}</span>
+              <span class="impact-label">已举办活动</span>
+            </div>
           </div>
           <div class="impact-item">
-            <h2 class="impact-number">{{ animatedStats.hours.toFixed(1) }}</h2>
-            <p class="impact-label">累计服务时长 (小时)</p>
+            <div class="impact-icon"><Timer /></div>
+            <div class="impact-text">
+              <span class="impact-number">{{ animatedStats.hours.toFixed(1) }}</span>
+              <span class="impact-label">累计服务时长</span>
+            </div>
           </div>
           <div class="impact-item">
-            <h2 class="impact-number">{{ animatedStats.organizations }}</h2>
-            <p class="impact-label">合作组织</p>
+            <div class="impact-icon"><OfficeBuilding /></div>
+            <div class="impact-text">
+              <span class="impact-number">{{ animatedStats.organizations }}</span>
+              <span class="impact-label">合作组织</span>
+            </div>
           </div>
         </div>
       </div>
@@ -42,93 +60,91 @@
     <section class="featured-activities-section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">热门活动</h2>
+          <h2 class="section-title">近期热门活动</h2>
           <router-link to="/activities" class="section-link">查看全部 &rarr;</router-link>
         </div>
-        <div class="carousel-wrapper">
-          <div class="activities-carousel" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-            <div class="activity-slide" v-for="activity in recentActivities" :key="activity.id">
-              <div class="activity-card">
-                <img :src="activity.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22220%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e2e8f0%22/%3E%3C/svg%3E'" alt="活动图片" class="activity-image">
-                <div class="card-content">
-                  <span class="category-tag">{{ getCategoryName(activity.category) }}</span>
-                  <h3 class="card-title">{{ activity.title }}</h3>
-                  <div class="card-meta">
-                    <span>📍 {{ activity.location }}</span>
-                  </div>
-                  <router-link :to="`/activities/${activity.id}`" class="btn btn-primary-outline">活动详情</router-link>
-                </div>
-              </div>
+      </div>
+      <div class="horizontal-scroll-container">
+        <div class="activity-card" v-for="activity in recentActivities" :key="activity.id">
+          <router-link :to="`/activities/${activity.id}`" class="card-link">
+            <div class="card-image-wrapper">
+              <img :src="activity.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22220%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e2e8f0%22/%3E%3C/svg%3E'" :alt="activity.title" class="activity-image"/>
+              <span class="category-tag">{{ activity.category }}</span>
             </div>
+            <div class="card-content">
+              <h3 class="card-title">{{ activity.title }}</h3>
+              <p class="card-location">📍 {{ activity.location }}</p>
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </section>
+
+    <section class="recent-news-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">近期新闻</h2>
+          <router-link to="/news" class="section-link">查看全部 &rarr;</router-link>
+        </div>
+        <div class="news-grid">
+          <div class="news-card" v-for="newsItem in recentNews" :key="newsItem.id">
+            <router-link :to="`/news/${newsItem.id}`" class="card-link">
+              <div class="news-card-content">
+                <h3 class="card-title">{{ newsItem.title }}</h3>
+                <p class="card-summary">{{ newsItem.summary }}</p>
+                <span class="card-meta">{{ newsItem.publishedAt }}</span>
+              </div>
+            </router-link>
           </div>
         </div>
-        <div class="carousel-dots">
-          <button v-for="(slide, index) in recentActivities" :key="index" @click="currentSlide = index" :class="{ active: currentSlide === index }"></button>
-        </div>
       </div>
     </section>
-
-    <section class="spotlight-section">
-      <div class="container spotlight-content">
-        <div class="spotlight-image">
-          <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800" alt="Volunteer Spotlight">
-        </div>
-        <div class="spotlight-text">
-          <h2 class="section-title">志愿者风采</h2>
-          <blockquote class="spotlight-quote">
-            “通过‘油炬智愿’，我不仅找到了有意义的活动，更结识了一群志同道合的朋友。每一次付出，都让我感受到了社区的温暖和自己的价值。”
-          </blockquote>
-          <p class="spotlight-author">- 张三, 信息工程学院</p>
-          <router-link to="/register" class="btn btn-secondary">加入我们</router-link>
-        </div>
-      </div>
-    </section>
-
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getPublicActivities } from '@/services/publicActivityApi.js';
 import { getPublicDashboardStats } from '@/services/dashboardApi.js';
+import { getNewsList } from '@/services/newsApi.js';
 import { gsap } from 'gsap';
+import { User, Flag, Timer, OfficeBuilding } from '@element-plus/icons-vue';
 
 const userStore = useUserStore();
 const { isLoggedIn } = userStore;
 
 const recentActivities = ref([]);
-const loading = ref(true);
-const error = ref(null);
-const currentSlide = ref(0);
-
+const recentNews = ref([]);
 const animatedStats = reactive({ volunteers: 0, activities: 0, hours: 0, organizations: 0 });
 
-let observer;
 onMounted(() => {
   fetchRecentActivities();
-
-  const impactSection = document.querySelector('.impact-section');
-  observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      fetchDashboardStatsAndAnimate();
-      observer.disconnect();
-    }
-  }, { threshold: 0.5 });
-
-  if(impactSection) observer.observe(impactSection);
-
-  const interval = setInterval(() => {
-    if(recentActivities.value.length > 0) {
-      currentSlide.value = (currentSlide.value + 1) % recentActivities.value.length;
-    }
-  }, 5000);
-
-  onUnmounted(() => {
-    clearInterval(interval);
-    if(observer) observer.disconnect();
-  });
+  fetchRecentNews();
+  fetchDashboardStatsAndAnimate();
 });
+
+const fetchRecentActivities = async () => {
+  try {
+    const response = await getPublicActivities(1, 8);
+    if (response && response.list) {
+      recentActivities.value = response.list;
+    }
+  } catch (err) {
+    console.error('获取热门活动失败:', err);
+  }
+};
+
+const fetchRecentNews = async () => {
+  try {
+    const response = await getNewsList(1, 4); // 获取4条新闻用于网格布局
+    if (response && response.list) {
+      recentNews.value = response.list;
+    }
+  } catch (err) {
+    console.error('获取近期新闻失败:', err);
+  }
+};
 
 const fetchDashboardStatsAndAnimate = async () => {
   try {
@@ -148,106 +164,123 @@ const fetchDashboardStatsAndAnimate = async () => {
     });
   } catch (e) {
     console.error("获取统计数据失败:", e);
-    animatedStats.volunteers = 100;
-    animatedStats.activities = 50;
-    animatedStats.hours = 2000;
-    animatedStats.organizations = 10;
   }
-};
-
-const fetchRecentActivities = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    const response = await getPublicActivities(1, 6);
-    if (response && response.list) {
-      recentActivities.value = response.list;
-    } else {
-      error.value = '无法加载活动数据。';
-    }
-  } catch (err) {
-    console.error('获取热门活动失败:', err);
-    error.value = '加载热门活动失败，请稍后再试。';
-  } finally {
-    loading.value = false;
-  }
-};
-
-const getCategoryName = (category) => {
-  const categories = { '校内服务': '校内服务', '社区服务': '社区服务', '环保': '环保', '教育': '教育' };
-  return categories[category] || category || '综合';
 };
 </script>
 
-
 <style scoped>
-/* General */
-.home-view { overflow-x: hidden; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
-.section-title { font-size: 2.25rem; font-weight: 700; color: var(--color-text-heading); }
-.section-link { color: var(--color-primary); font-weight: 500; text-decoration: none; }
-.btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; transition: all 0.2s; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
-.btn-lg { padding: 1rem 2rem; font-size: 1.1rem; }
-.btn-primary { background-color: var(--color-primary); color: white; }
-.btn-primary:hover { background-color: var(--color-primary-hover); transform: translateY(-2px); }
-.btn-secondary { background-color: #f97316; color: white; }
-.btn-secondary:hover { background-color: #ea580c; }
-.btn-outline-light { background-color: transparent; color: white; border-color: white; }
-.btn-outline-light:hover { background-color: rgba(255,255,255,0.1); }
-.btn-primary-outline { color: var(--color-primary); border-color: var(--color-primary); }
-.btn-primary-outline:hover { background-color: var(--color-primary-soft); }
-
-/* Hero Section - 调整了高度 */
-.hero-section { position: relative; height: 60vh; min-height: 400px; display: flex; align-items: center; text-align: center; color: white; }
-.hero-video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-.hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2; }
-.hero-content { position: relative; z-index: 3; }
-.hero-title { font-size: 3.5rem; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
-.hero-subtitle { font-size: 1.25rem; max-width: 600px; margin: 1rem auto 2.5rem; color: #e5e7eb; }
+/* 省略了部分不变的样式 */
+.home-page { position: relative; overflow-x: hidden; background-color: var(--color-background); }
+.background-shapes { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+.shape { position: absolute; border-radius: 50%; opacity: 0.1; filter: blur(80px); }
+.shape-1 { width: 400px; height: 400px; background-color: var(--color-primary); top: -100px; left: -100px; }
+.shape-2 { width: 500px; height: 500px; background-color: #8b5cf6; bottom: -150px; right: -150px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
+.section-header { text-align: center; margin-bottom: 3rem; }
+.section-title { font-size: 2.25rem; font-weight: 800; color: var(--color-text-heading); }
+.hero-section { position: relative; width: 100%; height: 75vh; min-height: 500px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.hero-video-background { position: absolute; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%) scale(1.25); min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: 1; }
+.hero-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); z-index: 2; }
+.hero-content { position: relative; z-index: 3; color: #fff; text-align: center; }
+.hero-title { font-size: 3.5rem; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.hero-subtitle { font-size: 1.25rem; max-width: 600px; margin: 1.5rem auto 2.5rem; color: #e5e7eb; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .hero-actions { display: flex; justify-content: center; gap: 1rem; }
+.impact-section { background-color: transparent; padding: 6rem 0; }
+.impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.7); }
+.impact-item { display: flex; align-items: center; gap: 1rem; }
+.impact-icon { flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background-color: var(--color-primary-soft); color: var(--color-primary); border-radius: 50%; font-size: 1.5rem; }
+.impact-text { display: flex; flex-direction: column; }
+.impact-number { font-size: 2rem; font-weight: 700; color: var(--color-text-heading); }
+.impact-label { font-size: 0.9rem; color: var(--color-text-muted); }
 
-/* Impact Section */
-.impact-section { padding: 4rem 1rem; background: var(--color-background-soft); }
-.impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
-.impact-item { text-align: center; }
-.impact-number { font-size: 3rem; font-weight: 700; color: var(--color-primary); }
-.impact-label { font-size: 1rem; color: var(--color-text-muted); }
-
-/* Featured Activities */
-.featured-activities-section { padding: 5rem 1rem; }
-.carousel-wrapper { overflow: hidden; }
-.activities-carousel { display: flex; transition: transform 0.5s ease-in-out; }
-.activity-slide { min-width: 100%; }
-@media (min-width: 640px) { .activity-slide { min-width: 50%; } }
-@media (min-width: 992px) { .activity-slide { min-width: 33.333%; } }
-.activity-card { margin: 0 1rem; background: var(--color-surface); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; height: 100%;}
-.activity-image { width: 100%; height: 220px; object-fit: cover; }
-.card-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
-.category-tag { display: inline-block; background-color: var(--color-primary-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.75rem; align-self: flex-start; }
-.card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; flex-grow: 1;}
-.card-meta { color: var(--color-text-muted); margin-bottom: 1.5rem; }
-.carousel-dots { text-align: center; margin-top: 2rem; }
-.carousel-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: #d1d5db; margin: 0 5px; cursor: pointer; transition: background 0.3s, transform 0.3s; }
-.carousel-dots button.active { background: var(--color-primary); transform: scale(1.2); }
-
-/* Spotlight Section */
-.spotlight-section { padding: 5rem 1rem; background: var(--color-background-soft); }
-.spotlight-content { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; }
-.spotlight-image img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-.spotlight-quote { font-size: 1.5rem; font-style: italic; color: var(--color-text-heading); border-left: 4px solid var(--color-primary); padding-left: 1.5rem; margin: 2rem 0; }
-.spotlight-author { font-weight: 600; margin-bottom: 2rem; }
-
-@media (max-width: 992px) {
-  .spotlight-content { grid-template-columns: 1fr; }
-  .spotlight-image { order: 2; margin-top: 2rem; }
-  .spotlight-text { order: 1; text-align: center; }
-  .spotlight-quote { margin: 2rem auto; }
+/* ▼▼▼【全新样式】▼▼▼ */
+/* 公共头部样式 */
+.featured-activities-section .section-header, .recent-news-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  text-align: left;
+  margin-bottom: 2rem;
 }
-@media (max-width: 768px) {
-  .hero-title { font-size: 2.5rem; }
-  .hero-subtitle { font-size: 1.1rem; }
-  .section-title { font-size: 1.8rem; }
+.section-link {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
 }
 
+/* 热门活动 - 横向滚动 */
+.featured-activities-section {
+  padding: 4rem 0;
+}
+.horizontal-scroll-container {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem;
+  margin: 0 -1rem; /* 让卡片可以贴近边缘 */
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.horizontal-scroll-container::-webkit-scrollbar { display: none; }
+.activity-card {
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+}
+.card-link { text-decoration: none; color: inherit; display: block; border-radius: 12px; overflow: hidden; background: var(--color-surface); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-link:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.card-image-wrapper { position: relative; }
+.activity-image { width: 100%; height: 180px; object-fit: cover; }
+.category-tag { position: absolute; top: 1rem; left: 1rem; background-color: rgba(255,255,255,0.8); backdrop-filter: blur(4px); color: var(--color-text-heading); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+.activity-card .card-content { padding: 1rem; }
+.activity-card .card-title { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.25rem; }
+.card-location { font-size: 0.9rem; color: var(--color-text-muted); }
+
+/* 近期新闻 - 网格布局 */
+.recent-news-section {
+  padding: 4rem 0 6rem;
+  background-color: var(--color-background-soft);
+}
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.news-card .card-link {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.news-card .card-content {
+  padding: 1.5rem;
+}
+.news-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  /* 多行文字溢出显示省略号 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: calc(1.1rem * 1.5 * 2); /* 字体大小 * 行高 * 行数 */
+}
+.news-card .card-summary {
+  font-size: 0.95rem;
+  color: var(--color-text-body);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: calc(0.95rem * 1.6 * 3);
+}
+.news-card .card-meta {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
 </style>
