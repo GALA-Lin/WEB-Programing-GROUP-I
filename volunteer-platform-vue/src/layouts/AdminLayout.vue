@@ -1,60 +1,60 @@
 <template>
-  <div class="admin-layout" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
-    <aside class="admin-sidebar">
-      <div class="sidebar-header">
-        <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="sidebar-logo"/>
-        <h3 v-if="!isSidebarCollapsed">油炬智愿后台</h3>
-      </div>
-      <el-menu
-          :default-active="$route.path"
-          class="admin-menu"
-          router
-          :collapse="isSidebarCollapsed"
-          background-color="#304156"
-          text-color="#bfcbd9"
-          active-text-color="#409EFF"
-      >
-        <el-menu-item index="/admin/dashboard">
-          <el-icon><DataLine /></el-icon>
-          <template #title><span>数据看板</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/activities">
-          <el-icon><Flag /></el-icon>
-          <template #title><span>活动管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/users">
-          <el-icon><User /></el-icon>
-          <template #title><span>用户管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/organizations">
-          <el-icon><OfficeBuilding /></el-icon>
-          <template #title><span>组织管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/news">
-          <el-icon><Document /></el-icon>
-          <template #title><span>新闻管理</span></template>
-        </el-menu-item>
-        <el-menu-item index="/admin/records">
-          <el-icon><Clock /></el-icon>
-          <template #title><span>时长管理</span></template>
-        </el-menu-item>
-      </el-menu>
-    </aside>
+  <div class="admin-layout-horizontal">
+    <header class="top-navbar">
+      <div class="navbar-content">
+        <div class="logo-area" @click="$router.push('/admin')">
+          <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="logo"/>
+          <span class="logo-text">油炬智愿 · 后台</span>
+        </div>
 
-    <div class="main-container">
-      <div class="header-section">
-        <Breadcrumb class="breadcrumb-container" />
+        <el-menu
+            :default-active="$route.path"
+            class="top-menu"
+            mode="horizontal"
+            router
+            :ellipsis="false"
+        >
+          <el-menu-item index="/admin/dashboard">
+            <el-icon><DataLine /></el-icon>
+            <span>数据看板</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/activities">
+            <el-icon><Flag /></el-icon>
+            <span>活动管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/users">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/organizations">
+            <el-icon><OfficeBuilding /></el-icon>
+            <span>组织管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/news">
+            <el-icon><Document /></el-icon>
+            <span>新闻管理</span>
+          </el-menu-item>
+        </el-menu>
+
+        <div class="right-menu">
+          <AdminHeader />
+        </div>
+      </div>
+    </header>
+
+    <main class="main-container">
+      <div class="page-header-container">
+        <Breadcrumb />
         <TagsView />
       </div>
-
-      <main class="admin-main-content">
+      <div class="app-main-content">
         <router-view v-slot="{ Component }">
           <keep-alive :include="cachedViews">
-            <component :is="Component" />
+            <component :is="Component" class="app-view-card" />
           </keep-alive>
         </router-view>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -63,7 +63,7 @@ import { computed } from 'vue';
 import { DataLine, Flag, User, OfficeBuilding, Document } from '@element-plus/icons-vue';
 import AdminHeader from '@/components/AdminHeader.vue';
 import TagsView from '@/components/tagIndex.vue';
-import Breadcrumb from '@/components/Breadcrumb.vue'; // 引入面包屑
+import Breadcrumb from '@/components/Breadcrumb.vue';
 import { useTagsViewStore } from '@/stores/tagsView.js';
 
 const tagsViewStore = useTagsViewStore();
@@ -75,24 +75,23 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f0f2f5;
+  background-color: #f7f8fa; /* 柔和的全局背景色 */
 }
 
 /* 顶部导航栏样式 */
 .top-navbar {
-  background-color: #fff;
-  border-bottom: 1px solid #e6e6e6;
+  background-color: #ffffff;
   height: 60px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  padding: 0 24px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  z-index: 10;
 }
 
 .navbar-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
 }
@@ -100,64 +99,67 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
 .logo-area {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
-
-.logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 12px;
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-heading);
-}
+.logo { width: 32px; height: 32px; margin-right: 12px; }
+.logo-text { font-size: 1.1rem; font-weight: 600; color: var(--color-text-heading); }
 
 .top-menu {
   flex-grow: 1;
   border-bottom: none;
-  margin-left: 50px; /* 与Logo区域拉开距离 */
+  margin-left: 40px;
+  background-color: transparent;
 }
-/* 覆盖Element Plus菜单项的默认下边距 */
 .top-menu.el-menu--horizontal > .el-menu-item {
   height: 59px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.top-menu.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover {
+  background-color: transparent;
+  color: var(--color-primary-hover);
+}
+.top-menu.el-menu--horizontal > .el-menu-item.is-active {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .right-menu {
-  display: flex;
-  align-items: center;
+  margin-left: auto;
 }
 
-/* 主内容区域 */
+/* 主内容区 */
 .main-container {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
-.header-section {
-  flex-shrink: 0;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
-  /* 调整面包屑和标签页的样式 */
-  padding-left: 20px;
+.page-header-container {
+  background-color: #ffffff;
+  padding: 0 24px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
 }
-.breadcrumb-container {
-  line-height: 40px; /* 调整面包屑行高 */
+:deep(.breadcrumb-container .el-breadcrumb) {
+  line-height: 44px;
 }
-/* 调整标签页容器的边框 */
 :deep(.tags-view-container) {
-  border-top: 1px solid #d8dce5;
-  border-bottom: none;
+  padding-left: 0;
+  border-top: 1px solid #f0f2f5;
   box-shadow: none;
+  border-bottom: none;
   height: 38px;
 }
 
-.admin-main-content {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
+.app-main-content {
+  padding: 24px;
+}
+
+/* 为每个路由页面添加卡片样式 */
+:deep(.app-view-card) {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  min-height: calc(100vh - 180px); /* 减去顶部栏、头部、外边距等高度 */
 }
 </style>
