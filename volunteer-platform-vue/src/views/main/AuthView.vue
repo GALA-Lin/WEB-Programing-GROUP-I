@@ -6,7 +6,7 @@
         <div class="auth-showcase-panel">
           <div class="showcase-content">
             <div class="logo">
-              <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="油炬智愿 Logo" />
+              <img src="@/assets/new-logo.ico" class="h-8" alt="油炬智愿 Logo" />
               <h1>油炬智愿</h1>
             </div>
             <p class="showcase-quote">
