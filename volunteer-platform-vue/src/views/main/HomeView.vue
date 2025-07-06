@@ -82,7 +82,7 @@
       </div>
     </section>
 
-    <!-- 【新增】近期新闻板块 -->
+    <!-- 近期新闻板块 -->
     <section class="recent-news-section">
       <div class="container">
         <div class="section-header">
@@ -103,13 +103,12 @@
       </div>
     </section>
 
-    <!-- 【新增】AI聊天框组件 -->
+    <!-- AI聊天框组件 -->
     <AIChatBox />
   </div>
 </template>
 
 <script setup>
-// 【变更】合并了所有 imports
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useUserStore } from '@/stores/userStore.js';
 import { getPublicActivities } from '@/services/publicActivityApi.js';
@@ -126,14 +125,14 @@ const recentActivities = ref([]);
 const recentNews = ref([]); // 新增
 const animatedStats = reactive({ volunteers: 0, activities: 0, hours: 0, organizations: 0 });
 
-// 【变更】保留了新版的无限滚动效果
+// 无限滚动效果
 const doubledActivities = computed(() => {
   return recentActivities.value.length > 0
       ? [...recentActivities.value, ...recentActivities.value]
       : [];
 });
 
-// 【变更】合并了 onMounted 钩子
+// 合并了 onMounted 钩子
 onMounted(() => {
   fetchRecentActivities();
   fetchRecentNews(); // 新增
@@ -151,7 +150,7 @@ const fetchRecentActivities = async () => {
   }
 };
 
-// 【新增】获取近期新闻的函数
+// 获取近期新闻的函数
 const fetchRecentNews = async () => {
   try {
     const response = await getNewsList(1, 4);
@@ -186,7 +185,7 @@ const fetchDashboardStatsAndAnimate = async () => {
 </script>
 
 <style scoped>
-/* 【新增】全局样式变量 */
+/* 全局样式变量 */
 :root {
   --color-primary: #1e88e5;
   --color-primary-soft: #e3f2fd;
@@ -226,7 +225,7 @@ const fetchDashboardStatsAndAnimate = async () => {
 .hero-subtitle { font-size: 1.25rem; max-width: 600px; margin: 1.5rem auto 2.5rem; color: #e5e7eb; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .hero-actions { display: flex; justify-content: center; gap: 1rem; }
 
-/* 【新增】按钮样式 */
+/* 按钮样式 */
 .btn { display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s ease; border: none; cursor: pointer; }
 .btn-primary { background-color: var(--color-primary); color: white; }
 .btn-primary:hover { background-color: #1565c0; transform: translateY(-2px); }
@@ -242,7 +241,7 @@ const fetchDashboardStatsAndAnimate = async () => {
 .impact-number { font-size: 2rem; font-weight: 700; color: var(--color-text-heading); }
 .impact-label { font-size: 0.9rem; color: var(--color-text-muted); }
 
-/* 【变更】保留并应用新版的无限滚动效果 */
+/* 无限滚动效果 */
 .featured-activities-section {
   padding: 4rem 0 6rem;
 }

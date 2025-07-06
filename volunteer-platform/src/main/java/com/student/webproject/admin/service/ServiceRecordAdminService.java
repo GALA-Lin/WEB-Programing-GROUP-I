@@ -22,7 +22,7 @@ public interface ServiceRecordAdminService {
     Result<ServiceRecord> createServiceRecord(ServiceRecordCreateDTO dto);
 
     /**
-     * 【新增】更新服务时长记录
+     * 更新服务时长记录
      * @param recordId 要更新的记录ID
      * @param dto 包含了更新信息的数据包
      * @return 返回更新后的记录实体
@@ -30,14 +30,14 @@ public interface ServiceRecordAdminService {
     Result<ServiceRecord> updateServiceRecord(Long recordId, ServiceRecordCreateDTO dto);
 
     /**
-     * 【新增】删除服务时长记录
+     * 删除服务时长记录
      * @param recordId 要删除的记录ID
      * @return 返回空结果
      */
     Result<Void> deleteServiceRecord(Long recordId);
 
     /**
-     * 【新增】从Excel文件批量导入服务时长记录
+     * 从Excel文件批量导入服务时长记录
      * @param file 上传的Excel文件
      * @param activityId 要关联的活动ID
      * @return 返回操作结果，例如成功导入了多少条记录
@@ -45,7 +45,7 @@ public interface ServiceRecordAdminService {
      */
     Result<String> importServiceRecordsFromExcel(MultipartFile file, Long activityId) throws IOException;
     /**
-     * 【新增】下载批量导入服务时长的Excel模板
+     * 下载批量导入服务时长的Excel模板
      * @return 包含Excel模板文件的字节输入流
      * @throws IOException
      */

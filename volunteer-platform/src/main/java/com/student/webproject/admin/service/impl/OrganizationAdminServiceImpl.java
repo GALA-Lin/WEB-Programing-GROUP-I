@@ -69,7 +69,6 @@ public class OrganizationAdminServiceImpl implements OrganizationAdminService {
         return Result.success(null, "组织删除成功");
     }
 
-    // --- ↓↓↓ 新增：统一的权限校验方法 ↓↓↓ ---
     private void checkPermission(Long orgId, Principal principal) {
         User operator = userMapper.selectOne(new QueryWrapper<User>().eq("username", principal.getName()));
         Organization org = organizationMapper.selectById(orgId);

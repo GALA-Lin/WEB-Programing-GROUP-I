@@ -10,14 +10,12 @@ export const useUserStore = defineStore('user', () => {
     const token = ref(localStorage.getItem('token') || null);
     const currentUser = ref(JSON.parse(localStorage.getItem('user')) || null);
 
-    // --- 【核心修正】---
     // 在 store 初始化时，如果 localStroage 中存在 token，
     // 就立即将其设置到 axios 的默认请求头中。
     // 这确保了即使用户刷新页面，后续的API请求也能携带正确的认证信息。
     if (token.value) {
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
     }
-    // --- 【修正结束】---
 
     // --- Getters (计算属性) ---
     const isLoggedIn = computed(() => !!token.value);

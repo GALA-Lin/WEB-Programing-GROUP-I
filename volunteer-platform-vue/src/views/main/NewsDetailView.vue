@@ -101,7 +101,7 @@ onMounted(fetchNewsDetail);
 </script>
 
 <style scoped>
-/* 【变更】整体页面背景色 */
+/* 整体页面背景色 */
 .news-detail-page {
   background-color: var(--color-background-soft);
 }
@@ -116,7 +116,7 @@ onMounted(fetchNewsDetail);
   background-color: var(--color-surface);
 }
 
-/* 【变更】文章头部的全新样式 */
+/* 文章头部的全新样式 */
 .article-header {
   padding: 3rem 0;
   background-color: var(--color-surface);

@@ -17,7 +17,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 设置HTTP状态码为 400
     public Result<?> handleRuntimeException(RuntimeException e) {
         // e.getMessage() 将会获取我们在 Service 中抛出异常时的提示信息
-        // 例如 "用户名 'newuser01' 已被占用"
         return Result.error(400, e.getMessage());
     }
 }

@@ -9,6 +9,6 @@ public class OrganizationDetailDTO {
     private String description;
     private String leaderName;
     private Long totalMembers;
-    private Boolean isMember; // 当前用户是否是成员
+    private Boolean isMember;
     private List<MemberDTO> members;
 }

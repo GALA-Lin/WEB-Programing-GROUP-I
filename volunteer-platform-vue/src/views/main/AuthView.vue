@@ -146,8 +146,6 @@
 </template>
 
 <script setup>
-// 您的 <script setup> 部分保持不变，这里为了简洁省略了
-// 我们只修改 <template> 和 <style> 部分
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore.js";

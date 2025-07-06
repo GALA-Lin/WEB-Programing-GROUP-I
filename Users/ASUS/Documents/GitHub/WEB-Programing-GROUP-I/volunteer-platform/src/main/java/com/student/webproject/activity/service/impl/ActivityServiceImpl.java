@@ -24,7 +24,7 @@ public ActivityDetailResponse getActivityById(Long id, String currentUserId) {
             }
             
             // 使用 isEnrolled 变量
-            data.setEnrolled(isEnrolled); // 新增这一行
+            data.setEnrolled(isEnrolled);
             
             response.setData(data);
             return response;
@@ -50,7 +50,7 @@ private void mapToActivityData(Activity activity, ActivityDetailResponse.Data da
     data.setCurrentEnrollment(activity.getCurrentEnrollment());
     data.setStatus(activity.getStatus());
 
-    // 新增：设置 organizerName 字段
+    // 设置 organizerName 字段
     Long organizerId = activity.getOrganizerId();
     if (organizerId != null) {
         // 这里简化为直接设置一个示例值，实际应根据 organizerId 查询组织名称
@@ -63,8 +63,7 @@ private void mapToActivityData(Activity activity, ActivityDetailResponse.Data da
 // 在 ActivityDetailResponse.Data 中添加 enrolled 字段
 public static class Data {
     private boolean enrolled; // 新增字段
-    
-    // Getter and Setter for enrolled
+
     public boolean isEnrolled() {
         return enrolled;
     }

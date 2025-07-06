@@ -45,7 +45,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring(7);
         final String username = jwtUtils.extractUsername(jwt);
 
-        // 【最终正确逻辑】检查用户名不为空，并且当前认证信息是null或者匿名认证
+        // 检查用户名不为空，并且当前认证信息是null或者匿名认证
         if (username != null && (SecurityContextHolder.getContext().getAuthentication() == null ||
                 SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
 

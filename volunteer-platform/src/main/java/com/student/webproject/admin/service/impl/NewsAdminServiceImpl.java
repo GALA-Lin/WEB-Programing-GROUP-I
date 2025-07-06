@@ -36,7 +36,7 @@ public class NewsAdminServiceImpl implements NewsAdminService {
 
     @Override
     public Result<News> createNews(NewsCreateDTO dto, Principal principal) {
-        // 【修正一】使用 QueryWrapper 通过 username 查询用户
+        // 使用 QueryWrapper 通过 username 查询用户
         User currentUser = userMapper.selectOne(new QueryWrapper<User>().eq("username", principal.getName()));
         if (currentUser == null) {
             throw new RuntimeException("无法获取当前用户信息");
@@ -46,7 +46,7 @@ public class NewsAdminServiceImpl implements NewsAdminService {
         BeanUtils.copyProperties(dto, news);
         news.setAuthorId(currentUser.getId());
 
-        // 【修正二】移除不存在的 setCreatedAt，保留 setUpdatedAt 和 setPublishedAt
+        // 移除不存在的 setCreatedAt，保留 setUpdatedAt 和 setPublishedAt
         news.setUpdatedAt(LocalDateTime.now());
         news.setPublishedAt(LocalDateTime.now()); // 可根据需求调整发布时间
 

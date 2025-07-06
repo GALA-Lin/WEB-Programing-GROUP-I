@@ -52,6 +52,6 @@ export const getEnrollments = (activityId) => {
  */
 export const exportEnrollments = (activityId) => {
     return apiClient.get(`/api/admin/activities/${activityId}/enrollments/export`, {
-        responseType: 'blob' // 关键：告诉axios期望接收一个二进制文件
+        responseType: 'blob' // 告诉axios期望接收一个二进制文件
     });
 };

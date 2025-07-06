@@ -147,7 +147,7 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-  // 【修改点】在这里添加了对路由名称的判断
+  // 添加了对路由名称的判断
   if (
       tagsViewStoreInstance &&
       to.meta.title &&

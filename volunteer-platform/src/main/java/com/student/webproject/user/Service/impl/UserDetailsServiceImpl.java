@@ -30,7 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户 '" + username + "' 不存在");
         }
 
-        // --- ↓↓↓ 核心修改点 ↓↓↓ ---
         // 3. 将用户的角色（例如 "admin"）封装成一个权限对象
         //    之前这里是一个空的ArrayList<>()
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));

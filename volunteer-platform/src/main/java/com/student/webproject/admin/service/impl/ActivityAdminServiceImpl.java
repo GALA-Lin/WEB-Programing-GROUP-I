@@ -31,14 +31,14 @@ public class ActivityAdminServiceImpl implements ActivityAdminService {
     public ActivityAdminServiceImpl(AdminActivityMapper activityMapper) {
         this.activityMapper = activityMapper;
     }
-    // 【新增】查询报名名单的业务逻辑
+    // 查询报名名单的业务逻辑
     @Override
     public Result<List<EnrollmentViewDTO>> getEnrollmentsByActivityId(Long activityId) {
         List<EnrollmentViewDTO> enrollments = activityMapper.selectEnrollmentsByActivityId(activityId);
         return Result.success(enrollments, "报名名单查询成功");
     }
 
-    // 【新增】导出报名名单为Excel的业务逻辑
+    // 导出报名名单为Excel的业务逻辑
     @Override
     public ByteArrayInputStream exportEnrollmentsToExcel(Long activityId) throws IOException {
         List<EnrollmentViewDTO> enrollments = activityMapper.selectEnrollmentsByActivityId(activityId);

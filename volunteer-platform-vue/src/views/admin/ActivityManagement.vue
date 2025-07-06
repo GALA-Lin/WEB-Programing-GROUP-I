@@ -135,7 +135,7 @@ const activityFormRef = ref(null);
 const handleSizeChange = (newSize) => {
   // 1. 更新每页的条数
   pageSize.value = newSize;
-  // 2. 将当前页码重置为第一页，这是一个好的用户体验实践
+  // 2. 将当前页码重置为第一页
   currentPage.value = 1;
   // 3. 重新获取数据
   fetchActivities();
@@ -163,7 +163,7 @@ const rules = reactive({
   startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
   endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }],
   description: [{ required: true, message: '请输入活动描述', trigger: 'blur' }],
-  // coverImageUrl 是选填项，所以可以不加规则
+  // coverImageUrl 是选填项，可以不加规则
 });
 
 // --- 报名详情对话框 ---

@@ -127,7 +127,7 @@ public class ServiceRecordAdminServiceImpl implements ServiceRecordAdminService 
         }
     }
     /**
-     * 【新增】更新时长记录的实现
+     * 更新时长记录的实现
      */
     @Override
     @Transactional
@@ -163,7 +163,7 @@ public class ServiceRecordAdminServiceImpl implements ServiceRecordAdminService 
     }
 
     /**
-     * 【新增】删除时长记录的实现
+     * 删除时长记录的实现
      */
     @Override
     @Transactional
@@ -200,7 +200,7 @@ public class ServiceRecordAdminServiceImpl implements ServiceRecordAdminService 
         return Result.success(pageResult, "时长记录查询成功");
     }
     /**
-     * 【新增】下载模板的业务逻辑实现
+     * 下载模板的业务逻辑实现
      */
     @Override
     public ByteArrayInputStream downloadExcelTemplate() throws IOException {
