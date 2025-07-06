@@ -3,11 +3,7 @@
     <div class="container">
       <div class="navbar-content">
         <router-link to="/" class="navbar-logo">
-          <img
-              src="https://i.postimg.cc/D006GCf7/logo-oil.png"
-              alt="油炬智愿 Logo"
-              class="logo-image"
-          />
+          <img src="@/assets/new-logo.ico" class="h-8" alt="油炬智愿 Logo" />
           <span class="logo-text">油炬智愿</span>
         </router-link>
 

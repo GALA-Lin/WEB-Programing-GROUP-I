@@ -3,7 +3,7 @@
     <header class="top-navbar">
       <div class="navbar-content">
         <div class="logo-area" @click="$router.push('/admin')">
-          <img src="https://i.postimg.cc/D006GCf7/logo-oil.png" alt="Logo" class="logo"/>
+          <img src="@/assets/new-logo.ico" class="h-8" alt="油炬智愿 Logo" />
           <span class="logo-text">油炬智愿 · 后台</span>
         </div>
 
