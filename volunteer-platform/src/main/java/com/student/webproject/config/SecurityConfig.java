@@ -35,7 +35,6 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // --- ↓↓↓ 我们将合并 dev 和 prod 配置，并添加严格的规则 ↓↓↓ ---
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -43,30 +42,36 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // 1. 允许任何人访问 登录、注册接口
-                        .requestMatchers("/api/auth/**", "/api/admin/auth/login").permitAll()
-                        // 允许访问AI聊天接口
-                        .requestMatchers("/api/chat/**").permitAll()
-                        // =================  规则顺序修正  =================
+                        // 【关键修改】第一条规则：无条件放行所有OPTIONS预检请求
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 第二部分：配置无需认证即可访问的公开API
+                        // 登录、注册、AI聊天等POST请求
                         .requestMatchers(
+                                "/api/auth/login",
                                 "/api/auth/register",
-                                "/api/auth/login"
+                                "/api/admin/auth/login", // 管理员登录
+                                "/api/chat/**"
                         ).permitAll()
+                        // 所有公开的GET请求
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/activities/**",
                                 "/api/news/**",
                                 "/api/organizations/**",
-                                "/api/dashboard/**" // 允许仪表盘数据接口被公开访问
+                                "/api/dashboard/**"
                         ).permitAll()
 
-                        // 2. 接着配置需要特定权限的路径
+                        // 第三部分：配置需要特定权限的路径
+                        // 所有/api/admin/下的请求都需要 'super_admin' 或 'admin' 角色
                         .requestMatchers("/api/admin/**").hasAnyAuthority("super_admin", "admin")
 
-                        // 3. 【必须是最后一条】其他所有未匹配的请求，都必须认证（登录）
+                        // 第四部分【必须是最后一条规则】：其他所有未明确匹配的请求，都必须经过认证
                         .anyRequest().authenticated()
                 )
+                // 在UsernamePasswordAuthenticationFilter之前添加JWT过滤器
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                // 配置退出登录
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
