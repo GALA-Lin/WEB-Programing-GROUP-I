@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // 1. 允许任何人访问 登录、注册接口
                         .requestMatchers("/api/auth/**", "/api/admin/auth/login").permitAll()
+                        // 允许访问AI聊天接口
+                        .requestMatchers("/api/chat/**").permitAll()
                         // =================  规则顺序修正  =================
                         .requestMatchers(
                                 "/api/auth/register",
