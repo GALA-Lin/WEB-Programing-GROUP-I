@@ -1,0 +1,2 @@
+INSERT INTO web_project_db.service_records (id, user_id, activity_id, service_hours, record_method, recorded_by, remarks, recorded_at) VALUES (7, 13, 10, 8.00, 'manual', 2, '钱坤同学整理图书效率高。', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.service_records (id, user_id, activity_id, service_hours, record_method, recorded_by, remarks, recorded_at) VALUES (8, 16, 10, 8.00, 'manual', 2, '何平同学工作细致。', '2025-07-04 10:56:07');

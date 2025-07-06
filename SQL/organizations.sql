@@ -1,0 +1,6 @@
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (1, '校青年志愿者协会', '中国石油大学（北京）克拉玛依校区官方最大的志愿者组织，统筹全校志愿服务活动。', 1, '2025-07-04 10:56:07', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (2, '信息工程学院志愿者分队', '专注于信息技术与科普相关的志愿服务，开展编程支教、电脑义诊等特色活动。', 3, '2025-07-04 10:56:07', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (3, '石榴籽少数民族志愿服务队', '致力于民族文化交流与传播，服务社区，促进民族团结。', 4, '2025-07-04 10:56:07', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (4, '环保先锋社', '一个专注于环保理念宣传与实践的学生社团。', 13, '2025-07-04 10:56:07', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (5, '爱宠之家服务队', '关爱流浪动物，定期前往救助站进行志愿服务。', 14, '2025-07-04 10:56:07', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.organizations (id, name, description, leader_id, created_at, updated_at) VALUES (6, '图书馆志愿服务岗', '协助图书馆进行图书整理、活动支持等常规工作。', 2, '2025-07-04 10:56:07', '2025-07-04 10:56:07');

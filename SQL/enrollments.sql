@@ -1,0 +1,11 @@
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (1, 3, 1, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (2, 4, 1, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (3, 8, 1, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (4, 13, 1, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (5, 5, 2, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (6, 9, 2, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (7, 3, 3, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (15, 13, 10, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (16, 16, 10, 'enrolled', '2025-07-04 10:56:07');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (35, 21, 6, 'enrolled', '2025-07-06 15:14:45');
+INSERT INTO web_project_db.enrollments (id, user_id, activity_id, status, enrolled_at) VALUES (36, 21, 5, 'enrolled', '2025-07-06 15:15:07');
