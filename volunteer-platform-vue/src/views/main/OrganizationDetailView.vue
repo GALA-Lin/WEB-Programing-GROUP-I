@@ -70,7 +70,6 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-// ▼▼▼ 确保从正确的API服务中导入函数 ▼▼▼
 import { getOrganizationDetails, applyToOrganization } from '@/services/organizationApi.js';
 import { ElMessage, ElCard, ElButton, ElSkeleton, ElSkeletonItem, ElResult, ElRow, ElCol, ElAvatar, ElTag, ElEmpty } from 'element-plus';
 

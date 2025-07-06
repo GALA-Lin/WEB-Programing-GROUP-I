@@ -12,7 +12,6 @@ public class Result<T> {
     // 私有化构造函数，强制使用静态工厂方法创建实例
     private Result() {}
 
-    // --- 成功的静态方法 ---
     public static <T> Result<T> success(T data, String message) {
         Result<T> result = new Result<>();
         result.setCode(200); // 默认成功码 200
@@ -26,7 +25,7 @@ public class Result<T> {
     }
 
 
-    // --- 【修改部分】资源创建成功的静态方法 (HTTP 201) ---
+    // 资源创建成功的静态方法 (HTTP 201)
     /**
      * 创建成功，可以自定义消息
      * @param data 创建成功后返回的数据

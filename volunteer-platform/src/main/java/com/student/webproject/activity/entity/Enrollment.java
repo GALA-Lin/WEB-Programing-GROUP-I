@@ -16,7 +16,7 @@ public class Enrollment {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long activityId;
 
-    private String status; // 新增字段，对应数据库的 status
+    private String status;
     private LocalDateTime enrolledAt;
 
 }

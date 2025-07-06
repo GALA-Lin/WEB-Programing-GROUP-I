@@ -53,7 +53,7 @@ public interface AdminActivityMapper extends BaseMapper<Activity> {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertActivity(Activity activity);
     /**
-     * 【新增】根据活动ID查询报名者列表
+     * 根据活动ID查询报名者列表
      */
     @Select("SELECT u.id as userId, u.real_name, u.student_id, u.phone_number, e.enrolled_at " +
             "FROM enrollments e " +

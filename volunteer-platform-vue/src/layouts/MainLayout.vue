@@ -16,7 +16,7 @@ import Footer from '@/components/Footer.vue';
 <style scoped>
 .main-content {
   /* 确保内容区不会被固定导航栏遮挡，并有最小高度 */
-  padding-top: 60px; /* 假设Navbar高度为60px */
+  padding-top: 60px;
   min-height: calc(100vh - 120px); /* 视口高度减去Navbar和Footer的高度 */
 }
 </style>

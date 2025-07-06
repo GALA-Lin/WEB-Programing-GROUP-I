@@ -21,14 +21,14 @@ public interface ActivityAdminService {
     Result<IPage<Activity>> listActivities(Long page, Long pageSize);
 
     /**
-     * 【新增】获取活动报名名单的接口定义
+     * 获取活动报名名单的接口定义
      * @param activityId 活动ID
      * @return 报名者信息列表
      */
     Result<List<EnrollmentViewDTO>> getEnrollmentsByActivityId(Long activityId);
 
     /**
-     * 【新增】导出报名名单为Excel的接口定义
+     * 导出报名名单为Excel的接口定义
      * @param activityId 活动ID
      * @return 包含Excel文件的字节输入流
      * @throws IOException IO异常

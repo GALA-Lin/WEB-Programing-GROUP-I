@@ -20,7 +20,7 @@ public class JwtUtils {
     private static final long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;
 
     /**
-     * (已有方法) 根据UserDetails对象生成JWT Token
+     * 根据UserDetails对象生成JWT Token
      * 我们的登录逻辑会使用这个方法
      */
     public String generateTokenByUserDetails(UserDetails userDetails) {
@@ -88,7 +88,7 @@ public class JwtUtils {
 
 
     /**
-     * (已有方法) 你原来的根据User对象生成Token的方法，可以保留用于其他场景
+     * (已有方法) 根据User对象生成Token的方法，可以保留用于其他场景
      */
     public String generateToken(User user) {
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);

@@ -59,7 +59,7 @@ const error = ref(null);
 // 分页相关状态
 const total = ref(0);
 const currentPage = ref(1);
-const pageSize = ref(10); // 【变更】每页显示10条
+const pageSize = ref(10); // 每页显示10条
 
 const fetchNews = async (page = 1) => {
   try {
@@ -87,7 +87,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 【全新样式】 */
 .news-page-container {
   background-color: var(--color-background-soft);
   padding: 40px 20px;

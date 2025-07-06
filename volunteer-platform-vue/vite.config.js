@@ -10,11 +10,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // 添加这个代理配置
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // 你的Spring Boot后端地址
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false
       }

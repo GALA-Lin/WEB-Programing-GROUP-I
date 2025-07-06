@@ -54,22 +54,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(UserLoginDTO userLoginDTO) {
-        // --- 1. 根据用户名查询用户 (逻辑不变) ---
+        // --- 1. 根据用户名查询用户 ---
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", userLoginDTO.getUsername());
         User user = userMapper.selectOne(queryWrapper);
 
-        // --- 2. 校验用户是否存在 & 密码是否匹配 (逻辑不变) ---
+        // --- 2. 校验用户是否存在 & 密码是否匹配 ---
         if (user == null || !passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("用户名或密码错误");
         }
 
-        // --- 3. 检查账户状态是否正常 (逻辑不变) ---
+        // --- 3. 检查账户状态是否正常 ---
         if (user.getStatus() != 1) {
             throw new RuntimeException("该账户已被禁用，请联系管理员");
         }
 
-        // --- 4. 【核心重构】登录成功，生成 JWT ---
+        // --- 4. 登录成功，生成 JWT ---
         // 不再手动传递 id 和 username，而是直接传递整个 user 对象
         // 让 JwtUtils.java 内部去决定需要从 user 对象中提取哪些信息来生成 Token
 
@@ -88,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("用户名或密码错误");
         }
 
-        // --- 3. 【核心区别】校验用户角色 ---
+        // --- 3. 校验用户角色 ---
         // 检查用户的角色是否是 'admin' 或 'super_admin'
         if (!"admin".equals(user.getRole()) && !"super_admin".equals(user.getRole())) {
             // 如果不是管理员角色，则拒绝登录

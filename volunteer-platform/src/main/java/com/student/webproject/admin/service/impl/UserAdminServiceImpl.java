@@ -42,7 +42,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         }
     }
 
-    // --- ↓↓↓ 修改这两个方法的签名，加入 Principal 参数 ↓↓↓ ---
+    // 修改这两个方法的签名，加入 Principal 参数
     @Override
     public Result<User> createUser(Principal principal, UserCreateDTO dto) {
         checkSuperAdminPermission(principal, dto.getRole());
@@ -78,7 +78,6 @@ public class UserAdminServiceImpl implements UserAdminService {
         userMapper.updateById(user);
         return Result.success(user, "用户信息更新成功");
     }
-    // --- ↑↑↑ 修改结束 ↑↑↑ ---
 
     @Override
     public Result<Void> deleteUser(Long id) {

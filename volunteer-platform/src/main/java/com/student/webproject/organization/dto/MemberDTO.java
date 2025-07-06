@@ -7,6 +7,6 @@ public class MemberDTO {
     private Long userId;
     private String realName;
     private String avatarUrl;
-    private String memberRole; // 'member', 'officer'
+    private String memberRole;
     private String joinDate;
 }

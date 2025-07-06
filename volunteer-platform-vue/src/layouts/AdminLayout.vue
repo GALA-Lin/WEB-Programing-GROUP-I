@@ -80,7 +80,7 @@ const cachedViews = computed(() => tagsViewStore.cachedViews);
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f7f8fa; /* 柔和的全局背景色 */
+  background-color: #f7f8fa;
 }
 
 /* 顶部导航栏样式 */

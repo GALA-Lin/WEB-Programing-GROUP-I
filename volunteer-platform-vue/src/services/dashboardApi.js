@@ -10,7 +10,7 @@ export const getPublicDashboardStats = () => {
 };
 
 /**
- * 【新增】获取【后台管理】的仪表盘统计数据
+ * 获取【后台管理】的仪表盘统计数据
  * @returns {Promise<any>}
  */
 export const getAdminDashboardStats = () => {

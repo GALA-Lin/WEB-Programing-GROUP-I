@@ -8,5 +8,5 @@ public class UserUpdateDTO {
     private String email;
     private String phoneNumber;
     private String role;
-    private Integer status; // 1 for active, 0 for disabled
+    private Integer status;
 }

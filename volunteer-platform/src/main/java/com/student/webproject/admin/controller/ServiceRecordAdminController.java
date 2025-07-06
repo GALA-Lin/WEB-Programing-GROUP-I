@@ -32,7 +32,7 @@ public class ServiceRecordAdminController {
     }
 
     /**
-     * 【新增】更新服务时长记录的API端点
+     * 更新服务时长记录的API端点
      * @param id 要更新的记录ID，从URL路径中获取
      * @param dto 包含更新数据的请求体
      * @return 更新后的服务记录
@@ -43,7 +43,7 @@ public class ServiceRecordAdminController {
     }
 
     /**
-     * 【新增】删除服务时长记录的API端点
+     * 删除服务时长记录的API端点
      * @param id 要删除的记录ID，从URL路径中获取
      * @return 操作结果
      */
@@ -52,7 +52,7 @@ public class ServiceRecordAdminController {
         return serviceRecordAdminService.deleteServiceRecord(id);
     }
     /**
-     * 【新增】获取服务时长记录列表的API端点
+     * 获取服务时长记录列表的API端点
      */
     @GetMapping
     public Result<IPage<ServiceRecordViewDTO>> listServiceRecords(
@@ -62,7 +62,7 @@ public class ServiceRecordAdminController {
         return serviceRecordAdminService.listServiceRecords(page, pageSize);
     }
     /**
-     * 【新增】处理Excel文件上传的API端点
+     * 处理Excel文件上传的API端点
      * @param file 上传的文件
      * @param activityId 表单中附带的活动ID
      * @return 处理结果
@@ -77,7 +77,7 @@ public class ServiceRecordAdminController {
         return serviceRecordAdminService.importServiceRecordsFromExcel(file, activityId);
     }
     /**
-     * 【新增】提供Excel模板下载的API端点
+     * 提供Excel模板下载的API端点
      */
     @GetMapping("/template")
     public ResponseEntity<InputStreamResource> downloadTemplate() throws IOException {

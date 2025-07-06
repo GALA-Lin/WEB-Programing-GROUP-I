@@ -19,7 +19,7 @@ public interface ServiceRecordMapper extends BaseMapper<ServiceRecord> {
             "WHERE sr.user_id = #{userId} ORDER BY sr.recorded_at DESC")
     List<ServiceRecordDTO> findServiceRecordsByUserId(Long userId);
     /**
-     * 【新增】分页联表查询，用于后台管理列表
+     * 分页联表查询，用于后台管理列表
      */
     @Select("SELECT sr.id, sr.user_id, sr.activity_id, u.real_name, a.title as activityTitle, sr.service_hours, sr.remarks, sr.recorded_at " +
             "FROM service_records sr " +

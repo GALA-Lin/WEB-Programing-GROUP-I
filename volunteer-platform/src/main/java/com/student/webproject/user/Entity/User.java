@@ -30,11 +30,11 @@ public class User {
     private Integer status;
     private LocalDateTime createdAt;
 
-    // 【核心修改】确保 updatedAt 字段存在，并使用 @TableField 注解
+    // 确保 updatedAt 字段存在，并使用 @TableField 注解
     @TableField(update = "now()")
     private LocalDateTime updatedAt;
 
-    // 【核心修改】确保 totalServiceHours 字段存在，并且类型是 BigDecimal
+    // 确保 totalServiceHours 字段存在，并且类型是 BigDecimal
     @TableField("total_service_hours")
     private BigDecimal totalServiceHours;
 }
