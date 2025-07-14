@@ -1,5 +1,18 @@
 # CUPK 计算机系 2025 web小学期 第一组
 
+## 项目许可
+
+
+ [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+本作品根据[署名—非商业性使用—相同方式共享 4.0 协议][cc-by-nc-sa]进行许可。
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
+
 ## 成员
 
 | 序号 | 学号 | 姓名   | 班级       |
@@ -92,3 +105,6 @@
 | 功能（60分） | 功能完整性<br />功能实用性<br />技术复杂度                   | 好<br />好<br />较好  | 56   |
 | 总评         | 界面美观，数据库设计合理，功能较实用、完善，报告内容较完整。 | 好                    | 93   |
 
+
+
+[cc-by-nc-sa]: 
